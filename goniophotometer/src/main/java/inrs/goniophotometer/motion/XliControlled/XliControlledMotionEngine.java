@@ -13,6 +13,9 @@ public abstract class XliControlledMotionEngine implements MotionEngine {
 	private int 			countPerDegree;
 	private String			serialPortName;
 	private int 			engineNumber;
+	private int				motorCurrent;
+	private int				motorStandbyCurrent;
+	private int 			motorResolution;
 	
 
 	private static final int	DEFAULT_ACCELERATION_DEGREES_PER_SQUARE_SECOND 	= 10;
@@ -27,6 +30,7 @@ public abstract class XliControlledMotionEngine implements MotionEngine {
 	private boolean			hardLimitsAllowed;
 	
 	private int				actualCountPosition;
+	private int				actualCountIncremental;
 	private int				countDistance;
 	private int 			lowerCountPositionLimit;
 	private int 			upperCountPositionLimit;
@@ -35,6 +39,8 @@ public abstract class XliControlledMotionEngine implements MotionEngine {
 	private int				countMaxSpeed;
 	private float 			velocityThreshold;
 	private boolean			inPosition;
+	private boolean			inMovement;
+	private boolean			isBusy;
 	
 	private final int 		flagCount = 32; 
 	
@@ -67,6 +73,8 @@ public abstract class XliControlledMotionEngine implements MotionEngine {
 		setUpperCountPositionLimit(DEFAULT_DEGREE_UPPER_LIMIT * getCountPerDegree());
 		setToZeroPosition();
 		setInPosition(true);
+		setMotorCurrent(50);
+		setMotorResolution(4000);
 		
 	}
 	
@@ -292,6 +300,66 @@ public abstract class XliControlledMotionEngine implements MotionEngine {
 
 	public void setInPosition(boolean in_position) {
 		inPosition = in_position;
+	}
+
+
+	public int getMotorCurrent() {
+		return motorCurrent;
+	}
+
+
+	public void setMotorCurrent(int motor_current) {
+		motorCurrent = motor_current;
+	}
+
+
+	public int getMotorResolution() {
+		return motorResolution;
+	}
+
+
+	public void setMotorResolution(int motor_resolution) {
+		this.motorResolution = motor_resolution;
+	}
+
+
+	public int getMotorStandbyCurrent() {
+		return motorStandbyCurrent;
+	}
+
+
+	public void setMotorStandbyCurrent(int motor_standby_current) {
+		this.motorStandbyCurrent = motor_standby_current;
+	}
+
+
+	public boolean isInMovement() {
+		return inMovement;
+	}
+
+
+	public void setInMovement(boolean in_movement) {
+		this.inMovement = in_movement;
+	}
+
+
+	public int getActualCountIncremental() {
+		return actualCountIncremental;
+	}
+
+
+	public void setActualCountIncremental(int actual_count_incremental) {
+		this.actualCountIncremental = actual_count_incremental;
+	}
+
+
+	public boolean isBusy() {
+		return isBusy;
+	}
+
+
+	public void setBusy(boolean is_busy) {
+		this.isBusy = is_busy;
 	}
 
 }
