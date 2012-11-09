@@ -34,6 +34,7 @@ public abstract class XliControlledMotionEngine implements MotionEngine {
 	private int 			countDeceleration;
 	private int				countMaxSpeed;
 	private float 			velocityThreshold;
+	private boolean			inPosition;
 	
 	private final int 		flagCount = 32; 
 	
@@ -65,6 +66,7 @@ public abstract class XliControlledMotionEngine implements MotionEngine {
 		setLowerCountPositionLimit(DEFAULT_DEGREE_LOWER_LIMIT * getCountPerDegree());
 		setUpperCountPositionLimit(DEFAULT_DEGREE_UPPER_LIMIT * getCountPerDegree());
 		setToZeroPosition();
+		setInPosition(true);
 		
 	}
 	
@@ -280,6 +282,16 @@ public abstract class XliControlledMotionEngine implements MotionEngine {
 
 	public boolean[] getUserFaultsTab() {
 		return userFaultsTab;
+	}
+
+
+	public boolean isInPosition() {
+		return inPosition;
+	}
+
+
+	public void setInPosition(boolean in_position) {
+		inPosition = in_position;
 	}
 
 }

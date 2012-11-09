@@ -95,14 +95,23 @@ public enum EasiVocabulary{
 			return "(DF)";
 		}
 	},
-	READ_ENCODER_POSITION("R"){
+	READ_ENCODER_POSITION("R"){		// not supported by the product
 		@Override
 		public String getCommandParameters(
 				XliControlledMotionEngine motion_engine) {
 			return "(EP)";
 		}
 	},
-	READ_IN_POSITION_FLAG("R"){
+	READ_IN_POSITION_FLAG("R", new StateDecoder(){
+
+		public void decodeState(String state_string,
+				XliControlledMotionEngine motion_engine)
+				throws StateParsingException {
+			if (state_string.length() != 2){
+				throw new StateParsingException("1R(IR) : bad length");
+			}
+			motion_engine.setInPosition(state_string.charAt(1) == '1');
+		}}){
 		@Override
 		public String getCommandParameters(
 				XliControlledMotionEngine motion_engine) {
