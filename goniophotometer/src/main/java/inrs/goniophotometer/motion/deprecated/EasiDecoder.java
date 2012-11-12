@@ -1,4 +1,4 @@
-package inrs.goniophotometer.motion;
+package inrs.goniophotometer.motion.deprecated;
 
 import java.io.IOException;
 import java.io.InputStream;

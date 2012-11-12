@@ -1,6 +1,6 @@
 package inrs.goniophotometer;
 
-import inrs.goniophotometer.motion.EasiDecoder;
+import inrs.goniophotometer.motion.deprecated.EasiDecoder;
 
 import java.io.IOException;
 import java.io.OutputStream;

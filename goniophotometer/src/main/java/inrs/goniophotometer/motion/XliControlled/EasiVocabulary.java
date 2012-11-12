@@ -1,5 +1,7 @@
 package inrs.goniophotometer.motion.XliControlled;
 
+import inrs.goniophotometer.motion.MotionEngine;
+
 public enum EasiVocabulary{
 
 
@@ -310,20 +312,42 @@ public enum EasiVocabulary{
 		commandLabel 	= cmd_label;
 		resultDecoder	= result_decoder;
 	}
+	/**
+	 * 
+	 * @return The Easi code of the command
+	 */
 	public String getLabel(){
 		return commandLabel;
 	}
+	/**
+	 * 
+	 * @return The decoder that can be used to decode this order's result and update a {@link MotionEngine}.<br>
+	 * <i>null</i> if there is nothing to decode. 
+	 */
 	public StateDecoder getResultDecoder() {
 		return resultDecoder;
 	}
+	/**
+	 * 
+	 * @param motion_engine The {@link MotionEngine} to take into account.
+	 * @return The string making the parameters of the order.
+	 */
 	public abstract String getCommandParameters(XliControlledMotionEngine motion_engine);
+	/**
+	 * 
+	 * @param motion_engine The {@link MotionEngine} to take into account.
+	 * @return The string corresponding to a state inquiry.
+	 */
 	public String getCommandState(XliControlledMotionEngine motion_engine){
 		return ""+motion_engine.getEngineNumber()+getLabel();
 	}
+	/**
+	 * 
+	 * @param motion_engine the {@link MotionEngine} to take into account.
+	 * @return The complete "set" sequence.
+	 */
 	public String getCommandSequence(XliControlledMotionEngine motion_engine){
 		return getCommandState(motion_engine)+getCommandParameters(motion_engine);
 	}
-	public boolean isAFlagReaderCommand(){
-		return false;
-	}
+
 };
