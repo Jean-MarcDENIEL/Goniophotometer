@@ -46,7 +46,7 @@ public interface MotionEngine {
 	 */
 	void	processAbsoluteMove(float deg_value);
 	/**
-	 * Stops smoothly the engine by applying its deceleration that has been set through the {@link #setDeceleration(float)} method.
+	 * Stops smoothly the engine by applying its deceleration that has been set through the {@link #setAngularDeceleration(float)} method.
 	 */
 	void	processSoftStop();
 	/**
@@ -58,17 +58,17 @@ public interface MotionEngine {
 	 * Sets the max velocity that can be achieved along a move.
 	 * @param deg_per_second Degree per second angular speed.
 	 */
-	void	setMaxVelocity(float deg_per_second);
+	void	setAngularMaxVelocity(float deg_per_second);
 	/**
 	 * Sets the motion acceleration.
 	 * @param deg_per_second_2 Degree per square second angular acceleration. Negative values are ignored.
 	 */
-	void	setAcceleration(float deg_per_second_2);
+	void	setAngularAcceleration(float deg_per_second_2);
 	/**
 	 * Set the motion deceleration.
 	 * @param deg_per_second_2 Degree per square second angular deceleration. Negative values are ignored.
 	 */
-	void	setDeceleration(float deg_per_second_2);
+	void	setAngularDeceleration(float deg_per_second_2);
 	
 	/**
 	 * Sets the zero reference position. This position is used by the {@link #processAbsoluteMove(float)} method.<br>
@@ -89,4 +89,8 @@ public interface MotionEngine {
 	 * @param deg_value
 	 */
 	void	setMaxPosition(float deg_value);
+	/**
+	 * Waits for the motion engine to be in position or stops moving.
+	 */
+	void	waitForEndOfMotion();
 }
