@@ -1,10 +1,8 @@
-package inrs.goniophotometer.motion.XliControlled;
+package inrs.goniophotometer.motion.xliControlled;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.TooManyListenersException;
-
-import javax.swing.plaf.SliderUI;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
@@ -25,7 +23,7 @@ import inrs.goniophotometer.motion.MotionEngine;
  *
  */
 @SuppressWarnings("restriction")
-public class XliControlledMotionEngine implements MotionEngine {
+public final class XliControlledMotionEngine implements MotionEngine {
 
 	private String			serialPortName;
 	private int 			engineNumber;
@@ -43,8 +41,12 @@ public class XliControlledMotionEngine implements MotionEngine {
 	private static final float	DEFAULT_MAX_VELOCITY_DEGREE_PER_SECOND 			= 2f;
 	private static final int	DEFAULT_DEGREE_LOWER_LIMIT						= 0;
 	private static final int	DEFAULT_DEGREE_UPPER_LIMIT						= 10;
-	private static final int	DEFAULT_DELAY_BETWEEN_SENDS_MILLISEC			= 200;
-	private static final float	DEFAULT_DEGREES_PER_SECOND_VELOCITY_THRESHOLD	= 0.5f; 
+	private static final int	DEFAULT_DELAY_BETWEEN_SENDS_MILLISEC			= 350;
+	private static final float	DEFAULT_DEGREES_PER_SECOND_VELOCITY_THRESHOLD	= 0.0f; 
+	private static final int	DEFAULT_TIMEOUT_MILLISEC						= 100;
+	private static final int	DEFAULT_MOTOR_CURRENT_PERCENT					= 50;
+
+	private static final float	ONE_REV_DEGREES									= 360.0f;
 
 	private boolean 		lowerHardLimitReached;
 	private boolean			upperHardLimitReached;
@@ -64,7 +66,7 @@ public class XliControlledMotionEngine implements MotionEngine {
 	private boolean			inMovement;
 	private boolean			isBusy;
 
-	private final int 		flagCount = 32; 
+	private final static int 		FLAG_COUNT = 32; 
 
 	private boolean[] 		driveFaultsTab;
 	private boolean[]		statusBitsTab;
@@ -90,15 +92,15 @@ public class XliControlledMotionEngine implements MotionEngine {
 			decodedStream = decoded_stream;
 		}
 
-		public void serialEvent(SerialPortEvent ev) {
-			int _read_data;
+		public void serialEvent(SerialPortEvent _ev) {
 			getControllerReturnToDecode().setLength(0);
 			try{
+				int _read_data = decodedStream.read();
 				// first receives the message from the controller
 				//
-				while (((_read_data = decodedStream.read())> -1)&&
-						(_read_data != '\n')){
+				while ((_read_data> -1)&& (_read_data != '\n')){
 					getControllerReturnToDecode().append((char)_read_data);
+					_read_data = decodedStream.read();
 				}
 				// if the message is a command result (i.e begins with '*') then it is decoded
 				//
@@ -111,9 +113,8 @@ public class XliControlledMotionEngine implements MotionEngine {
 			}
 			catch(IOException _e){
 				_e.printStackTrace();
-			} catch (StateParsingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (StateParsingException _e) {
+				_e.printStackTrace();
 			}
 
 		}
@@ -127,9 +128,9 @@ public class XliControlledMotionEngine implements MotionEngine {
 	 */
 	public XliControlledMotionEngine(String serial_port_name, int count_per_rev, int rev_ratio){
 
-		driveFaultsTab	= new boolean[flagCount];
-		statusBitsTab	= new boolean[flagCount];
-		userFaultsTab	= new boolean[flagCount];
+		driveFaultsTab	= new boolean[FLAG_COUNT];
+		statusBitsTab	= new boolean[FLAG_COUNT];
+		userFaultsTab	= new boolean[FLAG_COUNT];
 
 		setControllerReturnToDecode(new StringBuffer());
 
@@ -137,7 +138,7 @@ public class XliControlledMotionEngine implements MotionEngine {
 		setSerialPortName(serial_port_name);
 		setMotorResolution(count_per_rev);
 		setReducerRatio(rev_ratio);
-		setMotorCurrent(50);
+		setMotorCurrent(DEFAULT_MOTOR_CURRENT_PERCENT);
 		setRevPerSquareSecondAcceleration(convertFromDegreeToRev(DEFAULT_ACCELERATION_DEGREES_PER_SQUARE_SECOND));
 		setRevPerSquareSecondDeceleration(convertFromDegreeToRev(DEFAULT_DECELERATION_DEGREES_PER_SQUARE_SECOND));
 		setRevPerSecondMaxSpeed(convertFromDegreeToRev(DEFAULT_MAX_VELOCITY_DEGREE_PER_SECOND));
@@ -154,7 +155,7 @@ public class XliControlledMotionEngine implements MotionEngine {
 
 		try {
 			CommPortIdentifier _com_id = CommPortIdentifier.getPortIdentifier(getSerialPortName());
-			CommPort _com_port = _com_id.open("EngineMotion", 100);
+			CommPort _com_port = _com_id.open("EngineMotion", DEFAULT_TIMEOUT_MILLISEC);
 
 			if (_com_port instanceof SerialPort){
 				serialPort = (SerialPort)_com_port;
@@ -169,12 +170,10 @@ public class XliControlledMotionEngine implements MotionEngine {
 		serialPort.notifyOnDataAvailable(true);
 		try {
 			serialPort.addEventListener(new EasiDecoder(serialPort.getInputStream()));
-		} catch (TooManyListenersException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (TooManyListenersException _e) {
+			_e.printStackTrace();
+		} catch (IOException _e) {
+			_e.printStackTrace();
 		}
 
 		sendOrderAndSetDecoder(EasiVocabulary.TURN_ON);
@@ -195,7 +194,7 @@ public class XliControlledMotionEngine implements MotionEngine {
 
 	}
 	private int getCountPerDegree() {
-		return (int)(((float)(getReducerRatio()*getMotorResolution()))/360.0f);
+		return (int)(((float)(getReducerRatio()*getMotorResolution()))/ONE_REV_DEGREES);
 	}
 	/**
 	 * Converts taking into account the reducer ratio.
@@ -203,7 +202,7 @@ public class XliControlledMotionEngine implements MotionEngine {
 	 * @return
 	 */
 	public float convertFromDegreeToRev(float degree_v){
-		return degree_v / 360.0f * (float) reducerRatio;
+		return degree_v / ONE_REV_DEGREES * (float) reducerRatio;
 	}
 
 	/**
@@ -216,9 +215,6 @@ public class XliControlledMotionEngine implements MotionEngine {
 		setStateDecoderToUse(order_to_send.getResultDecoder());
 
 		String _order_str = order_to_send.getCommandSequence(this);
-		// DEBUG
-		System.out.println("             ->" + _order_str);
-
 		int[] _order_int_array = translateToPort(_order_str);
 		for (int _msg_data : _order_int_array){
 			try {
@@ -295,18 +291,18 @@ public class XliControlledMotionEngine implements MotionEngine {
 	}
 
 
-	public final boolean isLowerLimitReached() {
+	public boolean isLowerLimitReached() {
 		return statusBitsTab[StatusBits.LOWER_LIMIT_SEEN.getBitIndex()];
 	}
 
-	public final boolean isUpperLimitReached() {
+	public boolean isUpperLimitReached() {
 		return statusBitsTab[StatusBits.UPPER_LIMIT_SEEN.getBitIndex()];
 	}
 
 	/**
 	 * @return true if one or more user faults bits are non 0
 	 */
-	public final boolean isFaulty() {
+	public boolean isFaulty() {
 		for (UserFaultsBits _user_fault : UserFaultsBits.values()){
 			if (userFaultsTab[_user_fault.getBitIndex()]){
 				return true;
@@ -315,42 +311,44 @@ public class XliControlledMotionEngine implements MotionEngine {
 		return false;
 	}
 
-	public final String getUserFaults() {
+	public String getUserFaults() {
 		StringBuffer _res = new StringBuffer();
 		for (UserFaultsBits _user_fault : UserFaultsBits.values()){
 			if (userFaultsTab[_user_fault.getBitIndex()]){
-				_res.append(_user_fault.getBitMeaning()+"\n");
+				_res.append(_user_fault.getBitMeaning());
+				_res.append("\n");
 			}
 		}
 		return _res.toString();
 	}
 
-	public final String getStatus() {
+	public String getStatus() {
 		StringBuffer _res = new StringBuffer();
 		for (StatusBits _status : StatusBits.values()){
 			if(statusBitsTab[_status.getBitIndex()]){
-				_res.append(_status.getBitMeaning()+"\n");
+				_res.append(_status.getBitMeaning());
+				_res.append("\n");
 			}
 		}
 		return _res.toString();
 	}
 
-	public final void processRelativeMove(float deg_value) {
+	public void processRelativeMove(float deg_value) {
 
 		// TODO : ensure soft limits
 
-		if (deg_value < 0.0){
-			sendOrderAndSetDecoder(EasiVocabulary.CHANGE_DIRECTION);
-		}
+		//if (deg_value < 0.0){
+		//	sendOrderAndSetDecoder(EasiVocabulary.CHANGE_DIRECTION);
+		//}
 
 		setCountDistance((int)(((float)getCountPerDegree()) * deg_value));
 		sendOrderAndSetDecoder(EasiVocabulary.PROFILE_1);
 		sendOrderAndSetDecoder(EasiVocabulary.USE_PROFILE_1);
 		sendOrderAndSetDecoder(EasiVocabulary.MOVE);
 
-		if (deg_value < 0.0){
-			sendOrderAndSetDecoder(EasiVocabulary.CHANGE_DIRECTION);
-		}
+		//if (deg_value < 0.0){
+		//	sendOrderAndSetDecoder(EasiVocabulary.CHANGE_DIRECTION);
+		//}
 
 		readEnginState();
 	}
@@ -359,8 +357,8 @@ public class XliControlledMotionEngine implements MotionEngine {
 		sendOrderAndSetDecoder(EasiVocabulary.READ_DRIVE_FAULT_STATUS);
 		sendOrderAndSetDecoder(EasiVocabulary.READ_IN_POSITION_FLAG);
 		sendOrderAndSetDecoder(EasiVocabulary.READ_MOVING);
-		sendOrderAndSetDecoder(EasiVocabulary.READ_POSITION_ABSOLUTE);
-		sendOrderAndSetDecoder(EasiVocabulary.READ_POSITION_INCREMENTAL);
+		//sendOrderAndSetDecoder(EasiVocabulary.READ_POSITION_ABSOLUTE);
+		//sendOrderAndSetDecoder(EasiVocabulary.READ_POSITION_INCREMENTAL);
 		sendOrderAndSetDecoder(EasiVocabulary.READ_STATUS);
 		sendOrderAndSetDecoder(EasiVocabulary.READ_READY_BUSY_FLAG);
 		sendOrderAndSetDecoder(EasiVocabulary.READ_USER_PROGRAM_FAULT);
@@ -370,120 +368,120 @@ public class XliControlledMotionEngine implements MotionEngine {
 		return (int)((float)getCountPerDegree() * degree_value);
 	}
 
-	public final void processAbsoluteMove(float deg_value) {
+	public void processAbsoluteMove(float deg_value) {
 		int _abs_count_value = (int)(((float)getCountPerDegree())*deg_value);
 		int _rel_count_value = getActualCountPosition()-_abs_count_value;
 		processRelativeMove((float)_rel_count_value / (float)getCountPerDegree());
 	}
 
-	public final void processSoftStop() {
+	public void processSoftStop() {
 		sendOrderAndSetDecoder(EasiVocabulary.SMOOTH_STOP);
 	}
 
-	public final void processEmergencystop() {
+	public void processEmergencystop() {
 		sendOrderAndSetDecoder(EasiVocabulary.EMERGENCY_STOP);
 	}
 
-	public final void setAngularMaxVelocity(float deg_per_second) {
+	public void setAngularMaxVelocity(float deg_per_second) {
 		setRevPerSecondMaxSpeed(convertFromDegreeToRev(deg_per_second));
 		sendOrderAndSetDecoder(EasiVocabulary.PROFILE_1);
 		sendOrderAndSetDecoder(EasiVocabulary.USE_PROFILE_1);
 	}
 
-	public final void setAngularAcceleration(float deg_per_second_2) {
+	public void setAngularAcceleration(float deg_per_second_2) {
 		setRevPerSquareSecondAcceleration(convertFromDegreeToRev(deg_per_second_2));
 		sendOrderAndSetDecoder(EasiVocabulary.PROFILE_1);
 		sendOrderAndSetDecoder(EasiVocabulary.USE_PROFILE_1);
 	}
 
-	public final void setAngularDeceleration(float deg_per_second_2) {
+	public void setAngularDeceleration(float deg_per_second_2) {
 		setRevPerSquareSecondDeceleration(convertFromDegreeToRev(deg_per_second_2));
 		sendOrderAndSetDecoder(EasiVocabulary.PROFILE_1);
 		sendOrderAndSetDecoder(EasiVocabulary.USE_PROFILE_1);
 	}
 
-	public final void setToZeroPosition() {
+	public void setToZeroPosition() {
 		setActualCountPosition(0);
 		setInPosition(true);
 	}
 
-	public final void setMinPosition(float deg_value) {
+	public void setMinPosition(float deg_value) {
 		setLowerCountPositionLimit(translateFromDegreeToCount(deg_value));
 	}
 
-	public final void setMaxPosition(float deg_value) {
+	public void setMaxPosition(float deg_value) {
 		setUpperCountPositionLimit(translateFromDegreeToCount(deg_value));
 	}
 
-	public final int getLowerCountPositionLimit() {
+	public int getLowerCountPositionLimit() {
 		return lowerCountPositionLimit;
 	}
 
-	public final void setLowerCountPositionLimit(int lower_count_position_limit) {
+	public void setLowerCountPositionLimit(int lower_count_position_limit) {
 		lowerCountPositionLimit = lower_count_position_limit;
 	}
 
-	public final int getUpperCountPositionLimit() {
+	public int getUpperCountPositionLimit() {
 		return upperCountPositionLimit;
 	}
 
-	public final void setUpperCountPositionLimit(int upper_count_position_limit) {
+	public void setUpperCountPositionLimit(int upper_count_position_limit) {
 		upperCountPositionLimit = upper_count_position_limit;
 	}
 
-	public final float getRevPerSquareSecondAcceleration() {
+	public float getRevPerSquareSecondAcceleration() {
 		return revPerSquareSecondAcceleration;
 	}
 
-	public final void setRevPerSquareSecondAcceleration(float rev_per_square_acc) {
+	public void setRevPerSquareSecondAcceleration(float rev_per_square_acc) {
 		revPerSquareSecondAcceleration = rev_per_square_acc;
 	}
 
-	public final float getRevPerSquareSecondDeceleration() {
+	public float getRevPerSquareSecondDeceleration() {
 		return revPerSquareSecondDeceleration;
 	}
 
-	public final void setRevPerSquareSecondDeceleration(float rev_par_square_second_dec) {
+	public void setRevPerSquareSecondDeceleration(float rev_par_square_second_dec) {
 		revPerSquareSecondDeceleration = rev_par_square_second_dec;
 	}
 
-	public final String getSerialPortName() {
+	public String getSerialPortName() {
 		return serialPortName;
 	}
 
-	public final void setSerialPortName(String serial_port_name) {
+	public void setSerialPortName(String serial_port_name) {
 		serialPortName = serial_port_name;
 	}
 
-	public final int getActualCountPosition() {
+	public int getActualCountPosition() {
 		return actualCountPosition;
 	}
 
-	public final void setActualCountPosition(int actual_count_position) {
+	public void setActualCountPosition(int actual_count_position) {
 		actualCountPosition = actual_count_position;
 	}
 
-	public final float getRevPerSecondMaxSpeed() {
+	public float getRevPerSecondMaxSpeed() {
 		return revPerSecondMaxSpeed;
 	}
 
-	public final void setRevPerSecondMaxSpeed(float rev_per_sec_max_speed) {
+	public void setRevPerSecondMaxSpeed(float rev_per_sec_max_speed) {
 		revPerSecondMaxSpeed = rev_per_sec_max_speed;
 	}
 
 
 	public boolean[] getDriveFaultsTab() {
-		return driveFaultsTab;
+		return driveFaultsTab.clone();
 	}
 
 
 	public boolean[] getStatusBitsTab() {
-		return statusBitsTab;
+		return statusBitsTab.clone();
 	}
 
 
 	public boolean[] getUserFaultsTab() {
-		return userFaultsTab;
+		return userFaultsTab.clone();
 	}
 
 
@@ -600,6 +598,8 @@ public class XliControlledMotionEngine implements MotionEngine {
 	}
 
 	public void waitForEndOfMotion() {
+		setInMovement(true);
+		setInPosition(false);
 		do{
 			sendOrderAndSetDecoder(EasiVocabulary.READ_IN_POSITION_FLAG);
 			sendOrderAndSetDecoder(EasiVocabulary.READ_MOVING);

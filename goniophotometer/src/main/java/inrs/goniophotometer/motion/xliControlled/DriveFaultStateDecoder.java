@@ -1,4 +1,4 @@
-package inrs.goniophotometer.motion.XliControlled;
+package inrs.goniophotometer.motion.xliControlled;
 
 class DriveFaultStateDecoder extends BitsPaquetsStateDecoder{
 		public void decodeState(String state_string,

@@ -1,4 +1,4 @@
-package inrs.goniophotometer.motion.XliControlled;
+package inrs.goniophotometer.motion.xliControlled;
 
 enum StatusBits {
 	COMMAND_PROCESSING_PAUSED	(0, "Command processing paused"),

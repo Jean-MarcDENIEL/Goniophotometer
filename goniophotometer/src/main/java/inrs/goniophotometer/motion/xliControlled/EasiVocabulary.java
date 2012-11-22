@@ -1,6 +1,4 @@
-package inrs.goniophotometer.motion.XliControlled;
-
-import inrs.goniophotometer.motion.MotionEngine;
+package inrs.goniophotometer.motion.xliControlled;
 
 public enum EasiVocabulary{
 
@@ -33,13 +31,14 @@ public enum EasiVocabulary{
 			return "";
 		}
 	},
-	CHANGE_DIRECTION("H"){
+	// "H" should not be used as it blocks R(IP) and R(MV) return values that get queued until end of move.
+	/*CHANGE_DIRECTION("H"){
 		@Override
 		public String getCommandParameters(
 				XliControlledMotionEngine motion_engine) {
 			return "";
 		}
-	},
+	},*/
 	EMERGENCY_STOP("K"){
 		@Override
 		public String getCommandParameters(
@@ -109,10 +108,12 @@ public enum EasiVocabulary{
 		public void decodeState(String state_string,
 				XliControlledMotionEngine motion_engine)
 						throws StateParsingException {
-			if (state_string.length() != 3){
-				throw new StateParsingException("1R(IR) : bad length : " + state_string.length() + "instead of 3");
+			final int X_R_IR_LENGTH = 3;
+			if (state_string.length() != X_R_IR_LENGTH){
+				throw new StateParsingException("1R(IR) : bad length : " + state_string.length() + "instead of " + X_R_IR_LENGTH);
 			}
 			motion_engine.setInPosition(state_string.charAt(1) == '1');
+			
 		}}){
 		@Override
 		public String getCommandParameters(
@@ -130,7 +131,7 @@ public enum EasiVocabulary{
 				motion_engine.setMotorCurrent(Integer.parseInt(_value_str));
 			}
 			catch(NumberFormatException _e){
-				throw new StateParsingException("R(MC) decoding " + state_string);
+				throw new StateParsingException("R(MC) decoding " + state_string, _e);
 			}
 		}}) {
 		@Override
@@ -149,7 +150,7 @@ public enum EasiVocabulary{
 				motion_engine.setMotorResolution(Integer.parseInt(_value_str));
 			}
 			catch(NumberFormatException _e){
-				throw new StateParsingException("R(MR) decoding " + state_string);
+				throw new StateParsingException("R(MR) decoding " + state_string, _e);
 			}
 		}}) {
 		@Override
@@ -168,7 +169,7 @@ public enum EasiVocabulary{
 				motion_engine.setMotorStandbyCurrent(Integer.parseInt(_value_str));
 			}
 			catch(NumberFormatException _e){
-				throw new StateParsingException ("R(MS) decoding " + state_string);
+				throw new StateParsingException ("R(MS) decoding " + state_string, _e);
 			}
 		}}) {
 		@Override
@@ -201,7 +202,7 @@ public enum EasiVocabulary{
 				motion_engine.setActualCountPosition(Integer.parseInt(_value_str));
 			}
 			catch(NumberFormatException _e){
-				throw new StateParsingException("R(PA) decoding " + state_string + ": " + _value_str);
+				throw new StateParsingException("R(PA) decoding " + state_string + ": " + _value_str, _e);
 			}
 		}}) {
 		@Override
@@ -220,7 +221,7 @@ public enum EasiVocabulary{
 				motion_engine.setActualCountIncremental(Integer.parseInt(_value_str));
 			}
 			catch(NumberFormatException _e){
-				throw new StateParsingException("R(PI) decoding " + state_string);
+				throw new StateParsingException("R(PI) decoding " + state_string, _e);
 			}
 		}}) {
 		@Override
@@ -350,8 +351,10 @@ public enum EasiVocabulary{
 		return getCommandState(motion_engine)+getCommandParameters(motion_engine);
 	}
 
-	static public float limitDecimalPrecision(float fl_value, int dec_count){
-		return (float)(((float)((int)(fl_value*Math.pow(10.0, (double)dec_count)))) / Math.pow(10.0, (float)dec_count));
+	private static float DEC_TEN			= 10.0f; 
+	
+	public static float limitDecimalPrecision(float fl_value, int dec_count){
+		return (float)(((float)((int)(fl_value*Math.pow(DEC_TEN, (double)dec_count)))) / Math.pow(DEC_TEN, (float)dec_count));
 	}
 
 };

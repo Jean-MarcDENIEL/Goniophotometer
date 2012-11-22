@@ -1,4 +1,4 @@
-package inrs.goniophotometer.motion.XliControlled;
+package inrs.goniophotometer.motion.xliControlled;
 
 enum UserFaultsBits {
 	VALUE_OUT_OF_RANGE				(0, "Value is out of range"),
