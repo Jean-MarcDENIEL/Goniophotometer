@@ -66,7 +66,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	private boolean			inMovement;
 	private boolean			isBusy;
 
-	private final static int 		FLAG_COUNT = 32; 
+	private static final int 		FLAG_COUNT = 32; 
 
 	private boolean[] 		driveFaultsTab;
 	private boolean[]		statusBitsTab;
@@ -92,7 +92,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 			decodedStream = decoded_stream;
 		}
 
-		public void serialEvent(SerialPortEvent _ev) {
+		public void serialEvent(SerialPortEvent serial_event) {
 			getControllerReturnToDecode().setLength(0);
 			try{
 				int _read_data = decodedStream.read();

@@ -17,8 +17,8 @@ public class EasiDecoder implements SerialPortEventListener{
 	private int 				currentState;
 	private StringBuffer 		stringTab[];
 	private InputStream			decodedStream;
-	
-	
+
+
 	public EasiDecoder(InputStream decoded_stream){
 		currentState = 0;
 		stringTab = new StringBuffer[STATE_NB];
@@ -27,18 +27,20 @@ public class EasiDecoder implements SerialPortEventListener{
 		}
 		decodedStream = decoded_stream;
 	}
-	
+
 	public synchronized String getStateAndMeaning(){
-		if (stringTab[currentState].charAt(0)=='*')
+		if (stringTab[currentState].charAt(0)=='*'){
 			return stringTab[currentState].toString() + " = " + decodeState(stringTab[currentState].toString()); //= " : " + Integer.toString(stateTab[currentState], 2);
-		else
+		}
+		else{
 			return stringTab[currentState].toString();
+		}
 	}
-	
-	public static String decodeState(String _decoded_string){
+
+	public static String decodeState(String decoded_string){
 		StringBuffer _res = new StringBuffer();
-		
-		String _status_bit_table[] = 
+
+		/*String _status_bit_table[] = 
 			{"Command Processing paused",
 				"Looping",
 				"Wait for trigger",
@@ -55,8 +57,8 @@ public class EasiDecoder implements SerialPortEventListener{
 				"Stationary (in position)",
 				"No registration signal seen in registration window",
 				"Cannot stop within the defined registration distance"
-			};
-		
+			};*/
+
 		String _user_fault_bit_table[] ={
 				"Value is out of range",
 				"Incorrect command syntax",
@@ -81,46 +83,40 @@ public class EasiDecoder implements SerialPortEventListener{
 				"Command not supported by this product",
 				"Reserved"
 		};
-	
+
 		int _current_bit = 0;
-		for (int _i=0; (_i<_decoded_string.length())&&(_current_bit<_user_fault_bit_table.length); _i++){
-			switch(_decoded_string.charAt(_i)){
-			case '1' :
-				_res.append(_user_fault_bit_table[_current_bit]+" \n");
-				_current_bit ++;
-				break;
-			case '0' :
-				_current_bit ++;
-				break;
-			default :
-			}	
+		for (int _i=0; (_i<decoded_string.length())&&(_current_bit<_user_fault_bit_table.length); _i++){
+			if (decoded_string.charAt(_i) == '1'){
+				_res.append(_user_fault_bit_table[_current_bit]);
+				_res.append(" \n");
+			}
+			_current_bit ++;
 		}
-		
 		return _res.toString();
 	}
-	
-	
+
+
 	private synchronized void switchState(){
 		currentState = (currentState+1)%STATE_NB;
 	}
 
 
 	@SuppressWarnings("restriction")
-	public void serialEvent(SerialPortEvent ev) {
-		int _read_data;
+	public void serialEvent(SerialPortEvent e_v) {
 		stringTab[currentState].setLength(0);
 		try{
-			while (((_read_data = decodedStream.read())> -1)&&
+			int _read_data = decodedStream.read();
+			while ((_read_data > -1)&&
 					(_read_data != '\n')){
 				stringTab[this.currentState].append((char)_read_data);
+				_read_data = decodedStream.read();
 			}
-			System.out.println(""+getStateAndMeaning());
 			switchState();
 		}
 		catch(IOException _e){
 			_e.printStackTrace();
 		}
-		
+
 	}
-	
+
 };

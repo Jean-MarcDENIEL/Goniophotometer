@@ -1,7 +1,10 @@
 package inrs.goniophotometer.motion.xliControlled;
 
+
+
 public enum EasiVocabulary{
 
+	
 
 	ACCELERATION("AA"){
 		@Override
@@ -108,9 +111,10 @@ public enum EasiVocabulary{
 		public void decodeState(String state_string,
 				XliControlledMotionEngine motion_engine)
 						throws StateParsingException {
-			final int X_R_IR_LENGTH = 3;
-			if (state_string.length() != X_R_IR_LENGTH){
-				throw new StateParsingException("1R(IR) : bad length : " + state_string.length() + "instead of " + X_R_IR_LENGTH);
+
+			final int _X_R_IR_LENGTH = 3;
+			if (state_string.length() != _X_R_IR_LENGTH){
+				throw new StateParsingException("1R(IR) : bad length : " + state_string.length() + "instead of " + _X_R_IR_LENGTH);
 			}
 			motion_engine.setInPosition(state_string.charAt(1) == '1');
 			
@@ -351,7 +355,7 @@ public enum EasiVocabulary{
 		return getCommandState(motion_engine)+getCommandParameters(motion_engine);
 	}
 
-	private static float DEC_TEN			= 10.0f; 
+	private static final float DEC_TEN			= 10.0f; 
 	
 	public static float limitDecimalPrecision(float fl_value, int dec_count){
 		return (float)(((float)((int)(fl_value*Math.pow(DEC_TEN, (double)dec_count)))) / Math.pow(DEC_TEN, (float)dec_count));
