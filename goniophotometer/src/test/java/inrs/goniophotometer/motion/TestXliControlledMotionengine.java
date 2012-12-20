@@ -2,7 +2,7 @@ package inrs.goniophotometer.motion;
 
 import org.junit.Test;
 
-import inrs.goniophotometer.motion.xliControlled.XliControlledMotionEngine;
+import inrs.goniophotoradiometer.motion.xliControlled.XliControlledMotionEngine;
 import junit.framework.TestCase;
 
 public class TestXliControlledMotionengine extends TestCase {
