@@ -8,6 +8,11 @@ public class IntegerBounds {
 	private int upperBound;
 	private int lowerBound;
 	
+	public IntegerBounds(){
+		setLowerBound(0);
+		setUpperBound(0);
+	}
+	
 	public IntegerBounds(int lower_bound, int upper_bound){
 		setLowerBound(lower_bound);
 		setUpperBound(upper_bound);
@@ -20,6 +25,10 @@ public class IntegerBounds {
 	 */
 	public boolean boundsValue(int tested_value){
 		return (getLowerBound() <= tested_value)&& (tested_value <= getUpperBound());
+	}
+	
+	public float getWidth(){
+		return getUpperBound() - getLowerBound();
 	}
 	
 	public int getUpperBound() {

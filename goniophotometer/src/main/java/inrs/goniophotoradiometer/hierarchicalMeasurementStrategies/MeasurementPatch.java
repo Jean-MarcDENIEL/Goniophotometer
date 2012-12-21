@@ -22,10 +22,14 @@ import c4sci.math.geometry.plane.PlaneVector;
  *   Cmin /---------o--------/
  *     Gmin      Gmid     Gmax
  * 
+ * To these (C,Gamma) corresponds 5 {@link MeasurementPoint}s
  * @author jeanmarc.deniel
  *
  */
 public class MeasurementPatch {
+	
+	
+	
 	private int cMid;
 	private int gMid;
 	private MeasurementPoint cMingMid;
@@ -36,6 +40,11 @@ public class MeasurementPatch {
 	
 	private List<MeasurementPatch> subPatches;
 
+	/**
+	 * Creates an empty {@link MeasurementPatch} that has no {@link MeasurementPoint} inside : these must be created and set elsewhere.
+	 * @param c_mid
+	 * @param g_mid
+	 */
 	public MeasurementPatch(int c_mid, int g_mid){
 		setcMid(c_mid);
 		setgMid(g_mid);
@@ -67,8 +76,56 @@ public class MeasurementPatch {
 		}
 		return subPatches.toArray(new MeasurementPatch[1]);
 	}
+	
+	/*public void computeSubpatchBounds(MeasurementPatch parent_patch, MeasurementPatch child_patch, 
+			IntegerBounds parent_c_bounds, IntegerBounds parent_g_bound,
+			IntegerBounds child_c_bounds, IntegerBounds child_g_bounds){
+		if (child_patch.getcMid() < parent_patch.getcMid()){
+			// left child of a C cut patch
+			//
+			child_c_bounds.setLowerBound(parent_c_bounds.getLowerBound());
+			child_c_bounds.setUpperBound(parent_patch.getcMid());
+		}
+		else{
+			if (child_patch.getcMid() > parent_patch.getcMid()){
+				// right child of a C cut patch
+				//
+				child_c_bounds.setLowerBound(parent_patch.getcMid());
+				child_c_bounds.setUpperBound(parent_c_bounds.getUpperBound());
+			}
+			else{
+				// parent patch has not been cut on C
+				//
+				child_c_bounds.setLowerBound(parent_c_bounds.getLowerBound());
+				child_c_bounds.setUpperBound(parent_c_bounds.getUpperBound());
+			}
+		}
+
+		if (child_patch.getgMid() < parent_patch.getgMid()){
+			// left child of a G cut patch
+			//
+			child_g_bounds.setLowerBound(parent_g_bound.getLowerBound());
+			child_g_bounds.setUpperBound(parent_patch.getgMid());
+		}
+		else{
+			if (child_patch.getgMid() > parent_patch.getgMid()){
+				// right child of a G cut patch
+				//
+				child_g_bounds.setLowerBound(parent_patch.getgMid());
+				child_g_bounds.setUpperBound(parent_g_bound.getUpperBound());
+			}
+			else{
+				// the parent patch has not been cut on G
+				//
+				child_g_bounds.setLowerBound(parent_g_bound.getLowerBound());
+				child_g_bounds.setUpperBound(parent_g_bound.getUpperBound());
+			}
+		}
+	}*/
+	
+	
 	/**
-	 * Retrieves a {@link MeasurementPoint} if there exists on in a {@link MeasurementPatch} hiearchy
+	 * Retrieves a {@link MeasurementPoint} if there exists on in a {@link MeasurementPatch} hierarchy
 	 * @param current_patch	he patch that is tested
 	 * @param current_c_bounds current patch bounds on the C axis
 	 * @param current_g_bounds current patch bounds on the Gamma axis

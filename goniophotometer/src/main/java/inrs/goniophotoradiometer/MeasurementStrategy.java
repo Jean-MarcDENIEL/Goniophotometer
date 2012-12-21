@@ -1,5 +1,6 @@
 package inrs.goniophotoradiometer;
 
+import inrs.goniophotoradiometer.exceptions.RadiometryException;
 import c4sci.math.geometry.plane.PlaneVector;
 
 /**
@@ -14,11 +15,11 @@ public interface MeasurementStrategy {
 	 * 
 	 * @return The measurements to perform at the beginning of the measurement session, in (C, Gamma) expressed in degrees.
 	 */
-	PlaneVector[] getPrimaryMeasurementPositions();
+	PlaneVector[] getPrimaryMeasurementPositions() throws RadiometryException;
 	/**
 	 * Measures a signal, then decides of following measurement positions. 
 	 * @param measurement_pos_c_g_deg The measurement position in degree.
 	 * @return A set of measurements (C, Gamma, in degrees) to perform after the parameter position measurement has been performed.
 	 */
-	PlaneVector[] performMeasurement(PlaneVector measurement_pos_c_g_deg);
+	PlaneVector[] performMeasurement(PlaneVector measurement_pos_c_g_deg) throws RadiometryException;
 }
