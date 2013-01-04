@@ -22,7 +22,9 @@ import com.sun.jna.ptr.NativeLongByReference;
  */
 public class ZclTesting {
 
-	static public void main(String[] args){
+	private ZclTesting(){}
+	
+	public static void main(String[] args_){
 		System.out.println("Beginning camera testing");
 		
 		// for ZCL V 2.10.4 only
@@ -56,9 +58,9 @@ public class ZclTesting {
 		// ------------------------------------
 
 		System.out.println("Opening camera");
-		final NativeLongByReference _h_camera  = new NativeLongByReference();
-		printoutCallbackAndWait("     ZCLOpen ", ZCL_LIBRARY.INSTANCE.ZCLOpen(_camera_list.Info[0].UID, _h_camera));
-		System.out.println("     hCamera : 0x" + Long.toHexString(_h_camera.getValue().longValue()));
+		final NativeLongByReference _H_CAMERA  = new NativeLongByReference();
+		printoutCallbackAndWait("     ZCLOpen ", ZCL_LIBRARY.INSTANCE.ZCLOpen(_camera_list.Info[0].UID, _H_CAMERA));
+		System.out.println("     hCamera : 0x" + Long.toHexString(_H_CAMERA.getValue().longValue()));
 		
 		// ------------------------------------
 		// CAMERA INFOS
@@ -66,7 +68,7 @@ public class ZclTesting {
 		System.out.println("Reading camera info");
 		IntByReference _speed_info = new IntByReference();
 		ZCL_CAMERAINFO _camera_info = new ZCL_CAMERAINFO();
-		printoutCallbackAndWait("     ZCLCameraInfo " , ZCL_LIBRARY.INSTANCE.ZCLCameraInfo(_h_camera.getValue(), _camera_info, _speed_info));
+		printoutCallbackAndWait("     ZCLCameraInfo " , ZCL_LIBRARY.INSTANCE.ZCLCameraInfo(_H_CAMERA.getValue(), _camera_info, _speed_info));
 		System.out.println("     UID    : 0x" + Long.toHexString(_camera_info.UID));
 		System.out.println("     Vendor : " + convertToString(_camera_info.VendorName));
 		System.out.println("     Model  : " + convertToString(_camera_info.ModelName));
@@ -80,17 +82,17 @@ public class ZclTesting {
 		System.out.println("Cleaning");
 		//System.out.println("     ZCLCameraInit : " + ZCL_LIBRARY.INSTANCE.ZCLCameraInit(_h_camera.getValue()));
 		//waitTime();
-		printoutCallbackAndWait("     ZCLAbortImageReqAll " , ZCL_LIBRARY.INSTANCE.ZCLAbortImageReqAll(_h_camera.getValue()));
-		printoutCallbackAndWait("     ZCLIsoStop ", ZCL_LIBRARY.INSTANCE.ZCLIsoStop(_h_camera.getValue()));
+		printoutCallbackAndWait("     ZCLAbortImageReqAll " , ZCL_LIBRARY.INSTANCE.ZCLAbortImageReqAll(_H_CAMERA.getValue()));
+		printoutCallbackAndWait("     ZCLIsoStop ", ZCL_LIBRARY.INSTANCE.ZCLIsoStop(_H_CAMERA.getValue()));
 		System.out.println		("     ZCLCloseallConvHandle "); ZCL_LIBRARY.INSTANCE.ZCLCloseAllConvHandle();
 		waitTime();
-		printoutCallbackAndWait("     ZCLClose  ", ZCL_LIBRARY.INSTANCE.ZCLClose(_h_camera.getValue()));
+		printoutCallbackAndWait("     ZCLClose  ", ZCL_LIBRARY.INSTANCE.ZCLClose(_H_CAMERA.getValue()));
 
 		// ------------------------------------
 		// RE OPENING
 		// ------------------------------------
 		System.out.println("Reopening camera");
-		printoutCallbackAndWait("     ZCLOpen ", ZCL_LIBRARY.INSTANCE.ZCLOpen(_camera_list.Info[0].UID, _h_camera));
+		printoutCallbackAndWait("     ZCLOpen ", ZCL_LIBRARY.INSTANCE.ZCLOpen(_camera_list.Info[0].UID, _H_CAMERA));
 
 		// ------------------------------------
 		// MODE SETTING
@@ -103,15 +105,15 @@ public class ZclTesting {
 		_camera_mode_write.u.Std.FrameRate =	ZCL_CAMERAMODE.ZCL_FPS.ZCL_Fps_75.getFpsID();
 		_camera_mode_write.u.Std.Mode = 		ZCL_CAMERAMODE.ZCL_STDMODE.ZCL_VGA_MONO16.getModeID();
 
-		printoutCallbackAndWait("     ZCLIsoRelease  ",  ZCL_LIBRARY.INSTANCE.ZCLIsoRelease(_h_camera.getValue()));
-		printoutCallbackAndWait("     ZCLSetCameraMode  " , ZCL_LIBRARY.INSTANCE.ZCLSetCameraMode(_h_camera.getValue(), _camera_mode_write));
+		printoutCallbackAndWait("     ZCLIsoRelease  ",  ZCL_LIBRARY.INSTANCE.ZCLIsoRelease(_H_CAMERA.getValue()));
+		printoutCallbackAndWait("     ZCLSetCameraMode  " , ZCL_LIBRARY.INSTANCE.ZCLSetCameraMode(_H_CAMERA.getValue(), _camera_mode_write));
 
 		// ------------------------------------
 		// MODE READING
 		// ------------------------------------
 		ZCL_CAMERAMODE _camera_mode_read = new ZCL_CAMERAMODE();
 		_camera_mode_read.u.setStandardMode();
-		printoutCallbackAndWait("     ZCLNowCameraMode (Standard) " , ZCL_LIBRARY.INSTANCE.ZCLNowCameraMode(_h_camera.getValue(), _camera_mode_read));
+		printoutCallbackAndWait("     ZCLNowCameraMode (Standard) " , ZCL_LIBRARY.INSTANCE.ZCLNowCameraMode(_H_CAMERA.getValue(), _camera_mode_read));
 		System.out.println("     StdMode_Flag : " + _camera_mode_read.StdMode_Flag);
 		if (_camera_mode_read.StdMode_Flag){
 			System.out.println("     Std.Framerate : " + _camera_mode_read.u.Std.FrameRate);
@@ -119,7 +121,7 @@ public class ZclTesting {
 		}
 		else{
 			_camera_mode_read.u.setExtendedMode();
-			System.out.println("     ZCLNowCameraMode (Extended) : " + ZCL_LIBRARY.INSTANCE.ZCLNowCameraMode(_h_camera.getValue(), _camera_mode_read));
+			System.out.println("     ZCLNowCameraMode (Extended) : " + ZCL_LIBRARY.INSTANCE.ZCLNowCameraMode(_H_CAMERA.getValue(), _camera_mode_read));
 			System.out.println("     Ext.ColorID : " + _camera_mode_read.u.Ext.ColorID);
 			System.out.println("     Ext.FilterID : " + _camera_mode_read.u.Ext.FilterID);
 			System.out.println("     Ext.Mode : " + _camera_mode_read.u.Ext.Mode);
@@ -134,8 +136,9 @@ public class ZclTesting {
 		_set_gain.FeatureID = ZCL_SETFEATUREVALUE.ZCL_FEATUREID.ZCL_GAIN.getFeatureID();
 		_set_gain.ReqID = ZCL_SETFEATUREVALUE.ZCL_SETREQID.ZCL_VALUE.getRequestID();
 		_set_gain.u.switchToStd();
-		_set_gain.u.Std.Value = 100;
-		printoutCallbackAndWait("     Gain = " + _set_gain.u.Std.Abs_Value , ZCL_LIBRARY.INSTANCE.ZCLSetFeatureValue(_h_camera.getValue(), _set_gain));
+		final int _BASE_GAIN = 100;
+		_set_gain.u.Std.Value = _BASE_GAIN;
+		printoutCallbackAndWait("     Gain = " + _set_gain.u.Std.Abs_Value , ZCL_LIBRARY.INSTANCE.ZCLSetFeatureValue(_H_CAMERA.getValue(), _set_gain));
 /*
 		// ------------------------------------
 		// TRIGGER
@@ -163,12 +166,12 @@ public class ZclTesting {
 		// SHUTTER
 		// ------------------------------------
 		ZCL_SETFEATUREVALUE _set_exposure_time = new ZCL_SETFEATUREVALUE();
-		float _shutter = 0.03f;
+		final float _shutter = 0.03f;
 		_set_exposure_time.FeatureID = ZCL_FEATUREID.ZCL_SHUTTER.getFeatureID();
 		_set_exposure_time.ReqID = ZCL_SETREQID.ZCL_ABSVALUE.getRequestID();
 		_set_exposure_time.u.switchToStd();
 		_set_exposure_time.u.Std.Abs_Value = _shutter;
-		printoutCallbackAndWait("     Shutter = " + _shutter , ZCL_LIBRARY.INSTANCE.ZCLSetFeatureValue(_h_camera.getValue(), _set_exposure_time));
+		printoutCallbackAndWait("     Shutter = " + _shutter , ZCL_LIBRARY.INSTANCE.ZCLSetFeatureValue(_H_CAMERA.getValue(), _set_exposure_time));
 		 
 		// ------------------------------------
 		// AUTO EXPOSURE
@@ -200,17 +203,17 @@ public class ZclTesting {
 		// READING IMAGE INFO
 		// ------------------------------------
 		System.out.println("Retrieving image info : ");
-		final ZCL_GETIMAGEINFO _get_image_info = new ZCL_GETIMAGEINFO();
-		printoutCallbackAndWait("     ZCLGetImageInfo " , ZCL_LIBRARY.INSTANCE.ZCLGetImageInfo(_h_camera.getValue(), _get_image_info));
-		System.out.println("     .StdMode_flag : " + _get_image_info.StdMode_Flag);
-		if (_get_image_info.StdMode_Flag){
-			System.out.println("      .Image.Buffer : " + _get_image_info.Image.Buffer);
-			System.out.println("      .Image.ColorID : " + _get_image_info.Image.ColorID);
-			System.out.println("      .Image.DataLength : " + _get_image_info.Image.DataLength);
-			System.out.println("      .Image.Height : " + _get_image_info.Image.Height);
-			System.out.println("      .Image.width : " + _get_image_info.Image.Width);
-			System.out.println("      .Image.PosX : " + _get_image_info.Image.PosX);
-			System.out.println("      .Image.PosY : " + _get_image_info.Image.PosY); 
+		final ZCL_GETIMAGEINFO _GET_IMAGE_INFO = new ZCL_GETIMAGEINFO();
+		printoutCallbackAndWait("     ZCLGetImageInfo " , ZCL_LIBRARY.INSTANCE.ZCLGetImageInfo(_H_CAMERA.getValue(), _GET_IMAGE_INFO));
+		System.out.println("     .StdMode_flag : " + _GET_IMAGE_INFO.StdMode_Flag);
+		if (_GET_IMAGE_INFO.StdMode_Flag){
+			System.out.println("      .Image.Buffer : " + _GET_IMAGE_INFO.Image.Buffer);
+			System.out.println("      .Image.ColorID : " + _GET_IMAGE_INFO.Image.ColorID);
+			System.out.println("      .Image.DataLength : " + _GET_IMAGE_INFO.Image.DataLength);
+			System.out.println("      .Image.Height : " + _GET_IMAGE_INFO.Image.Height);
+			System.out.println("      .Image.width : " + _GET_IMAGE_INFO.Image.Width);
+			System.out.println("      .Image.PosX : " + _GET_IMAGE_INFO.Image.PosX);
+			System.out.println("      .Image.PosY : " + _GET_IMAGE_INFO.Image.PosY); 
 		}
 
 		// ------------------------------------
@@ -221,7 +224,7 @@ public class ZclTesting {
 		printoutCallbackAndWait("       ZCLImageDepth " , ZCL_LIBRARY.INSTANCE.ZCLGetDataDepth(_h_camera.getValue(), _data_depth));
 		System.out.println("       Data depth = " + _data_depth.getValue());
 		final int _byte_count_per_pixel = _data_depth.getValue() > 8 ? 2 : 1;*/
-		final int _byte_count_per_pixel = _get_image_info.Image.Buffer / _get_image_info.Image.Height / _get_image_info.Image.Width;
+		final int _BYTE_COUNT_PER_PIXEL = _GET_IMAGE_INFO.Image.Buffer / _GET_IMAGE_INFO.Image.Height / _GET_IMAGE_INFO.Image.Width;
 		
 		// ------------------------------------
 		// BITSHIFT
@@ -229,7 +232,7 @@ public class ZclTesting {
 		
 		System.out.println("Setting bitshift");
 		NativeLongByReference _htbl = new NativeLongByReference();
-		if (_byte_count_per_pixel > 1){
+		if (_BYTE_COUNT_PER_PIXEL > 1){
 			// 16 bits 9-2 shift
 			printoutCallbackAndWait("     ZCLCreateConvHandle " , ZCL_LIBRARY.INSTANCE.ZCLCreateConvHandle(_htbl, ZCL_CONVERTMODE.ZCL_C16bit.getConvertMode(), ZCL_SHIFTID.ZCL_SFT2.getShiftID(), null));
 		}
@@ -244,15 +247,15 @@ public class ZclTesting {
 		// ------------------------------------
 
 		System.out.println("Capturing image");
-		final JFrame	_window = new JFrame();
-		_window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		final JFrame	_WINDOW = new JFrame();
+		_WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-		final Memory _capt = new Memory(_get_image_info.Image.Buffer);
+		final Memory _CAPT = new Memory(_GET_IMAGE_INFO.Image.Buffer);
 
-		printoutCallbackAndWait("        ZCLIsoAlloc " , ZCL_LIBRARY.INSTANCE.ZCLIsoAlloc(_h_camera.getValue()));
-		printoutCallbackAndWait("        ZCLImageReq " , ZCL_LIBRARY.INSTANCE.ZCLImageReq(_h_camera.getValue(), _capt, _get_image_info.Image.Buffer));
-		printoutCallbackAndWait("        ZCLIsoStart " , ZCL_LIBRARY.INSTANCE.ZCLIsoStart(_h_camera.getValue(), (short) 1));
+		printoutCallbackAndWait("        ZCLIsoAlloc " , ZCL_LIBRARY.INSTANCE.ZCLIsoAlloc(_H_CAMERA.getValue()));
+		printoutCallbackAndWait("        ZCLImageReq " , ZCL_LIBRARY.INSTANCE.ZCLImageReq(_H_CAMERA.getValue(), _CAPT, _GET_IMAGE_INFO.Image.Buffer));
+		printoutCallbackAndWait("        ZCLIsoStart " , ZCL_LIBRARY.INSTANCE.ZCLIsoStart(_H_CAMERA.getValue(), (short) 1));
 		/*
 				if (_triggering){
 					printoutCallbackAndWait("        ZCLSoftTrigger " + true  , ZCL_LIBRARY.INSTANCE.ZCLSoftTrigger(_h_camera.getValue(), true));
@@ -260,7 +263,8 @@ public class ZclTesting {
 				}
 		 */
 		System.out.println("... waiting for image capture ...");
-		printoutCallbackAndWait("        ZCLImageCompleteWaitTimeOut " , ZCL_LIBRARY.INSTANCE.ZCLImageCompleteWaitTimeOut(_h_camera.getValue(), _capt, null, null, null, (short)1000));
+		final short _DELAY = 1000;
+		printoutCallbackAndWait("        ZCLImageCompleteWaitTimeOut " , ZCL_LIBRARY.INSTANCE.ZCLImageCompleteWaitTimeOut(_H_CAMERA.getValue(), _CAPT, null, null, null, _DELAY));
 
 		// ------------------------------------
 		// SHOWING RESULT
@@ -268,8 +272,8 @@ public class ZclTesting {
 		System.out.println("Showing image");
 		waitTime();
 
-		final int _image_width = _get_image_info.Image.Width;
-		final int _image_height = _get_image_info.Image.Height;
+		final int _IMAGE_WIDTH = _GET_IMAGE_INFO.Image.Width;
+		final int _IMAGE_HEIGHT = _GET_IMAGE_INFO.Image.Height;
 
 		try {
 			SwingUtilities.invokeAndWait(new Runnable(){
@@ -278,60 +282,64 @@ public class ZclTesting {
 					JPanel _panel = new JPanel(){
 						private static final long serialVersionUID = 1L;
 						@Override
-						public void paintComponent(Graphics _graphics){
+						public void paintComponent(Graphics paint_graphics){
 							int _index = 0;
-							for (int _row = 0; _row<_image_height; _row++){
-								for (int _column=0; _column<_image_width;_column++){
+							for (int _row = 0; _row<_IMAGE_HEIGHT; _row++){
+								for (int _column=0; _column<_IMAGE_WIDTH;_column++){
 									int _grey_level;
-									if (_byte_count_per_pixel == 1){
-										_grey_level = _capt.getByte(_index) & 0xFF;
+									final int _FF = 0xFF; 
+									if (_BYTE_COUNT_PER_PIXEL == 1){
+										_grey_level = _CAPT.getByte(_index) & _FF;
 									}
 									else{
-										int _high_bits	= _capt.getByte(_index);
-										int _low_bits	= _capt.getByte(_index+1);
-										_grey_level = ((_high_bits & 0xFF) << 6) | ((_low_bits & 0xFF)>>>2);
+										int _high_bits	= _CAPT.getByte(_index);
+										int _low_bits	= _CAPT.getByte(_index+1);
+										final int _LEFT_SHIFT = 6;
+										final int _RIGHT_SHIFT = 2;
+										_grey_level = ((_high_bits & _FF) << _LEFT_SHIFT) | ((_low_bits & _FF)>>> _RIGHT_SHIFT);
 									}
 
-									_graphics.setColor(new Color(_grey_level, _grey_level, _grey_level));
-									_graphics.drawLine(_column, _row, _column, _row);
+									paint_graphics.setColor(new Color(_grey_level, _grey_level, _grey_level));
+									paint_graphics.drawLine(_column, _row, _column, _row);
 
-									_index += _byte_count_per_pixel;
+									_index += _BYTE_COUNT_PER_PIXEL;
 								}
 							}
 						}
 
 					};
 
-					_window.setContentPane(_panel);
-					_window.setSize(_image_width, _image_height);
-					_window.setVisible(true);
+					_WINDOW.setContentPane(_panel);
+					_WINDOW.setSize(_IMAGE_WIDTH, _IMAGE_HEIGHT);
+					_WINDOW.setVisible(true);
 
 					_panel.setBackground(Color.red);
 
-					_window.repaint();
+					_WINDOW.repaint();
 				}
 			});
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		} catch (InvocationTargetException _e) {
+			_e.printStackTrace();
+		} catch (InterruptedException _e) {
+			_e.printStackTrace();
 		}
 
 		// ------------------------------------
 		// STOPING
 		// ------------------------------------
 		System.out.println("Stopping capture");
-		printoutCallbackAndWait("        ZCLIsoStop " , ZCL_LIBRARY.INSTANCE.ZCLIsoStop(_h_camera.getValue()));
-		printoutCallbackAndWait("        ZCLAbortImageReqAll " , ZCL_LIBRARY.INSTANCE.ZCLAbortImageReqAll(_h_camera.getValue()));
-		printoutCallbackAndWait("        ZCLIsoRelease " , ZCL_LIBRARY.INSTANCE.ZCLIsoRelease(_h_camera.getValue()));
-		printoutCallbackAndWait("        ZCLClose " , ZCL_LIBRARY.INSTANCE.ZCLClose(_h_camera.getValue()));
+		printoutCallbackAndWait("        ZCLIsoStop " , ZCL_LIBRARY.INSTANCE.ZCLIsoStop(_H_CAMERA.getValue()));
+		printoutCallbackAndWait("        ZCLAbortImageReqAll " , ZCL_LIBRARY.INSTANCE.ZCLAbortImageReqAll(_H_CAMERA.getValue()));
+		printoutCallbackAndWait("        ZCLIsoRelease " , ZCL_LIBRARY.INSTANCE.ZCLIsoRelease(_H_CAMERA.getValue()));
+		printoutCallbackAndWait("        ZCLClose " , ZCL_LIBRARY.INSTANCE.ZCLClose(_H_CAMERA.getValue()));
 
 		System.out.println("End of Camera testing");
-		waitTime(6000);
+		final int _WAIT_BEFORE_EXIT = 6000;
+		waitTime(_WAIT_BEFORE_EXIT);
 		System.exit(0);
 	}
 
-	static public String convertToString(byte[] byte_array){
+	public static String convertToString(byte[] byte_array){
 		StringBuffer _res = new StringBuffer();
 
 		for (byte _b : byte_array){
@@ -346,13 +354,14 @@ public class ZclTesting {
 	public static void waitTime(int milli_sec){
 		try {
 			Thread.sleep(milli_sec);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		} catch (InterruptedException _e) {
+			_e.printStackTrace();
 		}
 	}
 
 	public static void waitTime(){
-		waitTime(200);
+		final int _WAIT_MILLISEC = 200;
+		waitTime(_WAIT_MILLISEC);
 	}
 
 	public static void printoutCallbackAndWait(String callback_message, boolean callback_value){

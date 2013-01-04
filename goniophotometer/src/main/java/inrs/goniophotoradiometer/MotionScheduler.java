@@ -1,6 +1,6 @@
 package inrs.goniophotoradiometer;
 
-import c4sci.math.geometry.plane.PlaneVector;
+import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint;
 
 /**
  * This interface defines classes that are able to choose measurement motions
@@ -14,13 +14,13 @@ public interface MotionScheduler {
 	 * 
 	 * @param measurement_pos_c_g_rad A (C, gamma) position in radian.
 	 */
-	void 	addMeasurementPosition(PlaneVector measurement_pos_c_g_rad);
+	void 	addMeasurementPosition(MeasurementPoint measurement_pos_c_g_rad);
 	/**
 	 * Enters a set of measurement positions in the scheduler.<br>
 	 * There is no relationship nor meaning in the order of the positions in the array parameter. 
 	 * @param measurement_pos_c_g_rad_tab An array of (C, Gamma) positions in radian.
 	 */
-	void	addMeasurementPositions(PlaneVector[] measurement_pos_c_g_rad_tab);
+	void	addMeasurementPositions(MeasurementPoint[] measurement_pos_c_g_rad_tab);
 	/**
 	 * 
 	 * @return true if there is still at last one measurement position to deliver. 
@@ -31,7 +31,7 @@ public interface MotionScheduler {
 	 * This depends on previously scheduled positions and on waiting positions.<br>
 	 * The returned position is removed from the waiting positions set.
 	 * 
-	 * @return The next measurement (C, Gamma) position in radian. 
+	 * @return The next measurement (C, Gamma) position in radian or null if there is no.
 	 */
-	PlaneVector chooseNextMeasurementPosition();
+	MeasurementPoint chooseNextMeasurementPosition();
 }

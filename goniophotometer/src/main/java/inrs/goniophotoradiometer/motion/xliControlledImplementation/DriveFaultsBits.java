@@ -1,4 +1,4 @@
-package inrs.goniophotoradiometer.motion.xliControlled;
+package inrs.goniophotoradiometer.motion.xliControlledImplementation;
 
 enum DriveFaultsBits {
 	COMPOSITE_FAULT 				(0, "Composite Fault"),

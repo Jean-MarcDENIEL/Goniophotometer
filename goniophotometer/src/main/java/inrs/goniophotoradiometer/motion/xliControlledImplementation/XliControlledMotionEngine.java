@@ -1,4 +1,4 @@
-package inrs.goniophotoradiometer.motion.xliControlled;
+package inrs.goniophotoradiometer.motion.xliControlledImplementation;
 
 import java.io.IOException;
 import java.io.InputStream;

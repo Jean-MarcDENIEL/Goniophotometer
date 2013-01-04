@@ -23,24 +23,24 @@ public class IntegerBounds {
 	 * @param tested_value
 	 * @return true if tested_value is in the range of lower to upper bounds (included).
 	 */
-	public boolean boundsValue(int tested_value){
+	public final boolean boundsValue(int tested_value){
 		return (getLowerBound() <= tested_value)&& (tested_value <= getUpperBound());
 	}
 	
-	public float getWidth(){
+	public final float getWidth(){
 		return getUpperBound() - getLowerBound();
 	}
 	
-	public int getUpperBound() {
+	public final int getUpperBound() {
 		return upperBound;
 	}
-	public void setUpperBound(int upper_bound) {
+	public final void setUpperBound(int upper_bound) {
 		this.upperBound = upper_bound;
 	}
-	public int getLowerBound() {
+	public final int getLowerBound() {
 		return lowerBound;
 	}
-	public void setLowerBound(int lower_bound) {
+	public final void setLowerBound(int lower_bound) {
 		this.lowerBound = lower_bound;
 	}
 }

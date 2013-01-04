@@ -3,6 +3,7 @@ package inrs.goniophotoradiometer;
 import c4sci.math.geometry.plane.PlaneVector;
 import inrs.goniophotoradiometer.exceptions.GoniometryException;
 import inrs.goniophotoradiometer.exceptions.RadiometryException;
+import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint;
 import inrs.goniophotoradiometer.motion.MotionEngine;
 
 /**
@@ -54,8 +55,8 @@ public class Goniophotoradiometer {
 		// main loop
 		//
 		while (motionScheduler.hasWaitingMeasurementPositions() && ! shouldStop()){
-			PlaneVector _new_pos = motionScheduler.chooseNextMeasurementPosition();
-			goToPosition(_new_pos);
+			MeasurementPoint _new_pos = motionScheduler.chooseNextMeasurementPosition();
+			goToPosition(_new_pos.getMeasurementPosition());
 			motionScheduler.addMeasurementPositions(measurementStrategy.performMeasurement(_new_pos));
 		}
 		

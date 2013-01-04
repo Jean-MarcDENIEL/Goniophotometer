@@ -1,4 +1,4 @@
-package inrs.goniophotoradiometer.motion.xliControlled;
+package inrs.goniophotoradiometer.motion.xliControlledImplementation;
 /**
  * Decoder of a value string returned by a controller.<br>
  * @author jeanmarc.deniel
