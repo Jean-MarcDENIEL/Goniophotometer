@@ -44,6 +44,7 @@ public class Goniophotoradiometer {
 		armEngine.setToZeroPosition();
 		armEngine.setMaxPosition(QUATER_ROUND_DEGREE);
 		armEngine.setMinPosition(-QUATER_ROUND_DEGREE);
+		turntableEngine.setToZeroPosition();
 		turntableEngine.setMinPosition(0f);
 		turntableEngine.setMaxPosition(ROUND_DEGREE);
 		
@@ -58,6 +59,11 @@ public class Goniophotoradiometer {
 			MeasurementPoint _new_pos = motionScheduler.chooseNextMeasurementPosition();
 			goToPosition(_new_pos.getMeasurementPosition());
 			motionScheduler.addMeasurementPositions(measurementStrategy.performMeasurement(_new_pos));
+		}
+		
+		// last, if not suspended, go to an intermediate position
+		if (!shouldStop()){
+			goToPosition(new PlaneVector(-QUATER_ROUND_DEGREE/2.0f, QUATER_ROUND_DEGREE/2.0f));
 		}
 		
 		

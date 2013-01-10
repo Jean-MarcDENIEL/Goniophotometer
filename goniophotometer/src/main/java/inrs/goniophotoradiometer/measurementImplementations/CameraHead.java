@@ -8,6 +8,7 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
+import c4sci.math.algebra.Floatings;
 import c4sci.math.geometry.plane.PlaneVector;
 
 import inrs.goniophotoradiometer.exceptions.RadiometryException;
@@ -179,29 +180,41 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 			MeasurementPoint c_min_g_max_point,
 			MeasurementPoint c_max_g_min_point,
 			MeasurementPoint c_max_g_max_point) throws RadiometryException {
-		// TODO Auto-generated method stub
+		// for the moment there is no image analyze to decide whether to cut or not
+		//
 		return false;
 	}
 
-	public PatchSubdivision computeSubdivision(
+	public PatchSubdivision computeSubdivisionWay(
 			MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds,
 			IntegerBounds patch_g_bounds) throws RadiometryException {
-		// TODO Auto-generated method stub
-		return null;
+		// cut along the widest parameter range
+		//
+		if (patch_c_bounds.getWidth() > patch_g_bounds.getWidth()){
+			return PatchSubdivision.ON_C_ONLY;
+		}
+		else{
+			if (patch_c_bounds.getWidth() < patch_g_bounds.getWidth()){
+				return PatchSubdivision.ON_GAMMA_ONLY;
+			}
+			else{
+				return PatchSubdivision.ON_C_AND_GAMMA;
+			}
+		}
 	}
 
-	public IntegerBounds computeCSubdivision(
+	public IntegerBounds computeSubpatchesGammaMiddleValues(
 			MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds,
 			IntegerBounds patch_g_bounds) throws RadiometryException {
-		// TODO Auto-generated method stub
-		return null;
+		int _g_mid = patch_to_subdivide.getgMid();
+		return new IntegerBounds((_g_mid+patch_g_bounds.getLowerBound())/2, (_g_mid+patch_g_bounds.getUpperBound())/2);
 	}
 
-	public IntegerBounds computeGammaSubdivision(
+	public IntegerBounds computeSubpatchesCMiddleValues(
 			MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds,
 			IntegerBounds patch_g_bounds) throws RadiometryException {
-		// TODO Auto-generated method stub
-		return null;
+		int _c_mid = patch_to_subdivide.getcMid();
+		return new IntegerBounds((_c_mid + patch_c_bounds.getLowerBound())/2, (_c_mid + patch_c_bounds.getUpperBound())/2);
 	}
 
 }

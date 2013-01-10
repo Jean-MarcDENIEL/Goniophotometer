@@ -171,26 +171,26 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 	}
 
 	private void subdividePatch(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException{
-		PatchSubdivision _subdivision_way = computeSubdivision(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
+		PatchSubdivision _subdivision_way = computeSubdivisionWay(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
 		MeasurementPatch[] _child_patches = new MeasurementPatch[_subdivision_way.getChildCount()];
 		switch (_subdivision_way){
 		case ON_C_ONLY:
-			IntegerBounds _c_mids = computeCSubdivision(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
+			IntegerBounds _c_mids = computeSubpatchesCMiddleValues(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
 			_child_patches[MeasurementPatch.ChildPatchIndexes.C_CUT_LOWER_CHILD.getChildIndex()] = new MeasurementPatch(_c_mids.getLowerBound(), patch_to_subdivide.getgMid());
 			_child_patches[MeasurementPatch.ChildPatchIndexes.C_CUT_UPPER_CHILD.getChildIndex()] = new MeasurementPatch(_c_mids.getUpperBound(), patch_to_subdivide.getgMid());
 			initializeMeasurementPatch(_child_patches[MeasurementPatch.ChildPatchIndexes.C_CUT_LOWER_CHILD.getChildIndex()], new IntegerBounds(patch_c_bounds.getLowerBound(), patch_to_subdivide.getcMid()), patch_g_bounds);
 			initializeMeasurementPatch(_child_patches[MeasurementPatch.ChildPatchIndexes.C_CUT_UPPER_CHILD.getChildIndex()], new IntegerBounds(patch_to_subdivide.getcMid(), patch_c_bounds.getUpperBound()), patch_g_bounds);
 			break;
 		case ON_GAMMA_ONLY:
-			IntegerBounds _g_mids = computeGammaSubdivision(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
+			IntegerBounds _g_mids = computeSubpatchesGammaMiddleValues(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
 			_child_patches[MeasurementPatch.ChildPatchIndexes.G_CUT_LOWER_CHILD.getChildIndex()] = new MeasurementPatch(patch_to_subdivide.getcMid(), _g_mids.getLowerBound());
 			_child_patches[MeasurementPatch.ChildPatchIndexes.G_CUT_UPPER_CHILD.getChildIndex()] = new MeasurementPatch(patch_to_subdivide.getcMid(), _g_mids.getUpperBound());
 			initializeMeasurementPatch(_child_patches[MeasurementPatch.ChildPatchIndexes.G_CUT_LOWER_CHILD.getChildIndex()], patch_c_bounds, new IntegerBounds(patch_g_bounds.getLowerBound(), patch_to_subdivide.getgMid()));
 			initializeMeasurementPatch(_child_patches[MeasurementPatch.ChildPatchIndexes.G_CUT_UPPER_CHILD.getChildIndex()], patch_c_bounds, new IntegerBounds(patch_to_subdivide.getgMid(), patch_g_bounds.getUpperBound()));
 			break;
 		case ON_C_AND_GAMMA:
-			IntegerBounds _g_mids_2 = computeGammaSubdivision(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
-			IntegerBounds _c_mids_2 = computeCSubdivision(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
+			IntegerBounds _g_mids_2 = computeSubpatchesGammaMiddleValues(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
+			IntegerBounds _c_mids_2 = computeSubpatchesCMiddleValues(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
 			_child_patches[MeasurementPatch.ChildPatchIndexes.C_LOWER_AND_G_LOWER_CHILD.getChildIndex()] = new MeasurementPatch(_c_mids_2.getLowerBound(), _g_mids_2.getLowerBound());
 			_child_patches[MeasurementPatch.ChildPatchIndexes.C_LOWER_AND_G_UPPER_CHILD.getChildIndex()] = new MeasurementPatch(_c_mids_2.getLowerBound(), _g_mids_2.getUpperBound());
 			_child_patches[MeasurementPatch.ChildPatchIndexes.C_UPPER_AND_G_LOWER_CHILD.getChildIndex()] = new MeasurementPatch(_c_mids_2.getUpperBound(), _c_mids_2.getLowerBound());

@@ -3,11 +3,15 @@ package inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportI
 import java.io.File;
 import c4sci.io.SecuredFile;
 import c4sci.io.UncoherentStateFileException;
+import c4sci.math.algebra.Floatings;
 import c4sci.math.geometry.plane.PlaneVector;
 
 import inrs.goniophotoradiometer.exceptions.RadiometryException;
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalMeasurementStrategy;
+import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.IntegerBounds;
+import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPatch;
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint;
+import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalMeasurementStrategy.PatchSubdivision;
 
 /**
  * This class is intended at storing the measurement data in different files, so that
@@ -23,9 +27,11 @@ import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPo
  * @author jeanmarc.deniel
  *
  */
-public abstract class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMeasurementStrategy {
+public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMeasurementStrategy {
 	
 	private static final String				SEPARATOR = "_"; 
+	private static final float 				MIN_CUTTABLE_RANGE_WIDTH = 8.0f;
+	private static final int				MIN_SEPARATE_RANGE_WIDTH = 1;
 	
 	private String 							directoryAbsolutePath;
 	private FileSupportedMeasurementDevice	measurementDevice; 
@@ -98,6 +104,101 @@ public abstract class FileSupportHierarchicalMeasurementStrategy extends Hierarc
 
 	public MeasurementPoint createMeasurementPoint(PlaneVector meas_point) {
 		return measurementDevice.createMeasurementPoint(meas_point);
+	}
+
+	public boolean shouldCut(MeasurementPatch patch_,
+			MeasurementPoint c_min_g_min_point,
+			MeasurementPoint c_min_g_max_point,
+			MeasurementPoint c_max_g_min_point,
+			MeasurementPoint c_max_g_max_point) throws RadiometryException {
+		PlaneVector _c_g_width = c_max_g_max_point.getMeasurementPosition().opMinus(c_min_g_min_point.getMeasurementPosition());
+		
+		boolean _cutable_on_c = Floatings.isGreaterEqual(_c_g_width.getX(), MIN_CUTTABLE_RANGE_WIDTH);
+		boolean _cutable_on_g = Floatings.isGreaterEqual(_c_g_width.getY(), MIN_CUTTABLE_RANGE_WIDTH);
+		if ((!_cutable_on_c) && (!_cutable_on_g)){
+			return false;
+		}
+		return measurementDevice.shouldCut(patch_, c_min_g_min_point, c_min_g_max_point, c_max_g_min_point, c_max_g_max_point);
+	}
+
+	public PatchSubdivision computeSubdivisionWay(
+			MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds,
+			IntegerBounds patch_g_bounds) throws RadiometryException {
+		
+		boolean _cutable_on_c = Floatings.isGreaterEqual(patch_c_bounds.getWidth(), MIN_CUTTABLE_RANGE_WIDTH);
+		boolean _cutable_on_g = Floatings.isGreaterEqual(patch_g_bounds.getWidth(), MIN_CUTTABLE_RANGE_WIDTH);
+		
+		PatchSubdivision _res = measurementDevice.computeSubdivisionWay(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
+		switch(_res){
+		case NO_SUBDIVISION :
+			return _res;
+		case ON_C_ONLY:
+			if (_cutable_on_c){
+				return _res;
+			}
+			break;
+		case ON_GAMMA_ONLY:
+			if (_cutable_on_g){
+				return _res;
+			}
+			break;
+		case ON_C_AND_GAMMA:
+			if (_cutable_on_c && _cutable_on_g)
+				return _res;
+			break;
+		default:
+			throw new RadiometryException("Unexpected patch subdivision from measurement device");	
+		}
+		// otherwise it is not possible to cut as demanded by the measurement device
+		// in that case there is no cut
+		//
+		return PatchSubdivision.NO_SUBDIVISION;
+	}
+
+	public IntegerBounds computeSubpatchesCMiddleValues(
+			MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds,
+			IntegerBounds patch_g_bounds) throws RadiometryException {
+		IntegerBounds _res = measurementDevice.computeSubpatchesCMiddleValues(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
+		// ensure that C values are separate under the integer form
+		//
+		int _c_mid = patch_to_subdivide.getcMid();
+		int _c_min = patch_c_bounds.getLowerBound();
+		int _c_max = patch_c_bounds.getUpperBound();
+		int _lower_child_c_mid = _res.getLowerBound();
+		int _upper_child_c_mid = _res.getUpperBound();
+		
+		_res.setLowerBound(ensureValueIsSeparateFromBoundValue(_lower_child_c_mid, _c_min, _c_mid));
+		_res.setUpperBound(ensureValueIsSeparateFromBoundValue(_upper_child_c_mid, _c_mid, _c_max));
+		
+		return _res;
+	}
+
+	public IntegerBounds computeSubpatchesGammaMiddleValues(
+			MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds,
+			IntegerBounds patch_g_bounds) throws RadiometryException {
+		IntegerBounds _res = measurementDevice.computeSubpatchesGammaMiddleValues(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
+		// ensure that the G values are separate under the integer form
+		//
+		int _g_mid = patch_to_subdivide.getgMid();
+		int _g_min = patch_g_bounds.getLowerBound();
+		int _g_max = patch_g_bounds.getUpperBound();
+		int _lower_child_g_mid = _res.getLowerBound();
+		int _upper_child_g_mid = _res.getUpperBound();
+		
+		_res.setLowerBound(ensureValueIsSeparateFromBoundValue(_lower_child_g_mid, _g_min, _g_mid));
+		_res.setUpperBound(ensureValueIsSeparateFromBoundValue(_upper_child_g_mid, _g_mid, _g_max));
+		
+		return _res;
+	}
+	
+	private int ensureValueIsSeparateFromBoundValue(int child_value, int bounds_lower_value, int bounds_upper_value){
+		boolean _separate = (child_value - bounds_lower_value > MIN_SEPARATE_RANGE_WIDTH) && (bounds_upper_value - child_value > MIN_SEPARATE_RANGE_WIDTH);
+		if (_separate){
+			return child_value;
+		}
+		else{
+			return (bounds_lower_value + bounds_upper_value)/2;
+		}
 	}
 
 }

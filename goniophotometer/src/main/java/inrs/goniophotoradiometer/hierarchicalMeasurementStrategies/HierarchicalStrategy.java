@@ -8,10 +8,11 @@ import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalM
  * A {@link HierarchicalStrategy} is designed to 
  * <ol>
  * <li> create and measure {@link MeasurementPoint}s</li>
- * <li> decide on {@link MeasurementPoint}s and on {@link MeasurementPatch}s' subdivision. </li>
+ * <li> decide on {@link MeasurementPatch}s' subdivision. </li>
  * </ol>
- * <b>Warning: </b> All methods accepting {@link MeasurementPoint}s must be fed with {@link MeasurementPoint}s creatd through this' {@link #createMeasurementPoint(PlaneVector)} method.<br>
- * Otherwise a {@link RadiometryException} will be raised.
+ * <b>Warning: </b> All methods accepting {@link MeasurementPoint}s must be fed with {@link MeasurementPoint}s created through this' {@link #createMeasurementPoint(PlaneVector)} method.<br>
+ * Otherwise a {@link RadiometryException} will be raised.<br>
+ * In the same way, {@link MeasurementPatch}s must be composed with such {@link MeasurementPoint}s otherwise a {@link RadiometryException} will be raised.
  * <br>
  * @author jeanmarc.deniel
  *
@@ -40,7 +41,7 @@ public interface HierarchicalStrategy {
 	 * @return
 	 * @throws RadiometryException
 	 */
-	PatchSubdivision computeSubdivision(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
+	PatchSubdivision computeSubdivisionWay(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
 
 	/**
 	 * Computes the C middle values of sub patches
@@ -50,7 +51,7 @@ public interface HierarchicalStrategy {
 	 * @return Lower = lower child C middle value, Upper = upper child C middle value
 	 * @throws RadiometryException
 	 */
-	IntegerBounds computeCSubdivision(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
+	IntegerBounds computeSubpatchesCMiddleValues(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
 	
 	/**
 	 * Computes the G middle values of sub patches
@@ -60,6 +61,6 @@ public interface HierarchicalStrategy {
 	 * @return
 	 * @throws RadiometryException
 	 */
-	IntegerBounds computeGammaSubdivision(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
+	IntegerBounds computeSubpatchesGammaMiddleValues(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
 
 }
