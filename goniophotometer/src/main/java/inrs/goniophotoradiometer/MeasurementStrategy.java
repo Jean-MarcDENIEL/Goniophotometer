@@ -17,7 +17,7 @@ public interface MeasurementStrategy {
 	 */
 	MeasurementPoint[] getPrimaryMeasurementPositions() throws RadiometryException;
 	/**
-	 * Measures a signal, then decides of following measurement positions. 
+	 * Measures a signal, sets it as measured, then decides of following measurement positions. 
 	 * @param measurement_pos_c_g_deg The measurement point that will be completed.
 	 * @return A set of measurements (C, Gamma, in degrees) to perform after the parameter position measurement has been performed.
 	 */

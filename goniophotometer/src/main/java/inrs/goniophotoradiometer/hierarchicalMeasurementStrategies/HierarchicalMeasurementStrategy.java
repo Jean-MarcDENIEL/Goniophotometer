@@ -3,12 +3,14 @@ package inrs.goniophotoradiometer.hierarchicalMeasurementStrategies;
 import java.util.ArrayList;
 import java.util.List;
 
+import c4sci.math.geometry.plane.PlaneVector;
+
 import inrs.goniophotoradiometer.MeasurementStrategy;
 import inrs.goniophotoradiometer.exceptions.RadiometryException;
 
-public abstract class HierarchicalMeasurementStrategy implements MeasurementStrategy {
+public abstract class HierarchicalMeasurementStrategy implements MeasurementStrategy, HierarchicalStrategy{
 
-	private enum PatchSubdivision{
+	public enum PatchSubdivision{
 		ON_C_ONLY (2),
 		ON_GAMMA_ONLY (2),
 		ON_C_AND_GAMMA (4),
@@ -51,10 +53,10 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 		setRootPatch(new MeasurementPatch((LOWER_C_BOUND+UPPER_C_BOUND)/2, (LOWER_G_BOUND+UPPER_G_BOUND)/2));
 		initializeMeasurementPatch(getRootPatch(), C_BOUNDS, G_BOUNDS);
 		waitingPoints = new ArrayList<MeasurementPoint>();
-		setcMingMinMeasurement(createMeasurementPoint());
-		setcMingMaxMeasurement(createMeasurementPoint());
-		setcMaxgMinMeasurement(createMeasurementPoint());
-		setcMaxgMaxMeasurement(createMeasurementPoint());
+		setcMingMinMeasurement(createMeasurementPoint(new PlaneVector(LOWER_C_BOUND, LOWER_G_BOUND)));
+		setcMingMaxMeasurement(createMeasurementPoint(new PlaneVector(LOWER_C_BOUND, UPPER_G_BOUND)));
+		setcMaxgMinMeasurement(createMeasurementPoint(new PlaneVector(UPPER_C_BOUND, LOWER_G_BOUND)));
+		setcMaxgMaxMeasurement(createMeasurementPoint(new PlaneVector(UPPER_C_BOUND, UPPER_G_BOUND)));
 		waitingPoints.add(getcMingMinMeasurement());
 		waitingPoints.add(getcMingMaxMeasurement());
 		waitingPoints.add(getcMaxgMinMeasurement());
@@ -65,55 +67,13 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 		getPrimaryMeasurementPositions(getRootPatch(), C_BOUNDS, G_BOUNDS);
 		return convertWaitingPointsToArray();
 	}
-	/**
-	 * Indicates whereas a patch should be cut in sub_patches.
-	 * @param patch_ The patch that must be fully completed (not including sub patches).
-	 * @return
-	 */
-	abstract boolean shouldCut(MeasurementPatch patch_, MeasurementPoint c_min_g_min_point, MeasurementPoint c_min_g_max_point, MeasurementPoint c_max_g_min_point, MeasurementPoint c_max_g_max_point) throws RadiometryException;
-	/**
-	 * Creates a measurement point.<br>
-	 * <b>Pattern</b> This method implements the <b>factory method</b> pattern.
-	 * @return
-	 */
-	abstract MeasurementPoint createMeasurementPoint();
-	/**
-	 * Performs necessary measurement and completes the parameter {@link MeasurementPoint}.
-	 * @param meas_point a {@link MeasurementPoint} got through this' {@link #createMeasurementPoint()} method call. 
-	 * @throws RadiometryException
-	 */
-	abstract void completeMeasurementPoint(MeasurementPoint meas_point) throws RadiometryException;
 
-	/**
-	 * Computes how to subdivide a patch in two or four sub patches.
-	 * @param patch_to_subdivide
-	 * @param patch_c_bounds
-	 * @param patch_g_bounds
-	 * @return The way to subdivide a patch in two or four sub patches.
-	 */
-	abstract PatchSubdivision computeSubdivision(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
-	/**
-	 * Computes the C middle values of sub patches
-	 * @param patch_to_subdivide
-	 * @param patch_c_bounds
-	 * @param patch_g_bounds
-	 * @return Lower = lower child C middle value, Upper = upper child C middle value
-	 */
-	abstract IntegerBounds computeCSubdivision(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
-	/**
-	 * Computes the G middle values of sub patches
-	 * @param patch_to_subdivide
-	 * @param patch_c_bounds
-	 * @param patch_g_bounds
-	 * @return
-	 * @throws RadiometryException
-	 */
-	abstract IntegerBounds computeGammaSubdivision(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
 
 	public MeasurementPoint[] performMeasurement(MeasurementPoint measurement_pos_c_g_deg) throws RadiometryException {
-		// first measures
+		// first measures and sets as measured
 		//
 		completeMeasurementPoint(measurement_pos_c_g_deg);
+		measurement_pos_c_g_deg.setAsMeasured();
 		// then inspects corresponding patches and eventually adds MeasurementPoints of waitingPoints  
 		//
 		inspectPatch(getRootPatch(), getcMingMinMeasurement(), getcMingMaxMeasurement(), 
@@ -163,7 +123,6 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 			}
 		}
 	}
-
 
 	
 	private MeasurementPoint[] convertWaitingPointsToArray(){
@@ -265,7 +224,7 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 			_res = MeasurementPatch.getExistingMeasurementPoint(getRootPatch(), C_BOUNDS, G_BOUNDS, c_value, g_value);
 		}
 		if (_res == null){
-			_res = createMeasurementPoint();
+			_res = createMeasurementPoint(new PlaneVector(c_value, g_value));
 			waitingPoints.add(_res);
 		}
 		return _res;
