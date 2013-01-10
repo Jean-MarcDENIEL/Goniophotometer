@@ -83,6 +83,14 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 		//
 		return convertWaitingPointsToArray();
 	}	
+	
+	/**
+	 * Ensures the parameter {@link MeasurementPoint} is complete and its {@link MeasurementPoint#hasBeenYetMeasured()} returns true.
+	 * @param meas_point a {@link MeasurementPoint} got through this' {@link #createMeasurementPoint(PlaneVector)} method call. 
+	 * @throws RadiometryException
+	 */
+	public abstract void completeMeasurementPoint(MeasurementPoint meas_point) throws RadiometryException;
+
 
 	private void inspectPatch(MeasurementPatch meas_patch, 
 			MeasurementPoint c_min_g_min_point,

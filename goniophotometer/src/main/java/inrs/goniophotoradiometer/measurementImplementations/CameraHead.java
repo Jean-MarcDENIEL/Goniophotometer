@@ -1,7 +1,6 @@
 package inrs.goniophotoradiometer.measurementImplementations;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.InputStream;
@@ -182,12 +181,6 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 			MeasurementPoint c_max_g_max_point) throws RadiometryException {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	public void completeMeasurementPoint(MeasurementPoint meas_point)
-			throws RadiometryException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public PatchSubdivision computeSubdivision(
