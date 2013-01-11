@@ -19,7 +19,8 @@ import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalM
  */
 public interface HierarchicalStrategy {
 	/**
-	 * Indicates whereas a patch should be cut in sub_patches.
+	 * Indicates whereas a patch should be cut in sub_patches.<br>
+	 * Neither children nor parent patches will be explored.
 	 * @param patch_ The patch that must be fully completed (not including sub patches).
 	 * @return
 	 */
@@ -32,6 +33,8 @@ public interface HierarchicalStrategy {
 	 * @return
 	 */
 	MeasurementPoint createMeasurementPoint(PlaneVector meas_point);
+	
+	MeasurementPatch createMeasurementPatch(int c_mid, int g_mid);
 
 	/**
 	 * Computes how to subdivide a patch in two or four sub patches.

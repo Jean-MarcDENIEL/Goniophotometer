@@ -68,7 +68,7 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 		}
 	}
 	
-	public String[] getMeasurementPartsNames() {
+	public String[] getMeasurementPartsNames() throws RadiometryException {
 		return new String[] {PART_NAME + "." + imageSuffix };
 	}
 
@@ -215,6 +215,10 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 			IntegerBounds patch_g_bounds) throws RadiometryException {
 		int _c_mid = patch_to_subdivide.getcMid();
 		return new IntegerBounds((_c_mid + patch_c_bounds.getLowerBound())/2, (_c_mid + patch_c_bounds.getUpperBound())/2);
+	}
+
+	public MeasurementPatch createMeasurementPatch(int c_mid, int g_mid) {
+		return new MeasurementPatch(c_mid, g_mid);
 	}
 
 }

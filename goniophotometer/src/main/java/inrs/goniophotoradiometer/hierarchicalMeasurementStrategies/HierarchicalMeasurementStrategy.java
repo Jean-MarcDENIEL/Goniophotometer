@@ -50,7 +50,7 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 	public HierarchicalMeasurementStrategy(int max_c_delta, int max_g_delta) {
 		maxCDelta = max_c_delta;
 		maxGDelta = max_g_delta;
-		setRootPatch(new MeasurementPatch((LOWER_C_BOUND+UPPER_C_BOUND)/2, (LOWER_G_BOUND+UPPER_G_BOUND)/2));
+		setRootPatch(createMeasurementPatch((LOWER_C_BOUND+UPPER_C_BOUND)/2, (LOWER_G_BOUND+UPPER_G_BOUND)/2));
 		initializeMeasurementPatch(getRootPatch(), C_BOUNDS, G_BOUNDS);
 		waitingPoints = new ArrayList<MeasurementPoint>();
 		setcMingMinMeasurement(createMeasurementPoint(new PlaneVector(LOWER_C_BOUND, LOWER_G_BOUND)));
@@ -176,25 +176,25 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 		switch (_subdivision_way){
 		case ON_C_ONLY:
 			IntegerBounds _c_mids = computeSubpatchesCMiddleValues(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
-			_child_patches[MeasurementPatch.ChildPatchIndexes.C_CUT_LOWER_CHILD.getChildIndex()] = new MeasurementPatch(_c_mids.getLowerBound(), patch_to_subdivide.getgMid());
-			_child_patches[MeasurementPatch.ChildPatchIndexes.C_CUT_UPPER_CHILD.getChildIndex()] = new MeasurementPatch(_c_mids.getUpperBound(), patch_to_subdivide.getgMid());
+			_child_patches[MeasurementPatch.ChildPatchIndexes.C_CUT_LOWER_CHILD.getChildIndex()] = createMeasurementPatch(_c_mids.getLowerBound(), patch_to_subdivide.getgMid());
+			_child_patches[MeasurementPatch.ChildPatchIndexes.C_CUT_UPPER_CHILD.getChildIndex()] = createMeasurementPatch(_c_mids.getUpperBound(), patch_to_subdivide.getgMid());
 			initializeMeasurementPatch(_child_patches[MeasurementPatch.ChildPatchIndexes.C_CUT_LOWER_CHILD.getChildIndex()], new IntegerBounds(patch_c_bounds.getLowerBound(), patch_to_subdivide.getcMid()), patch_g_bounds);
 			initializeMeasurementPatch(_child_patches[MeasurementPatch.ChildPatchIndexes.C_CUT_UPPER_CHILD.getChildIndex()], new IntegerBounds(patch_to_subdivide.getcMid(), patch_c_bounds.getUpperBound()), patch_g_bounds);
 			break;
 		case ON_GAMMA_ONLY:
 			IntegerBounds _g_mids = computeSubpatchesGammaMiddleValues(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
-			_child_patches[MeasurementPatch.ChildPatchIndexes.G_CUT_LOWER_CHILD.getChildIndex()] = new MeasurementPatch(patch_to_subdivide.getcMid(), _g_mids.getLowerBound());
-			_child_patches[MeasurementPatch.ChildPatchIndexes.G_CUT_UPPER_CHILD.getChildIndex()] = new MeasurementPatch(patch_to_subdivide.getcMid(), _g_mids.getUpperBound());
+			_child_patches[MeasurementPatch.ChildPatchIndexes.G_CUT_LOWER_CHILD.getChildIndex()] = createMeasurementPatch(patch_to_subdivide.getcMid(), _g_mids.getLowerBound());
+			_child_patches[MeasurementPatch.ChildPatchIndexes.G_CUT_UPPER_CHILD.getChildIndex()] = createMeasurementPatch(patch_to_subdivide.getcMid(), _g_mids.getUpperBound());
 			initializeMeasurementPatch(_child_patches[MeasurementPatch.ChildPatchIndexes.G_CUT_LOWER_CHILD.getChildIndex()], patch_c_bounds, new IntegerBounds(patch_g_bounds.getLowerBound(), patch_to_subdivide.getgMid()));
 			initializeMeasurementPatch(_child_patches[MeasurementPatch.ChildPatchIndexes.G_CUT_UPPER_CHILD.getChildIndex()], patch_c_bounds, new IntegerBounds(patch_to_subdivide.getgMid(), patch_g_bounds.getUpperBound()));
 			break;
 		case ON_C_AND_GAMMA:
 			IntegerBounds _g_mids_2 = computeSubpatchesGammaMiddleValues(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
 			IntegerBounds _c_mids_2 = computeSubpatchesCMiddleValues(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
-			_child_patches[MeasurementPatch.ChildPatchIndexes.C_LOWER_AND_G_LOWER_CHILD.getChildIndex()] = new MeasurementPatch(_c_mids_2.getLowerBound(), _g_mids_2.getLowerBound());
-			_child_patches[MeasurementPatch.ChildPatchIndexes.C_LOWER_AND_G_UPPER_CHILD.getChildIndex()] = new MeasurementPatch(_c_mids_2.getLowerBound(), _g_mids_2.getUpperBound());
-			_child_patches[MeasurementPatch.ChildPatchIndexes.C_UPPER_AND_G_LOWER_CHILD.getChildIndex()] = new MeasurementPatch(_c_mids_2.getUpperBound(), _c_mids_2.getLowerBound());
-			_child_patches[MeasurementPatch.ChildPatchIndexes.C_UPPER_AND_G_UPPER_CHILD.getChildIndex()] = new MeasurementPatch(_c_mids_2.getUpperBound(), _g_mids_2.getUpperBound());
+			_child_patches[MeasurementPatch.ChildPatchIndexes.C_LOWER_AND_G_LOWER_CHILD.getChildIndex()] = createMeasurementPatch(_c_mids_2.getLowerBound(), _g_mids_2.getLowerBound());
+			_child_patches[MeasurementPatch.ChildPatchIndexes.C_LOWER_AND_G_UPPER_CHILD.getChildIndex()] = createMeasurementPatch(_c_mids_2.getLowerBound(), _g_mids_2.getUpperBound());
+			_child_patches[MeasurementPatch.ChildPatchIndexes.C_UPPER_AND_G_LOWER_CHILD.getChildIndex()] = createMeasurementPatch(_c_mids_2.getUpperBound(), _c_mids_2.getLowerBound());
+			_child_patches[MeasurementPatch.ChildPatchIndexes.C_UPPER_AND_G_UPPER_CHILD.getChildIndex()] = createMeasurementPatch(_c_mids_2.getUpperBound(), _g_mids_2.getUpperBound());
 			initializeMeasurementPatch(_child_patches[MeasurementPatch.ChildPatchIndexes.C_LOWER_AND_G_LOWER_CHILD.getChildIndex()], 
 					new IntegerBounds(patch_c_bounds.getLowerBound(), patch_to_subdivide.getcMid()), 
 					new IntegerBounds(patch_g_bounds.getLowerBound(), patch_to_subdivide.getgMid()));

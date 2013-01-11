@@ -18,8 +18,9 @@ public interface FileSupportedMeasurementDevice extends HierarchicalStrategy {
 	/**
 	 * 
 	 * @return The file names that are associated to the different parts composing the {@link MeasurementPoint}.
+	 * @throws RadiometryException TODO
 	 */
-	String [] getMeasurementPartsNames();
+	String [] getMeasurementPartsNames() throws RadiometryException;
 	/**
 	 * Performs necessary computations prior to loading {@link MeasurementPoint} parts
 	 * @throws RadiometryException

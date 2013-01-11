@@ -201,4 +201,8 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 		}
 	}
 
+	public MeasurementPatch createMeasurementPatch(int c_mid, int g_mid) {
+		return measurementDevice.createMeasurementPatch(c_mid, g_mid);
+	}
+
 }
