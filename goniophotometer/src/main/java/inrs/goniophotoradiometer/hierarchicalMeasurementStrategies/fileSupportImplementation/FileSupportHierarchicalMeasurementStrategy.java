@@ -143,8 +143,9 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 			}
 			break;
 		case ON_C_AND_GAMMA:
-			if (_cutable_on_c && _cutable_on_g)
+			if (_cutable_on_c && _cutable_on_g){
 				return _res;
+			}
 			break;
 		default:
 			throw new RadiometryException("Unexpected patch subdivision from measurement device");	

@@ -7,8 +7,6 @@ import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPo
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import c4sci.math.geometry.plane.PlaneVector;
-
 /**
  * This interface describes devices that are able to load and safe their measurements data through {@link InputStream}s and {@link OutputStream}s.
  * @author jeanmarc.deniel

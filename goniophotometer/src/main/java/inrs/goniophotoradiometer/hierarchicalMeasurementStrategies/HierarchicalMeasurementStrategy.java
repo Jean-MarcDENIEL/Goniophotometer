@@ -50,20 +50,24 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 	public HierarchicalMeasurementStrategy(int max_c_delta, int max_g_delta) {
 		maxCDelta = max_c_delta;
 		maxGDelta = max_g_delta;
-		setRootPatch(createMeasurementPatch((LOWER_C_BOUND+UPPER_C_BOUND)/2, (LOWER_G_BOUND+UPPER_G_BOUND)/2));
-		initializeMeasurementPatch(getRootPatch(), C_BOUNDS, G_BOUNDS);
+		setRootPatch(null);
 		waitingPoints = new ArrayList<MeasurementPoint>();
-		setcMingMinMeasurement(createMeasurementPoint(new PlaneVector(LOWER_C_BOUND, LOWER_G_BOUND)));
-		setcMingMaxMeasurement(createMeasurementPoint(new PlaneVector(LOWER_C_BOUND, UPPER_G_BOUND)));
-		setcMaxgMinMeasurement(createMeasurementPoint(new PlaneVector(UPPER_C_BOUND, LOWER_G_BOUND)));
-		setcMaxgMaxMeasurement(createMeasurementPoint(new PlaneVector(UPPER_C_BOUND, UPPER_G_BOUND)));
-		waitingPoints.add(getcMingMinMeasurement());
-		waitingPoints.add(getcMingMaxMeasurement());
-		waitingPoints.add(getcMaxgMinMeasurement());
-		waitingPoints.add(getcMaxgMaxMeasurement());
+
 	}
 
 	public MeasurementPoint[] getPrimaryMeasurementPositions() throws RadiometryException {
+		if (getRootPatch() == null){
+			setRootPatch(createMeasurementPatch((LOWER_C_BOUND+UPPER_C_BOUND)/2, (LOWER_G_BOUND+UPPER_G_BOUND)/2));
+			initializeMeasurementPatch(getRootPatch(), C_BOUNDS, G_BOUNDS);
+			setcMingMinMeasurement(createMeasurementPoint(new PlaneVector(LOWER_C_BOUND, LOWER_G_BOUND)));
+			setcMingMaxMeasurement(createMeasurementPoint(new PlaneVector(LOWER_C_BOUND, UPPER_G_BOUND)));
+			setcMaxgMinMeasurement(createMeasurementPoint(new PlaneVector(UPPER_C_BOUND, LOWER_G_BOUND)));
+			setcMaxgMaxMeasurement(createMeasurementPoint(new PlaneVector(UPPER_C_BOUND, UPPER_G_BOUND)));
+			waitingPoints.add(getcMingMinMeasurement());
+			waitingPoints.add(getcMingMaxMeasurement());
+			waitingPoints.add(getcMaxgMinMeasurement());
+			waitingPoints.add(getcMaxgMaxMeasurement());
+		}
 		getPrimaryMeasurementPositions(getRootPatch(), C_BOUNDS, G_BOUNDS);
 		return convertWaitingPointsToArray();
 	}

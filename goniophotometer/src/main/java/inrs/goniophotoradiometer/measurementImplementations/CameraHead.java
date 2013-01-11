@@ -8,7 +8,6 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
-import c4sci.math.algebra.Floatings;
 import c4sci.math.geometry.plane.PlaneVector;
 
 import inrs.goniophotoradiometer.exceptions.RadiometryException;
@@ -30,7 +29,7 @@ import inrs.goniophotoradiometer.imageCapture.xcd90Implementation.XCD90ImageCapt
 public class CameraHead implements FileSupportedMeasurementDevice {
 
 	private static final String	 PART_NAME = "Camera";
-	
+
 	private String 					imageFormatUnformalName;
 	private String					imageSuffix;
 	private GrayscaleImageCapture	captureDevice;
@@ -52,22 +51,19 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 			throw new RadiometryException("cannot initialize camera", _e);
 		}
 	}
-	
-	public void finalize(){
+
+	@Override
+	protected void finalize() throws Throwable{
 		try {
 			captureDevice.endCapture();
 		} catch (CaptureException _e) {
 			_e.printStackTrace();
 		}
 		finally{
-			try {
-				super.finalize();
-			} catch (Throwable _e) {
-				_e.printStackTrace();
-			}
+			super.finalize();			
 		}
 	}
-	
+
 	public String[] getMeasurementPartsNames() throws RadiometryException {
 		return new String[] {PART_NAME + "." + imageSuffix };
 	}
@@ -76,7 +72,7 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 
 	public void loadMeasurementPart(MeasurementPoint meas_point,
 			String part_name, InputStream part_stream)
-			throws RadiometryException {
+					throws RadiometryException {
 		try {
 			if (!part_name.startsWith(PART_NAME)){
 				throw new RadiometryException("Bad part name : "+ part_name + " instead of beginning with " + PART_NAME);
@@ -88,13 +84,15 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 			if (_read_img.getType() != BufferedImage.TYPE_USHORT_GRAY){
 				throw new RadiometryException("wrong measurement part image type");
 			}
-			((CameraHeadMeasurementPoint)meas_point).setMeasurementImage(_read_img);
-			
+			if (CameraHeadMeasurementPoint.class.isInstance(meas_point)){
+				((CameraHeadMeasurementPoint)meas_point).setMeasurementImage(_read_img);
+			}
+			else{
+				throw new RadiometryException("bad MeasurementPoint type : " +meas_point.getClass().getName());
+			}
+
 		} catch (IOException _e) {
 			throw new RadiometryException("cannot retrieve saved image", _e);
-		}
-		catch(ClassCastException _e){
-			throw new RadiometryException("bad MeasurementPoint type : " +meas_point.getClass().getName());
 		}
 	}
 
@@ -104,19 +102,21 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 
 	public void saveMeasurementPart(MeasurementPoint meas_point,
 			String part_name, OutputStream part_stream)
-			throws RadiometryException {
+					throws RadiometryException {
 		if (!part_name.startsWith(PART_NAME)){
 			throw new RadiometryException("Bad part name : "+ part_name + " instead of beginning with " + PART_NAME);
 		}
 		try {
-			if (!ImageIO.write(((CameraHeadMeasurementPoint)meas_point).getMeasurementImage(), imageFormatUnformalName, part_stream)){
-				throw new RadiometryException("Cannot image image : no appropriate writer");
+			if (CameraHeadMeasurementPoint.class.isInstance(meas_point)){
+				if (!ImageIO.write(((CameraHeadMeasurementPoint)meas_point).getMeasurementImage(), imageFormatUnformalName, part_stream)){
+					throw new RadiometryException("Cannot image image : no appropriate writer");
+				}
+			}
+			else{
+				throw new RadiometryException("Bad MeasurementPoint type : " +meas_point.getClass().getName());
 			}
 		} catch (IOException _e) {
 			throw new RadiometryException("Cannot write image", _e);
-		}
-		catch(ClassCastException _e){
-			throw new RadiometryException("Bad MeasurementPoint type : " +meas_point.getClass().getName());
 		}
 	}
 
@@ -125,27 +125,30 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 	public void performCompleteMeasurement(MeasurementPoint meas_point)
 			throws RadiometryException {
 		try{
-			CameraHeadMeasurementPoint _camera_point = (CameraHeadMeasurementPoint)meas_point;
-			int _width = captureDevice.getImageWidth();
-			int _height = captureDevice.getImageHeight();
-			_camera_point.setMeasurementImage(new BufferedImage(_width, _height, BufferedImage.TYPE_USHORT_GRAY));
-			capturedImage = captureDevice.captureImage(capturedImage);
-			int _capt_index = 0;
-			WritableRaster _raster = _camera_point.getMeasurementImage().getRaster();
-			
-			for (int _row = 0; _row < _height; _row ++){
-				for (int _col = 0; _col<_width; _col++){
-					int _value = capturedImage[_capt_index ++];
-					_raster.setSample(_col, _row, 0, _value);
+			if (CameraHeadMeasurementPoint.class.isInstance(meas_point)){
+				CameraHeadMeasurementPoint _camera_point = (CameraHeadMeasurementPoint)meas_point;
+				int _width = captureDevice.getImageWidth();
+				int _height = captureDevice.getImageHeight();
+				_camera_point.setMeasurementImage(new BufferedImage(_width, _height, BufferedImage.TYPE_USHORT_GRAY));
+				capturedImage = captureDevice.captureImage(capturedImage);
+				int _capt_index = 0;
+				WritableRaster _raster = _camera_point.getMeasurementImage().getRaster();
+
+				for (int _row = 0; _row < _height; _row ++){
+					for (int _col = 0; _col<_width; _col++){
+						int _value = capturedImage[_capt_index ++];
+						_raster.setSample(_col, _row, 0, _value);
+					}
 				}
 			}
+			else{
+				throw new RadiometryException("Bad MeasurementPoint type : " + meas_point.getClass().getName());
+			}
 		}
-		catch(ClassCastException _e){
-			throw new RadiometryException("Bad MeasurementPoint type : " + meas_point.getClass().getName(), _e);
-		} catch (CaptureException _e) {
+		catch (CaptureException _e) {
 			throw new RadiometryException("Camera error", _e);
 		}
-		
+
 	}
 
 	public MeasurementPoint createMeasurementPoint(PlaneVector meas_point) {
@@ -160,18 +163,18 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 	 */
 	public class CameraHeadMeasurementPoint extends MeasurementPoint{
 		private BufferedImage measurementImage;
-		
+
 		public CameraHeadMeasurementPoint(PlaneVector meas_point) {
 			super(meas_point);
 			setMeasurementImage(null);
 			setAsNotYetMeasured();
 		}
 
-		public BufferedImage getMeasurementImage() {
+		public final BufferedImage getMeasurementImage() {
 			return measurementImage;
 		}
 
-		public void setMeasurementImage(BufferedImage measurement_image) {
+		public final void setMeasurementImage(BufferedImage measurement_image) {
 			this.measurementImage = measurement_image;
 		}
 	}

@@ -37,28 +37,37 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 			MeasurementPoint c_min_g_max_point,
 			MeasurementPoint c_max_g_min_point,
 			MeasurementPoint c_max_g_max_point) throws RadiometryException {
-		try{
+		if (	ComposedMeasurementPoint.class.isInstance(c_min_g_min_point) &&
+				ComposedMeasurementPoint.class.isInstance(c_min_g_max_point) &&
+				ComposedMeasurementPoint.class.isInstance(c_max_g_min_point) &&
+				ComposedMeasurementPoint.class.isInstance(c_max_g_max_point)
+				){
 			ComposedMeasurementPoint _comp_c_min_gmin 	= (ComposedMeasurementPoint) c_min_g_min_point;
 			ComposedMeasurementPoint _comp_c_min_gmax 	= (ComposedMeasurementPoint) c_min_g_max_point;
 			ComposedMeasurementPoint _comp_c_max_gmin 	= (ComposedMeasurementPoint) c_max_g_min_point;
 			ComposedMeasurementPoint _comp_c_max_gmax 	= (ComposedMeasurementPoint) c_max_g_max_point;
-			ComposedMeasurementPatch _comp_patch		= (ComposedMeasurementPatch) patch_;
-			for (Iterator<FileSupportedMeasurementDevice> _it = measurementDevices.iterator(); _it.hasNext();){
-				FileSupportedMeasurementDevice _sub_device = _it.next();
-				MeasurementPoint _cmin_g_min = _comp_c_min_gmin.getSubDeviceMeasurementPoint(_sub_device);
-				MeasurementPoint _cmin_g_max = _comp_c_min_gmax.getSubDeviceMeasurementPoint(_sub_device);
-				MeasurementPoint _cmax_g_min = _comp_c_max_gmin.getSubDeviceMeasurementPoint(_sub_device);
-				MeasurementPoint _cmax_g_max = _comp_c_max_gmax.getSubDeviceMeasurementPoint(_sub_device);
-				MeasurementPatch _subcomp_patch 	 = _comp_patch.getSubDeviceMeasurementPatch(_sub_device); 
+			if (ComposedMeasurementPatch.class.isInstance(patch_)){
+				ComposedMeasurementPatch _comp_patch		= (ComposedMeasurementPatch) patch_;
+				for (Iterator<FileSupportedMeasurementDevice> _it = measurementDevices.iterator(); _it.hasNext();){
+					FileSupportedMeasurementDevice _sub_device = _it.next();
+					MeasurementPoint _cmin_g_min = _comp_c_min_gmin.getSubDeviceMeasurementPoint(_sub_device);
+					MeasurementPoint _cmin_g_max = _comp_c_min_gmax.getSubDeviceMeasurementPoint(_sub_device);
+					MeasurementPoint _cmax_g_min = _comp_c_max_gmin.getSubDeviceMeasurementPoint(_sub_device);
+					MeasurementPoint _cmax_g_max = _comp_c_max_gmax.getSubDeviceMeasurementPoint(_sub_device);
+					MeasurementPatch _subcomp_patch 	 = _comp_patch.getSubDeviceMeasurementPatch(_sub_device); 
 
-				if (_it.next().shouldCut(_subcomp_patch, _cmin_g_min, _cmin_g_max, _cmax_g_min, _cmax_g_max)){
-					return true;
+					if (_it.next().shouldCut(_subcomp_patch, _cmin_g_min, _cmin_g_max, _cmax_g_min, _cmax_g_max)){
+						return true;
+					}
 				}
+				return false;
 			}
-			return false;
+			else{
+				throw new RadiometryException("Bad MeasurementPatch type");
+			}
 		}
-		catch(ClassCastException _e){
-			throw new RadiometryException("Bad Measurement point type", _e);
+		else{
+			throw new RadiometryException("Bad MeasurementPoint type");
 		}
 	}
 
@@ -77,15 +86,16 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 	public PatchSubdivision computeSubdivisionWay(
 			MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds,
 			IntegerBounds patch_g_bounds) throws RadiometryException {
-		try{
-			ComposedMeasurementPatch _comp_patch		= (ComposedMeasurementPatch) patch_to_subdivide;
+
+		if (ComposedMeasurementPatch.class.isInstance(patch_to_subdivide)){
+			ComposedMeasurementPatch _comp_patch = (ComposedMeasurementPatch) patch_to_subdivide;
 			boolean _c_subdivide = false;
 			boolean _g_subdivide = false;
 			for (	Iterator<FileSupportedMeasurementDevice> _it = measurementDevices.iterator(); (
 					_it.hasNext())&&((!_c_subdivide)||(!_g_subdivide));){
 				FileSupportedMeasurementDevice _sub_device = _it.next();
-				MeasurementPatch _sub_patch = _comp_patch.getSubDeviceMeasurementPatch(_sub_device);
-				PatchSubdivision _subdivision = _sub_device.computeSubdivisionWay(_sub_patch, patch_c_bounds, patch_g_bounds);
+				MeasurementPatch _sub_patch 	= _comp_patch.getSubDeviceMeasurementPatch(_sub_device);
+				PatchSubdivision _subdivision 	= _sub_device.computeSubdivisionWay(_sub_patch, patch_c_bounds, patch_g_bounds);
 				switch(_subdivision){
 				case NO_SUBDIVISION:
 					break;
@@ -96,7 +106,8 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 					_g_subdivide = true;
 					break;
 				case ON_C_AND_GAMMA:
-					_c_subdivide = _g_subdivide = true;
+					_c_subdivide = true;
+					_g_subdivide = true;
 					break;
 				default:
 					throw new RadiometryException("Unexpected subdivision");	
@@ -119,8 +130,8 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 				}
 			}
 		}
-		catch(ClassCastException _e){
-			throw new RadiometryException("Bad Measurement point type", _e);
+		else{
+			throw new RadiometryException("Bad Measurement point type");
 		}
 	}
 
@@ -135,7 +146,7 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 			throw new RadiometryException("no sub device");
 		}
 		IntegerBounds _res = new IntegerBounds(0, 0);
-		try{
+		if (ComposedMeasurementPatch.class.isInstance(patch_to_subdivide)){
 			ComposedMeasurementPatch _comp_patch = (ComposedMeasurementPatch) patch_to_subdivide;
 			for (Iterator<FileSupportedMeasurementDevice> _it = measurementDevices.iterator(); _it.hasNext();){
 				FileSupportedMeasurementDevice _sub_device = _it.next();
@@ -147,8 +158,8 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 			_res.setLowerBound(_res.getLowerBound()/_sub_count);
 			_res.setUpperBound(_res.getUpperBound()/_sub_count);
 		}
-		catch(ClassCastException _e){
-			throw new RadiometryException("bad MeasurementPatch type", _e);
+		else{
+			throw new RadiometryException("bad MeasurementPatch type");
 		}
 		return _res;
 	}
@@ -186,7 +197,7 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 	 */
 	public String[] getMeasurementPartsNames() throws RadiometryException {
 		ArrayList<String> _res = new ArrayList<String>();
-		
+
 		for (Iterator<FileSupportedMeasurementDevice> _it = measurementDevices.iterator(); _it.hasNext();){
 			FileSupportedMeasurementDevice _sub_device = _it.next();
 			String[] _sub_parts_names_tab = _sub_device.getMeasurementPartsNames();
@@ -210,7 +221,7 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 	public void loadMeasurementPart(MeasurementPoint meas_point,
 			String part_name, InputStream part_stream)
 					throws RadiometryException {
-		try{
+		if (ComposedMeasurementPoint.class.isInstance(meas_point)){
 			ComposedMeasurementPoint _comp_point = (ComposedMeasurementPoint) meas_point;
 			for (Iterator<FileSupportedMeasurementDevice> _it = measurementDevices.iterator(); _it.hasNext();){
 				FileSupportedMeasurementDevice _sub_device = _it.next();
@@ -221,8 +232,8 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 				}
 			}
 		}
-		catch (ClassCastException _e){
-			throw new RadiometryException("bad MeasurementPoint type", _e);
+		else{
+			throw new RadiometryException("bad MeasurementPoint type");
 		}
 	}
 	/**
@@ -305,7 +316,7 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 			return measurementPoints.get(sub_device);
 		}
 	}
-	
+
 	public class ComposedMeasurementPatch extends MeasurementPatch{
 		private Map<FileSupportedMeasurementDevice, MeasurementPatch> measurementPatches;
 		public ComposedMeasurementPatch(int c_mid, int g_mid, List<FileSupportedMeasurementDevice> sub_device_list){
