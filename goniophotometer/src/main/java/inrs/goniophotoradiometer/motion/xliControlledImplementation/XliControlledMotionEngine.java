@@ -33,6 +33,11 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	private int				reducerRatio;
 	private SerialPort		serialPort;
 	private int				delayBetweenSendsMilliSec;
+	private boolean			homingPositiveReferenceEdge;
+	private boolean			homeSwitchNormallyClosed;
+	private boolean			homePositiveSense;
+	private float			homingVelocityRevPerSecond;
+	private float			homingAccelerationDecelerationRevPerSecond;
 
 
 
@@ -146,6 +151,12 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		setUpperCountPositionLimit(DEFAULT_DEGREE_UPPER_LIMIT * getCountPerDegree());
 		setToZeroPosition();
 		setInPosition(true);
+		setHomePositiveSense(false);
+		setHomeSwitchNormallyClosed(false);
+		setHomingPositiveReferenceEdge(true);
+		setHomingVelocityRevPerSecond(convertFromDegreeToRev(DEFAULT_MAX_VELOCITY_DEGREE_PER_SECOND));
+		setHomingAccelerationDecelerationRevPerSecond(convertFromDegreeToRev(DEFAULT_ACCELERATION_DEGREES_PER_SQUARE_SECOND));
+		
 
 		setDelayBetweenSendsMilliSec(DEFAULT_DELAY_BETWEEN_SENDS_MILLISEC);
 
@@ -379,7 +390,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 
 	public void processAbsoluteMove(float deg_value) {
 		int _abs_count_value = (int)(((float)getCountPerDegree())*deg_value);
-		int _rel_count_value = getActualCountPosition()-_abs_count_value;
+		int _rel_count_value = _abs_count_value - getActualCountPosition();
 		processRelativeMove((float)_rel_count_value / (float)getCountPerDegree());
 	}
 
@@ -615,6 +626,43 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		}
 		while ((!isInPosition()) && isInMovement());
 	}
+	public boolean isHomingPositiveReferenceEdge() {
+		return homingPositiveReferenceEdge;
+	}
+	public void setHomingPositiveReferenceEdge(boolean homing_positive_reference_edge) {
+		this.homingPositiveReferenceEdge = homing_positive_reference_edge;
+	}
+	public boolean isHomeSwitchNormallyClosed() {
+		return homeSwitchNormallyClosed;
+	}
+	public void setHomeSwitchNormallyClosed(boolean home_switch_normally_closed) {
+		this.homeSwitchNormallyClosed = home_switch_normally_closed;
+	}
+	public boolean isHomePositiveSense() {
+		return homePositiveSense;
+	}
+	public void setHomePositiveSense(boolean homePositiveSense) {
+		this.homePositiveSense = homePositiveSense;
+	}
+	public float getHomingVelocityRevPerSecond() {
+		return homingVelocityRevPerSecond;
+	}
+	public void setHomingVelocityRevPerSecond(
+			float homing_velocity_degree_per_second) {
+		this.homingVelocityRevPerSecond = homing_velocity_degree_per_second;
+	}
+	public float getHomingAccelerationDecelerationRevPerSecond() {
+		return homingAccelerationDecelerationRevPerSecond;
+	}
+	public void setHomingAccelerationDecelerationRevPerSecond(
+			float homing_acceleration_deceleration_rev_per_second) {
+		this.homingAccelerationDecelerationRevPerSecond = homing_acceleration_deceleration_rev_per_second;
+	}
 
+	public void performHoming(){
+		sendOrderAndSetDecoder(EasiVocabulary.ARM_COMMAND);
+		sendOrderAndSetDecoder(EasiVocabulary.CONFIGURE_HOMING);
+		sendOrderAndSetDecoder(EasiVocabulary.GO_HOME);
+	}
 
 }

@@ -4,7 +4,7 @@ package inrs.goniophotoradiometer.motion.xliControlledImplementation;
 
 public enum EasiVocabulary{
 
-	
+
 
 	ACCELERATION("AA"){
 		@Override
@@ -12,6 +12,14 @@ public enum EasiVocabulary{
 				XliControlledMotionEngine motion_engine) {
 			return ""+limitDecimalPrecision(motion_engine.getRevPerSquareSecondAcceleration(),2);
 		}
+	},
+	ARM_COMMAND("ARM1"){
+		@Override
+		public String getCommandParameters(
+				XliControlledMotionEngine motion_engine) {
+			return "";
+		}
+
 	},
 	DECELERATION("AD"){
 		@Override
@@ -42,6 +50,25 @@ public enum EasiVocabulary{
 			return "";
 		}
 	},*/
+	GO_HOME("GH") {
+		@Override
+		public String getCommandParameters(
+				XliControlledMotionEngine motion_engine) {
+			return "";
+		}
+	},	
+	CONFIGURE_HOMING("HOME1"){
+		@Override
+		public String getCommandParameters(
+				XliControlledMotionEngine motion_engine) {
+			return ""+
+					(motion_engine.isHomingPositiveReferenceEdge()?"+":"-") + "," +
+					(motion_engine.isHomeSwitchNormallyClosed()?"1":"0") + "," +
+					(motion_engine.isHomePositiveSense()?"":"-") + limitDecimalPrecision(motion_engine.getHomingVelocityRevPerSecond(),2) + "," +
+					limitDecimalPrecision(motion_engine.getHomingAccelerationDecelerationRevPerSecond(),2) + ",0";
+		}
+	},
+
 	EMERGENCY_STOP("K"){
 		@Override
 		public String getCommandParameters(
@@ -106,6 +133,7 @@ public enum EasiVocabulary{
 			return "(EP)";
 		}
 	},
+
 	READ_IN_POSITION_FLAG("R", new StateDecoder(){
 
 		public void decodeState(String state_string,
@@ -117,7 +145,7 @@ public enum EasiVocabulary{
 				throw new StateParsingException("1R(IR) : bad length : " + state_string.length() + "instead of " + _X_R_IR_LENGTH);
 			}
 			motion_engine.setInPosition(state_string.charAt(1) == '1');
-			
+
 		}}){
 		@Override
 		public String getCommandParameters(
@@ -356,7 +384,7 @@ public enum EasiVocabulary{
 	}
 
 	private static final float DEC_TEN			= 10.0f; 
-	
+
 	public static float limitDecimalPrecision(float fl_value, int dec_count){
 		return (float)(((float)((int)(fl_value*Math.pow(DEC_TEN, (double)dec_count)))) / Math.pow(DEC_TEN, (float)dec_count));
 	}
