@@ -93,20 +93,35 @@ public class GoniophotoradiometerApplication {
 			XliControlledMotionEngine		_arm 		= new XliControlledMotionEngine(ARM_PORT, ARM_COUNT_PER_REV, ARM_REV_RATIO);
 			XliControlledMotionEngine		_turntable	= new XliControlledMotionEngine(TURNTABLE_PORT, TURNTABLE_COUNT_PER_REV, TURNTABLE_REV_RATIO);
 
-			System.out.println("doing POM");
-			
+			System.out.println("Performing arm homing");
 			_arm.setAngularMaxVelocity(ARM_MAX_SPEED_DEG_SEC);
 			_arm.setAngularAcceleration(ARM_ACC_DEG_SEC_2);
 			_arm.setAngularDeceleration(ARM_ACC_DEG_SEC_2);
 			_arm.setVelocityThreshold(0.0f);
 			_arm.setHardLimitsAllowed(true);
 			_arm.setHardLimitsNormalyOpen(true);
-			_arm.processRelativeMove(20.0f);
-			
+			_arm.processRelativeMove(5f);
+			_arm.waitForEndOfMotion();
+			_arm.performHoming();
+			_arm.waitForEndOfMotion();
+			_arm.processRelativeMove(90f);
+			_arm.waitForEndOfMotion();
+			_arm.setActualCountPosition(0);
+			System.out.println("Arm Homing performed");
+
+			System.out.println("Performing turntable homing");
 			_turntable.setAngularMaxVelocity(TURNTABLE_MAX_SPEED_DEG_SEC);
 			_turntable.setAngularAcceleration(TURNTABLE_ACC_DEG_SEC_2);
 			_turntable.setAngularDeceleration(TURNTABLE_ACC_DEG_SEC_2);
 			_turntable.setVelocityThreshold(0.0f);
+			_turntable.setHardLimitsAllowed(true);
+			_turntable.setHardLimitsNormalyOpen(true);
+			_turntable.processRelativeMove(5f);
+			_turntable.waitForEndOfMotion();
+			_turntable.performHoming();
+			_turntable.waitForEndOfMotion();
+			_turntable.setActualCountPosition(0);
+			System.out.println("Turntable Homing performed");
 			
 			if (true){
 				System.exit(0);
