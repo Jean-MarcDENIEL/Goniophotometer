@@ -56,7 +56,7 @@ public enum EasiVocabulary{
 			return "(" +  
 					(motion_engine.isHardLimitsAllowed() ? "0" : "3")+ "," +
 					(motion_engine.isHardLimitsNormalyOpen() ? "0" : "1") + "," +
-					"0)" ;
+					"1)" ;
 		}
 	},
 	MODE_INCREMENTAL("M"){

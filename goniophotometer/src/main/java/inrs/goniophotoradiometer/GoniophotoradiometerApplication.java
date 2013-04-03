@@ -1,9 +1,11 @@
 package inrs.goniophotoradiometer;
 
+import inrs.goniophotoradiometer.exceptions.GoniometryException;
 import inrs.goniophotoradiometer.exceptions.RadiometryException;
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.FileSupportHierarchicalMeasurementStrategy;
 import inrs.goniophotoradiometer.measurementImplementations.CameraHead;
 import inrs.goniophotoradiometer.motion.MotionEngine;
+import inrs.goniophotoradiometer.motion.ShortestTravelTimeMotionScheduler;
 import inrs.goniophotoradiometer.motion.xliControlledImplementation.XliControlledMotionEngine;
 
 import java.io.BufferedReader;
@@ -21,11 +23,15 @@ public class GoniophotoradiometerApplication {
 	public static final int 		MAX_C_DELTA = 15;
 	public static final int 		MAX_G_DELTA = 20;
 	public static final String 		ARM_PORT = "COM1";
-	public static final int			ARM_COUNT_PER_REV = 200;
+	public static final int			ARM_COUNT_PER_REV = 4000;
 	public static final int			ARM_REV_RATIO = 500 ;
+	public static final float		ARM_MAX_SPEED_DEG_SEC = 1.163f;
+	public static final float		ARM_ACC_DEG_SEC_2 = 1.0f;	
 	public static final String 		TURNTABLE_PORT = "COM2";
-	public static final int			TURNTABLE_COUNT_PER_REV = 200;
+	public static final int			TURNTABLE_COUNT_PER_REV = 4000;
 	public static final int			TURNTABLE_REV_RATIO = 64;
+	public static final float		TURNTABLE_MAX_SPEED_DEG_SEC = 3.35f;
+	public static final float		TURNTABLE_ACC_DEG_SEC_2 = 1.0f;
 	
 	/**
 	 * First argument is a working directory
@@ -80,11 +86,34 @@ public class GoniophotoradiometerApplication {
 			
 			CameraHead 			_camera 	= new CameraHead(_image_formal_name_tab[_format_index], _image_formal_name_tab[_format_index]);
 			MeasurementStrategy _strategy 	= new FileSupportHierarchicalMeasurementStrategy(MAX_C_DELTA, MAX_G_DELTA, _directory, _camera);
-			MotionEngine		_arm 		= new XliControlledMotionEngine(ARM_PORT, ARM_COUNT_PER_REV, ARM_REV_RATIO);
-			MotionEngine		_turntable	= new XliControlledMotionEngine(TURNTABLE_PORT, TURNTABLE_COUNT_PER_REV, TURNTABLE_REV_RATIO);
+			MotionScheduler		_scheduler = new 
+					ShortestTravelTimeMotionScheduler(	ARM_ACC_DEG_SEC_2, ARM_MAX_SPEED_DEG_SEC, 
+														TURNTABLE_ACC_DEG_SEC_2, TURNTABLE_MAX_SPEED_DEG_SEC);
 			
-			System.out.println("Moving the arm 5 degrees");
-			_arm.processRelativeMove(5.0f);
+			XliControlledMotionEngine		_arm 		= new XliControlledMotionEngine(ARM_PORT, ARM_COUNT_PER_REV, ARM_REV_RATIO);
+			XliControlledMotionEngine		_turntable	= new XliControlledMotionEngine(TURNTABLE_PORT, TURNTABLE_COUNT_PER_REV, TURNTABLE_REV_RATIO);
+
+			System.out.println("doing POM");
+			
+			_arm.setAngularMaxVelocity(ARM_MAX_SPEED_DEG_SEC);
+			_arm.setAngularAcceleration(ARM_ACC_DEG_SEC_2);
+			_arm.setAngularDeceleration(ARM_ACC_DEG_SEC_2);
+			_arm.setVelocityThreshold(0.0f);
+			_arm.setHardLimitsAllowed(true);
+			_arm.setHardLimitsNormalyOpen(true);
+			_arm.processRelativeMove(20.0f);
+			
+			_turntable.setAngularMaxVelocity(TURNTABLE_MAX_SPEED_DEG_SEC);
+			_turntable.setAngularAcceleration(TURNTABLE_ACC_DEG_SEC_2);
+			_turntable.setAngularDeceleration(TURNTABLE_ACC_DEG_SEC_2);
+			_turntable.setVelocityThreshold(0.0f);
+			
+			if (true){
+				System.exit(0);
+			}
+			
+			Goniophotoradiometer	_gonio = new Goniophotoradiometer(_scheduler, _strategy, _arm, _turntable);
+			_gonio.performMeasurement();
 			
 		}
 		catch(IOException _e){
@@ -93,6 +122,10 @@ public class GoniophotoradiometerApplication {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			errorExiting("An issue with the measurement head arrised");
+		} catch (GoniometryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			errorExiting("An issue with the gonio arrised");
 		}
 	}
 	

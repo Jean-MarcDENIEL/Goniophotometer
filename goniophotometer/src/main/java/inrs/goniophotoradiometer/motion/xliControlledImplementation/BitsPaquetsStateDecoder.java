@@ -21,32 +21,34 @@ abstract class BitsPaquetsStateDecoder implements StateDecoder{
 		
 		// verify and set flags that begin at index 1
 		//
-		int _index = 0;
+		int _index_in_str = 0;
 		for (int _paquet_index = 0; _paquet_index < PAQUET_COUNT; _paquet_index ++){
 			for (int _bit_index_in_paquet = 0; _bit_index_in_paquet<PAQUET_LENGTH; _bit_index_in_paquet ++){
-				char _bit_char = state_string.charAt(_index+1);
+				char _bit_char = state_string.charAt(_index_in_str+1);
 				if ((_bit_char != '0')&&(_bit_char != '1')){
-					throw new StateParsingException("bad bit char at index " + _index+1 + " : " + state_string.charAt(_index+1));
+					throw new StateParsingException("bad bit char at index " + _index_in_str+1 + " : " + state_string.charAt(_index_in_str+1));
 				}
-				_index ++;
+				_index_in_str ++;
 			}
 			if (_paquet_index < PAQUET_COUNT-1){
-				if (state_string.charAt(_index+1)!=PAQUET_SEPARATOR){
-					throw new StateParsingException("bad separator at index " + (_index+1) + ": " + state_string.charAt(_index+1) + "paquet_index = "+ _paquet_index  + " / " + PAQUET_COUNT);
+				if (state_string.charAt(_index_in_str+1)!=PAQUET_SEPARATOR){
+					throw new StateParsingException("bad separator at index " + (_index_in_str+1) + ": " + state_string.charAt(_index_in_str+1) + "paquet_index = "+ _paquet_index  + " / " + PAQUET_COUNT);
 				}
-				_index ++;
+				_index_in_str ++;
 			}
 		}
 		
 		// set flags
 		//
-		_index = 0;
+		_index_in_str = 0;
+		int _bit_index = 0;
 		for (int _paquet_index = 0; _paquet_index < PAQUET_COUNT; _paquet_index ++){
 			for (int _bit_index_in_paquet = 0; _bit_index_in_paquet<PAQUET_LENGTH; _bit_index_in_paquet ++){
-				flag_tab[_index] = (state_string.charAt(_index+1) == '1');
-				_index ++;
+				flag_tab[_bit_index] = (state_string.charAt(_index_in_str+1) == '1');
+				_index_in_str ++;
+				_bit_index ++;
 			}
-			_index ++;
+			_index_in_str ++;
 		}
 	}
 };

@@ -40,7 +40,8 @@ public class Goniophotoradiometer {
 	public void performMeasurement() throws GoniometryException, RadiometryException {
 		// first make a 0 positioning
 		//
-		goToPosition(new PlaneVector(-HALF_ROUND_DEGREE, -HALF_ROUND_DEGREE));
+		goToPosition(new PlaneVector(-HALF_ROUND_DEGREE, HALF_ROUND_DEGREE));
+		goToPosition(new PlaneVector(-HALF_ROUND_DEGREE, -QUATER_ROUND_DEGREE));
 		armEngine.setToZeroPosition();
 		armEngine.setMaxPosition(QUATER_ROUND_DEGREE);
 		armEngine.setMinPosition(-QUATER_ROUND_DEGREE);
@@ -63,7 +64,7 @@ public class Goniophotoradiometer {
 		
 		// last, if not suspended, go to an intermediate position
 		if (!shouldStop()){
-			goToPosition(new PlaneVector(-QUATER_ROUND_DEGREE/2.0f, QUATER_ROUND_DEGREE/2.0f));
+			goToPosition(new PlaneVector(QUATER_ROUND_DEGREE/2.0f, QUATER_ROUND_DEGREE/2.0f));
 		}
 		
 		

@@ -149,9 +149,6 @@ public final class XliControlledMotionEngine implements MotionEngine {
 
 		setDelayBetweenSendsMilliSec(DEFAULT_DELAY_BETWEEN_SENDS_MILLISEC);
 
-		setHardLimitsAllowed(true);
-		setHardLimitsNormalyOpen(true);
-		setVelocityThreshold(convertFromDegreeToRev(DEFAULT_DEGREES_PER_SECOND_VELOCITY_THRESHOLD));
 
 		try {
 			CommPortIdentifier _com_id = CommPortIdentifier.getPortIdentifier(getSerialPortName());
@@ -189,6 +186,11 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		sendOrderAndSetDecoder(EasiVocabulary.START_STOP_VELOCITY_THRESHOLD);
 		sendOrderAndSetDecoder(EasiVocabulary.PROFILE_1);
 		sendOrderAndSetDecoder(EasiVocabulary.USE_PROFILE_1);
+		
+		setHardLimitsAllowed(true);
+		setHardLimitsNormalyOpen(true);
+		setVelocityThreshold(convertFromDegreeToRev(DEFAULT_DEGREES_PER_SECOND_VELOCITY_THRESHOLD));
+
 
 		setToZeroPosition();
 
@@ -252,42 +254,49 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	}
 	public void setVelocityThreshold(float velocity_threshold) {
 		this.velocityThreshold = velocity_threshold;
+		// TODO : send
 	}
 	public boolean isHardLimitsNormalyOpen() {
 		return hardLimitsNormalyOpen;
 	}
 	public void setHardLimitsNormalyOpen(boolean hard_limits_normaly_open) {
 		this.hardLimitsNormalyOpen = hard_limits_normaly_open;
+		sendOrderAndSetDecoder(EasiVocabulary.CONFIGURE_LIMITS);
 	}
 	public boolean isHardLimitsAllowed() {
 		return hardLimitsAllowed;
 	}
 	public void setHardLimitsAllowed(boolean hard_limits_allowed) {
 		this.hardLimitsAllowed = hard_limits_allowed;
+		sendOrderAndSetDecoder(EasiVocabulary.CONFIGURE_LIMITS);
 	}
 	public int getCountDistance() {
 		return countDistance;
 	}
 	public void setCountDistance(int count_distance) {
 		this.countDistance = count_distance;
+		// TODO : send
 	}
 	public int getEngineNumber() {
 		return engineNumber;
 	}
 	public void setEngineNumber(int engine_number) {
 		this.engineNumber = engine_number;
+		// TODO : send
 	}
 	public boolean isLowerHardLimitReached() {
 		return lowerHardLimitReached;
 	}
 	public void setLowerHardLimitReached(boolean lower_hard_limit_reached) {
 		this.lowerHardLimitReached = lower_hard_limit_reached;
+		// TODO : send
 	}
 	public boolean isUpperHardLimitReached() {
 		return upperHardLimitReached;
 	}
 	public void setUpperHardLimitReached(boolean upper_hard_limit_reached) {
 		upperHardLimitReached = upper_hard_limit_reached;
+		// TODO : send
 	}
 
 
