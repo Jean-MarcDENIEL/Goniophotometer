@@ -27,7 +27,7 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 
 	public static final int LOWER_C_BOUND	= 0;
 	public static final int UPPER_C_BOUND	= 359;
-	public static final int	LOWER_G_BOUND	= -90;
+	public static final int	LOWER_G_BOUND	= 0;
 	public static final int UPPER_G_BOUND	= 90;
 
 	public static final IntegerBounds C_BOUNDS = new IntegerBounds(LOWER_C_BOUND, UPPER_C_BOUND);
