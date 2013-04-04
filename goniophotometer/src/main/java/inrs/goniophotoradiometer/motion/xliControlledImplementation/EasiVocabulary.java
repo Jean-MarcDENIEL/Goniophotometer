@@ -61,11 +61,11 @@ public enum EasiVocabulary{
 		@Override
 		public String getCommandParameters(
 				XliControlledMotionEngine motion_engine) {
-			return ""+
+			return "("+
 					(motion_engine.isHomingPositiveReferenceEdge()?"+":"-") + "," +
 					(motion_engine.isHomeSwitchNormallyClosed()?"1":"0") + "," +
 					(motion_engine.isHomePositiveSense()?"":"-") + limitDecimalPrecision(motion_engine.getHomingVelocityRevPerSecond(),2) + "," +
-					limitDecimalPrecision(motion_engine.getHomingAccelerationDecelerationRevPerSecond(),2) + ",0";
+					limitDecimalPrecision(motion_engine.getHomingAccelerationDecelerationRevPerSecond(),2) + ",0)";
 		}
 	},
 
@@ -83,7 +83,7 @@ public enum EasiVocabulary{
 			return "(" +  
 					(motion_engine.isHardLimitsAllowed() ? "0" : "3")+ "," +
 					(motion_engine.isHardLimitsNormalyOpen() ? "0" : "1") + "," +
-					"1)" ;
+					"0)" ;
 		}
 	},
 	MODE_INCREMENTAL("M"){

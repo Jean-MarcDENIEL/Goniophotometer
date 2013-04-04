@@ -2,12 +2,12 @@ package inrs.goniophotoradiometer.measurementImplementations;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import javax.imageio.ImageIO;
-
 import c4sci.math.geometry.plane.PlaneVector;
 
 import inrs.goniophotoradiometer.exceptions.RadiometryException;
@@ -28,7 +28,8 @@ import inrs.goniophotoradiometer.imageCapture.xcd90Implementation.XCD90ImageCapt
  */
 public class CameraHead implements FileSupportedMeasurementDevice {
 
-	private static final String	 PART_NAME = "Camera";
+	private static final String	 	PART_NAME = "Camera";
+	private static final int		RASTER_TYPE = BufferedImage.TYPE_INT_RGB;
 
 	private String 					imageFormatUnformalName;
 	private String					imageSuffix;
@@ -81,7 +82,7 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 			if (_read_img == null){
 				throw new RadiometryException("Cannot read that kind of image");
 			}
-			if (_read_img.getType() != BufferedImage.TYPE_USHORT_GRAY){
+			if (_read_img.getType() != RASTER_TYPE){
 				throw new RadiometryException("wrong measurement part image type");
 			}
 			if (CameraHeadMeasurementPoint.class.isInstance(meas_point)){
@@ -109,7 +110,7 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 		try {
 			if (CameraHeadMeasurementPoint.class.isInstance(meas_point)){
 				if (!ImageIO.write(((CameraHeadMeasurementPoint)meas_point).getMeasurementImage(), imageFormatUnformalName, part_stream)){
-					throw new RadiometryException("Cannot image image : no appropriate writer");
+					throw new RadiometryException("Cannot write image : error writing " + imageFormatUnformalName +" image type");
 				}
 			}
 			else{
@@ -129,7 +130,7 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 				CameraHeadMeasurementPoint _camera_point = (CameraHeadMeasurementPoint)meas_point;
 				int _width = captureDevice.getImageWidth();
 				int _height = captureDevice.getImageHeight();
-				_camera_point.setMeasurementImage(new BufferedImage(_width, _height, BufferedImage.TYPE_USHORT_GRAY));
+				_camera_point.setMeasurementImage(new BufferedImage(_width, _height, RASTER_TYPE));
 				capturedImage = captureDevice.captureImage(capturedImage);
 				int _capt_index = 0;
 				WritableRaster _raster = _camera_point.getMeasurementImage().getRaster();
@@ -157,7 +158,6 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 	/**
 	 * {@link MeasurementPoint} created by the {@link CameraHead} class.<br>
 	 * <br>
-	 * The image model is {@link BufferedImage#TYPE_USHORT_GRAY}.
 	 * @author jeanmarc.deniel
 	 *
 	 */
@@ -224,4 +224,23 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 		return new MeasurementPatch(c_mid, g_mid);
 	}
 
+	public static void main(String[] args){
+		try {
+			//BufferedImage _img = ImageIO.read(new FileInputStream("c:\\test\\lecture.png"));
+			
+			BufferedImage _img = new BufferedImage(100, 200, BufferedImage.TYPE_INT_RGB);
+			
+			FileOutputStream _out = new FileOutputStream("c:\\test\\ecriture.jpg");
+			System.out.println("Ecriture : "  + ImageIO.write(_img, "jpg", _out));
+			_out.close();
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 }

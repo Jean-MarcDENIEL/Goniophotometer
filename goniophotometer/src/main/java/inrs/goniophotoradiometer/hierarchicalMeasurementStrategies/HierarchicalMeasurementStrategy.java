@@ -215,6 +215,7 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 		default:
 			throw new RadiometryException("Cannot subdivide with NO_SUBDIVISON order");
 		}
+		patch_to_subdivide.subDivide(_child_patches);
 	}
 
 	private void initializeMeasurementPatch(MeasurementPatch patch_to_initialize, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds){

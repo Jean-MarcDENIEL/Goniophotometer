@@ -4,7 +4,6 @@ import inrs.goniophotoradiometer.exceptions.GoniometryException;
 import inrs.goniophotoradiometer.exceptions.RadiometryException;
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.FileSupportHierarchicalMeasurementStrategy;
 import inrs.goniophotoradiometer.measurementImplementations.CameraHead;
-import inrs.goniophotoradiometer.motion.MotionEngine;
 import inrs.goniophotoradiometer.motion.ShortestTravelTimeMotionScheduler;
 import inrs.goniophotoradiometer.motion.xliControlledImplementation.XliControlledMotionEngine;
 
@@ -65,7 +64,8 @@ public class GoniophotoradiometerApplication {
 			String[] _image_formal_name_tab = uniqueNames(ImageIO.getWriterFormatNames());
 			System.out.println("Choose an image format among the followings [0 - " + (_image_formal_name_tab.length-1) + "] (default 0) :" );
 			for (int _i=0; _i<_image_formal_name_tab.length; _i++){
-				System.out.println("\t [" +_i + "] : " + _image_formal_name_tab[_i] );
+				System.out.println("\t [" +_i + "] : " + _image_formal_name_tab[_i] + ": " +
+						(ImageIO.getImageWritersByFormatName(_image_formal_name_tab[_i]).hasNext()?"a writer available":"no writer"));
 			}
 			String _image_format_index_str = _buff.readLine();
 			int _format_index = 0;
@@ -93,6 +93,10 @@ public class GoniophotoradiometerApplication {
 			XliControlledMotionEngine		_arm 		= new XliControlledMotionEngine(ARM_PORT, ARM_COUNT_PER_REV, ARM_REV_RATIO);
 			XliControlledMotionEngine		_turntable	= new XliControlledMotionEngine(TURNTABLE_PORT, TURNTABLE_COUNT_PER_REV, TURNTABLE_REV_RATIO);
 
+			System.out.println("Need for homing motions (y n) ? [n]");
+			String 	str_need_for_homing = _buff.readLine();
+			boolean	need_for_homing = (str_need_for_homing.compareTo("y") == 0);
+			
 			System.out.println("Performing arm homing");
 			_arm.setAngularMaxVelocity(ARM_MAX_SPEED_DEG_SEC);
 			_arm.setAngularAcceleration(ARM_ACC_DEG_SEC_2);
@@ -100,13 +104,19 @@ public class GoniophotoradiometerApplication {
 			_arm.setVelocityThreshold(0.0f);
 			_arm.setHardLimitsAllowed(true);
 			_arm.setHardLimitsNormalyOpen(true);
-			_arm.processRelativeMove(5f);
-			_arm.waitForEndOfMotion();
-			_arm.performHoming();
-			_arm.waitForEndOfMotion();
-			_arm.processRelativeMove(90f);
-			_arm.waitForEndOfMotion();
+			_arm.setInvertMotionSense(false);
+			if (need_for_homing){
+				_arm.processRelativeMove(1f);
+				_arm.waitForEndOfMotion();
+				_arm.performHoming();
+				_arm.waitForEndOfMotion();
+				_arm.processRelativeMove(90f);
+				_arm.waitForEndOfMotion();
+			}
 			_arm.setActualCountPosition(0);
+			_arm.setInvertMotionSense(true);
+			_arm.setMinPosition(0f);
+			_arm.setMaxPosition(90f);
 			System.out.println("Arm Homing performed");
 
 			System.out.println("Performing turntable homing");
@@ -116,16 +126,17 @@ public class GoniophotoradiometerApplication {
 			_turntable.setVelocityThreshold(0.0f);
 			_turntable.setHardLimitsAllowed(true);
 			_turntable.setHardLimitsNormalyOpen(true);
-			_turntable.processRelativeMove(5f);
-			_turntable.waitForEndOfMotion();
-			_turntable.performHoming();
-			_turntable.waitForEndOfMotion();
-			_turntable.setActualCountPosition(0);
-			System.out.println("Turntable Homing performed");
-			
-			if (true){
-				System.exit(0);
+			_turntable.setInvertMotionSense(false);
+			if (need_for_homing){
+				_turntable.processRelativeMove(1f);
+				_turntable.waitForEndOfMotion();
+				_turntable.performHoming();
+				_turntable.waitForEndOfMotion();
 			}
+			_turntable.setActualCountPosition(0);
+			_turntable.setMinPosition(0f);
+			_turntable.setMaxPosition(360f);
+			System.out.println("Turntable Homing performed");
 			
 			Goniophotoradiometer	_gonio = new Goniophotoradiometer(_scheduler, _strategy, _arm, _turntable);
 			_gonio.performMeasurement();

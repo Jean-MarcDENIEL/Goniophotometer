@@ -11,7 +11,6 @@ import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalM
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.IntegerBounds;
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPatch;
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint;
-import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalMeasurementStrategy.PatchSubdivision;
 
 /**
  * This class is intended at storing the measurement data in different files, so that
@@ -67,9 +66,9 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 			measurementDevice.beginLoadingSession();
 			for (String _part_name : _parts_names){
 				try{
-				SecuredFile _secured = new SecuredFile(getPartFileName(_part_name, meas_point));
-				measurementDevice.loadMeasurementPart(meas_point, _part_name, _secured.readFile());
-				_secured.closeFile();
+					SecuredFile _secured = new SecuredFile(getPartFileName(_part_name, meas_point));
+					measurementDevice.loadMeasurementPart(meas_point, _part_name, _secured.readFile());
+					_secured.closeFile();
 				}
 				catch (UncoherentStateFileException _e){
 					throw new RadiometryException("error loading " + _part_name + " measurement part.", _e);

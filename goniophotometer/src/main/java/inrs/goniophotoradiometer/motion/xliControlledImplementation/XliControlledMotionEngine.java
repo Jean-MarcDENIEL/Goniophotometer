@@ -38,6 +38,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	private boolean			homePositiveSense;
 	private float			homingVelocityRevPerSecond;
 	private float			homingAccelerationDecelerationRevPerSecond;
+	private boolean			invertMotionSense;
 
 
 
@@ -202,6 +203,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		setHardLimitsNormalyOpen(true);
 		setVelocityThreshold(convertFromDegreeToRev(DEFAULT_DEGREES_PER_SECOND_VELOCITY_THRESHOLD));
 
+		setInvertMotionSense(false);
 
 		setToZeroPosition();
 
@@ -353,32 +355,24 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		return _res.toString();
 	}
 
+	
+	
 	public void processRelativeMove(float deg_value) {
 
-		// TODO : ensure soft limits
-
-		//if (deg_value < 0.0){
-		//	sendOrderAndSetDecoder(EasiVocabulary.CHANGE_DIRECTION);
-		//}
-
+		if (isInvertMotionSense()){
+			deg_value = -deg_value;
+		}
 		setCountDistance((int)(((float)getCountPerDegree()) * deg_value));
 		sendOrderAndSetDecoder(EasiVocabulary.PROFILE_1);
 		sendOrderAndSetDecoder(EasiVocabulary.USE_PROFILE_1);
 		sendOrderAndSetDecoder(EasiVocabulary.MOVE);
-
-		//if (deg_value < 0.0){
-		//	sendOrderAndSetDecoder(EasiVocabulary.CHANGE_DIRECTION);
-		//}
-
-		readEnginState();
+		readEngineState();
 	}
 
-	private void readEnginState() {
+	private void readEngineState() {
 		sendOrderAndSetDecoder(EasiVocabulary.READ_DRIVE_FAULT_STATUS);
 		sendOrderAndSetDecoder(EasiVocabulary.READ_IN_POSITION_FLAG);
 		sendOrderAndSetDecoder(EasiVocabulary.READ_MOVING);
-		//sendOrderAndSetDecoder(EasiVocabulary.READ_POSITION_ABSOLUTE);
-		//sendOrderAndSetDecoder(EasiVocabulary.READ_POSITION_INCREMENTAL);
 		sendOrderAndSetDecoder(EasiVocabulary.READ_STATUS);
 		sendOrderAndSetDecoder(EasiVocabulary.READ_READY_BUSY_FLAG);
 		sendOrderAndSetDecoder(EasiVocabulary.READ_USER_PROGRAM_FAULT);
@@ -663,6 +657,16 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		sendOrderAndSetDecoder(EasiVocabulary.ARM_COMMAND);
 		sendOrderAndSetDecoder(EasiVocabulary.CONFIGURE_HOMING);
 		sendOrderAndSetDecoder(EasiVocabulary.GO_HOME);
+	}
+	public boolean isInvertMotionSense() {
+		return invertMotionSense;
+	}
+	/**
+	 * Changes the sense in which the moves are made. It corresponds to inverting the sign of absolute and relative moves.
+	 * @param invert_motion_sense
+	 */
+	public void setInvertMotionSense(boolean invert_motion_sense) {
+		this.invertMotionSense = invert_motion_sense;
 	}
 
 }

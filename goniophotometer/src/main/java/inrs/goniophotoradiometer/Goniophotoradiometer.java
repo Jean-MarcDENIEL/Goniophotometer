@@ -38,17 +38,6 @@ public class Goniophotoradiometer {
 	}
 
 	public void performMeasurement() throws GoniometryException, RadiometryException {
-		// first make a 0 positioning
-		//
-		goToPosition(new PlaneVector(-HALF_ROUND_DEGREE, HALF_ROUND_DEGREE));
-		goToPosition(new PlaneVector(-HALF_ROUND_DEGREE, -QUATER_ROUND_DEGREE));
-		armEngine.setToZeroPosition();
-		armEngine.setMaxPosition(QUATER_ROUND_DEGREE);
-		armEngine.setMinPosition(-QUATER_ROUND_DEGREE);
-		turntableEngine.setToZeroPosition();
-		turntableEngine.setMinPosition(0f);
-		turntableEngine.setMaxPosition(ROUND_DEGREE);
-		
 		
 		// initialize primary measurements to perform
 		//
@@ -58,6 +47,7 @@ public class Goniophotoradiometer {
 		//
 		while (motionScheduler.hasWaitingMeasurementPositions() && ! shouldStop()){
 			MeasurementPoint _new_pos = motionScheduler.chooseNextMeasurementPosition();
+			System.out.println("Measuring in " + _new_pos.getMeasurementPosition().getX() + " , " + _new_pos.getMeasurementPosition().getY());
 			goToPosition(_new_pos.getMeasurementPosition());
 			motionScheduler.addMeasurementPositions(measurementStrategy.performMeasurement(_new_pos));
 		}
