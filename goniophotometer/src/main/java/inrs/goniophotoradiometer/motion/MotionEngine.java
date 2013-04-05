@@ -92,5 +92,5 @@ public interface MotionEngine {
 	/**
 	 * Waits for the motion engine to be in position or stops moving.
 	 */
-	void	waitForEndOfMotion();
+	void	waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 }

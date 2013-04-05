@@ -59,8 +59,8 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	private boolean			hardLimitsNormalyOpen;
 	private boolean			hardLimitsAllowed;
 
-	private int				actualCountPosition;
-	private int				actualCountIncremental;
+	private int				actualTheoricalCountPosition;
+	private int				goalTheoricalCountPosition;
 	private int				countDistance;
 	private int 			lowerCountPositionLimit;
 	private int 			upperCountPositionLimit;
@@ -137,6 +137,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		driveFaultsTab	= new boolean[FLAG_COUNT];
 		statusBitsTab	= new boolean[FLAG_COUNT];
 		userFaultsTab	= new boolean[FLAG_COUNT];
+		serialPort		= null;
 
 		setControllerReturnToDecode(new StringBuffer());
 
@@ -359,9 +360,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	
 	public void processRelativeMove(float deg_value) {
 
-		if (isInvertMotionSense()){
-			deg_value = -deg_value;
-		}
+
 		setCountDistance((int)(((float)getCountPerDegree()) * deg_value));
 		sendOrderAndSetDecoder(EasiVocabulary.PROFILE_1);
 		sendOrderAndSetDecoder(EasiVocabulary.USE_PROFILE_1);
@@ -383,8 +382,16 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	}
 
 	public void processAbsoluteMove(float deg_value) {
+		if (isInvertAbsoluteMotionSense()){
+			deg_value = -deg_value;
+		}
 		int _abs_count_value = (int)(((float)getCountPerDegree())*deg_value);
-		int _rel_count_value = _abs_count_value - getActualCountPosition();
+		setGoalTheoricalCountPosition(_abs_count_value);
+		int _rel_count_value = _abs_count_value - getActualTheoricalCountPosition();
+		/*System.out.println("processAbsoluteMove :");
+		System.out.println("	Actual : " + getActualTheoricalCountPosition());
+		System.out.println("	Dest :   " + _abs_count_value);
+		System.out.println("    Rel  :   " + _rel_count_value);*/
 		processRelativeMove((float)_rel_count_value / (float)getCountPerDegree());
 	}
 
@@ -415,7 +422,8 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	}
 
 	public void setToZeroPosition() {
-		setActualCountPosition(0);
+		setActualTheoricalCountPosition(0);
+		setGoalTheoricalCountPosition(0);
 		setInPosition(true);
 	}
 
@@ -467,12 +475,13 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		serialPortName = serial_port_name;
 	}
 
-	public int getActualCountPosition() {
-		return actualCountPosition;
+	public int getActualTheoricalCountPosition() {
+		return actualTheoricalCountPosition;
 	}
 
-	public void setActualCountPosition(int actual_count_position) {
-		actualCountPosition = actual_count_position;
+	public void setActualTheoricalCountPosition(int actual_count_position) {
+		actualTheoricalCountPosition = actual_count_position;
+
 	}
 
 	public float getRevPerSecondMaxSpeed() {
@@ -556,21 +565,9 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		this.inMovement = in_movement;
 	}
 
-
-	public int getActualCountIncremental() {
-		return actualCountIncremental;
-	}
-
-
-	public void setActualCountIncremental(int actual_count_incremental) {
-		this.actualCountIncremental = actual_count_incremental;
-	}
-
-
 	public boolean isBusy() {
 		return isBusy;
 	}
-
 
 	public void setBusy(boolean is_busy) {
 		this.isBusy = is_busy;
@@ -611,7 +608,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		delayBetweenSendsMilliSec = delay_between_sends_milli_sec;
 	}
 
-	public void waitForEndOfMotion() {
+	public void waitForEndOfMotionAndSetTheoricalAbsolutePosition() {
 		setInMovement(true);
 		setInPosition(false);
 		do{
@@ -619,6 +616,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 			sendOrderAndSetDecoder(EasiVocabulary.READ_MOVING);
 		}
 		while ((!isInPosition()) && isInMovement());
+		setActualTheoricalCountPosition(getGoalTheoricalCountPosition());
 	}
 	public boolean isHomingPositiveReferenceEdge() {
 		return homingPositiveReferenceEdge;
@@ -658,7 +656,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		sendOrderAndSetDecoder(EasiVocabulary.CONFIGURE_HOMING);
 		sendOrderAndSetDecoder(EasiVocabulary.GO_HOME);
 	}
-	public boolean isInvertMotionSense() {
+	public boolean isInvertAbsoluteMotionSense() {
 		return invertMotionSense;
 	}
 	/**
@@ -668,5 +666,12 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	public void setInvertMotionSense(boolean invert_motion_sense) {
 		this.invertMotionSense = invert_motion_sense;
 	}
+	public int getGoalTheoricalCountPosition() {
+		return goalTheoricalCountPosition;
+	}
+	public void setGoalTheoricalCountPosition(int goal_theorical_count_position) {
+		this.goalTheoricalCountPosition = goal_theorical_count_position;
+	}
+
 
 }

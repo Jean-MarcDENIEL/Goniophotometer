@@ -29,6 +29,7 @@ import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPo
 public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMeasurementStrategy {
 	
 	private static final String				SEPARATOR = "_"; 
+	private static final String				DIRECTORY_SEPARATOR = "\\";
 	private static final float 				MIN_CUTTABLE_RANGE_WIDTH = 8.0f;
 	private static final int				MIN_SEPARATE_RANGE_WIDTH = 1;
 	
@@ -37,7 +38,7 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 
 	public FileSupportHierarchicalMeasurementStrategy(int max_c_delta, int max_g_delta, String directory_absolute_path, FileSupportedMeasurementDevice meas_device) {
 		super(max_c_delta, max_g_delta);
-		directoryAbsolutePath = directory_absolute_path + File.pathSeparator;
+		directoryAbsolutePath = directory_absolute_path + File.separator;
 		measurementDevice = meas_device;
 	}
 

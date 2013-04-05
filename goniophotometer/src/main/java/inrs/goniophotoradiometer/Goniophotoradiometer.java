@@ -63,8 +63,8 @@ public class Goniophotoradiometer {
 	private void goToPosition(PlaneVector c_g_pos_deg) throws GoniometryException{
 		armEngine.processAbsoluteMove(c_g_pos_deg.getY());
 		turntableEngine.processAbsoluteMove(c_g_pos_deg.getX());
-		armEngine.waitForEndOfMotion();
-		turntableEngine.waitForEndOfMotion();
+		armEngine.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
+		turntableEngine.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 		if (armEngine.isFaulty()){
 			throw new GoniometryException("Arm engine is faulty : " + armEngine.getUserFaults());
 		}

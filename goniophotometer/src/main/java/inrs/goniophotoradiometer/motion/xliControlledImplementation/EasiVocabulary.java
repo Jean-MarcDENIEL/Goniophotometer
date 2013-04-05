@@ -229,12 +229,16 @@ public enum EasiVocabulary{
 		public void decodeState(String state_string,
 				XliControlledMotionEngine motion_engine)
 						throws StateParsingException {
-			String _value_str = state_string.substring(1, state_string.length()-2);
+			String _value_str = state_string.substring(1, state_string.length()-1);
 			try{
-				motion_engine.setActualCountPosition(Integer.parseInt(_value_str));
+				/*System.out.println("Read_Position_Absolute");
+				System.out.println("	Strings :" + state_string + ":" +_value_str);
+				System.out.println("	Passing from " + motion_engine.getActualTheoricalCountPosition() + " to " + Integer.parseInt(_value_str));*/
+				
+				motion_engine.setActualTheoricalCountPosition(Integer.parseInt(_value_str));
 			}
 			catch(NumberFormatException _e){
-				throw new StateParsingException("R(PA) decoding " + state_string + ": " + _value_str, _e);
+				throw new StateParsingException("R(PA) decoding : " + _value_str + "from : " + state_string, _e);
 			}
 		}}) {
 		@Override
@@ -250,7 +254,7 @@ public enum EasiVocabulary{
 						throws StateParsingException {
 			String _value_str = state_string.substring(1, state_string.length()-2);
 			try{
-				motion_engine.setActualCountIncremental(Integer.parseInt(_value_str));
+				//motion_engine.setActualCountIncremental(Integer.parseInt(_value_str));
 			}
 			catch(NumberFormatException _e){
 				throw new StateParsingException("R(PI) decoding " + state_string, _e);
@@ -322,6 +326,13 @@ public enum EasiVocabulary{
 		public String getCommandParameters(
 				XliControlledMotionEngine motion_engine) {
 			return ""  + limitDecimalPrecision(motion_engine.getVelocityThreshold(),2);
+		}
+	},
+	SET_POSITION_ABSOLUTE("R") {
+		@Override
+		public String getCommandParameters(
+				XliControlledMotionEngine motion_engine) {
+			return "(PA," + motion_engine.getActualTheoricalCountPosition()+")";
 		}
 	},
 	RESET("Z") {

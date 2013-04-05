@@ -107,13 +107,13 @@ public class GoniophotoradiometerApplication {
 			_arm.setInvertMotionSense(false);
 			if (need_for_homing){
 				_arm.processRelativeMove(1f);
-				_arm.waitForEndOfMotion();
+				_arm.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 				_arm.performHoming();
-				_arm.waitForEndOfMotion();
+				_arm.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 				_arm.processRelativeMove(90f);
-				_arm.waitForEndOfMotion();
+				_arm.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 			}
-			_arm.setActualCountPosition(0);
+			_arm.setToZeroPosition();
 			_arm.setInvertMotionSense(true);
 			_arm.setMinPosition(0f);
 			_arm.setMaxPosition(90f);
@@ -129,11 +129,11 @@ public class GoniophotoradiometerApplication {
 			_turntable.setInvertMotionSense(false);
 			if (need_for_homing){
 				_turntable.processRelativeMove(1f);
-				_turntable.waitForEndOfMotion();
+				_turntable.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 				_turntable.performHoming();
-				_turntable.waitForEndOfMotion();
+				_turntable.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 			}
-			_turntable.setActualCountPosition(0);
+			_turntable.setToZeroPosition();
 			_turntable.setMinPosition(0f);
 			_turntable.setMaxPosition(360f);
 			System.out.println("Turntable Homing performed");
