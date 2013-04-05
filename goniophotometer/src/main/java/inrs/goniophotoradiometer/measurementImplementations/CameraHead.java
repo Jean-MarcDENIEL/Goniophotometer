@@ -83,7 +83,16 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 				throw new RadiometryException("Cannot read that kind of image");
 			}
 			if (_read_img.getType() != RASTER_TYPE){
-				throw new RadiometryException("wrong measurement part image type");
+				// convert to the right image type
+				BufferedImage _converted_img = new BufferedImage(_read_img.getWidth(), _read_img.getHeight(), RASTER_TYPE);
+				for (int _conv_lgn=0; _conv_lgn<_read_img.getHeight(); _conv_lgn++){
+					for (int _conv_row = 0; _conv_row<_read_img.getWidth(); _conv_row++){
+						_converted_img.setRGB(_conv_row, _conv_lgn, _read_img.getRGB(_conv_row, _conv_lgn));
+					}
+				}
+				_read_img = _converted_img;
+				
+				//throw new RadiometryException("wrong measurement part image type : " + _read_img.getType() + " instead of" + RASTER_TYPE);
 			}
 			if (CameraHeadMeasurementPoint.class.isInstance(meas_point)){
 				((CameraHeadMeasurementPoint)meas_point).setMeasurementImage(_read_img);

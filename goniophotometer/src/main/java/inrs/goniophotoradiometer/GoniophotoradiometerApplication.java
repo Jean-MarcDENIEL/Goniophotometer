@@ -33,6 +33,7 @@ public class GoniophotoradiometerApplication {
 	public static final int			TURNTABLE_BIG_GEAR = 120;
 	public static final float		TURNTABLE_MAX_SPEED_DEG_SEC = 3.35f;
 	public static final float		TURNTABLE_ACC_DEG_SEC_2 = 1.0f;
+	public static final String		BMP_IMAGE_FORMAT = "bmp";
 	
 	/**
 	 * First argument is a working directory
@@ -86,7 +87,7 @@ public class GoniophotoradiometerApplication {
 				errorExiting("Out of format possible choices.");
 			}
 			
-			CameraHead 			_camera 	= new CameraHead(_image_formal_name_tab[_format_index], _image_formal_name_tab[_format_index]);
+			CameraHead 			_camera 	= new CameraHead(BMP_IMAGE_FORMAT, BMP_IMAGE_FORMAT);
 			MeasurementStrategy _strategy 	= new FileSupportHierarchicalMeasurementStrategy(MAX_C_DELTA, MAX_G_DELTA, _directory, _camera);
 			MotionScheduler		_scheduler = new 
 					ShortestTravelTimeMotionScheduler(	ARM_ACC_DEG_SEC_2, ARM_MAX_SPEED_DEG_SEC, 
