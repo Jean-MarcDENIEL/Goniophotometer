@@ -29,6 +29,8 @@ public class GoniophotoradiometerApplication {
 	public static final String 		TURNTABLE_PORT = "COM2";
 	public static final int			TURNTABLE_COUNT_PER_REV = 4000;
 	public static final int			TURNTABLE_REV_RATIO = 64;
+	public static final int			TURNTABLE_SMALL_GEAR = 15;
+	public static final int			TURNTABLE_BIG_GEAR = 120;
 	public static final float		TURNTABLE_MAX_SPEED_DEG_SEC = 3.35f;
 	public static final float		TURNTABLE_ACC_DEG_SEC_2 = 1.0f;
 	
@@ -91,7 +93,7 @@ public class GoniophotoradiometerApplication {
 														TURNTABLE_ACC_DEG_SEC_2, TURNTABLE_MAX_SPEED_DEG_SEC);
 			
 			XliControlledMotionEngine		_arm 		= new XliControlledMotionEngine(ARM_PORT, ARM_COUNT_PER_REV, ARM_REV_RATIO);
-			XliControlledMotionEngine		_turntable	= new XliControlledMotionEngine(TURNTABLE_PORT, TURNTABLE_COUNT_PER_REV, TURNTABLE_REV_RATIO);
+			XliControlledMotionEngine		_turntable	= new XliControlledMotionEngine(TURNTABLE_PORT, TURNTABLE_COUNT_PER_REV, TURNTABLE_REV_RATIO*TURNTABLE_BIG_GEAR/TURNTABLE_SMALL_GEAR);
 
 			System.out.println("Need for homing motions (y n) ? [n]");
 			String 	str_need_for_homing = _buff.readLine();
@@ -106,7 +108,11 @@ public class GoniophotoradiometerApplication {
 			_arm.setHardLimitsNormalyOpen(true);
 			_arm.setInvertMotionSense(false);
 			if (need_for_homing){
-				_arm.processRelativeMove(1f);
+				_arm.processRelativeMove(-1f);
+				_arm.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
+				_arm.performHoming();
+				_arm.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
+				_arm.processRelativeMove(15f);
 				_arm.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 				_arm.performHoming();
 				_arm.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
@@ -129,6 +135,10 @@ public class GoniophotoradiometerApplication {
 			_turntable.setInvertMotionSense(false);
 			if (need_for_homing){
 				_turntable.processRelativeMove(1f);
+				_turntable.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
+				_turntable.performHoming();
+				_turntable.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
+				_turntable.processRelativeMove(15f);
 				_turntable.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 				_turntable.performHoming();
 				_turntable.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
