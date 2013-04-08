@@ -22,4 +22,11 @@ public interface MeasurementStrategy {
 	 * @return A set of measurements (C, Gamma, in degrees) to perform after the parameter position measurement has been performed.
 	 */
 	MeasurementPoint[] performMeasurement(MeasurementPoint measurement_pos_c_g_deg) throws RadiometryException;
+	/**
+	 * Tests whereas a given measurement has already been performed.
+	 * @param measurement_pos_c_g_deg
+	 * @return True if the measurement already exists, false otherwise.
+	 * @throws RadiometryException 
+	 */
+	boolean existsMeasurement(MeasurementPoint measurement_pos_c_g_deg) throws RadiometryException;
 }

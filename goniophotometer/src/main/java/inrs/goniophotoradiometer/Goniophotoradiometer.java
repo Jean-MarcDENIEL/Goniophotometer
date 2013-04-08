@@ -48,7 +48,9 @@ public class Goniophotoradiometer {
 		while (motionScheduler.hasWaitingMeasurementPositions() && ! shouldStop()){
 			MeasurementPoint _new_pos = motionScheduler.chooseNextMeasurementPosition();
 			System.out.println("Measuring in " + _new_pos.getMeasurementPosition().getX() + " , " + _new_pos.getMeasurementPosition().getY());
-			goToPosition(_new_pos.getMeasurementPosition());
+			if (!measurementStrategy.existsMeasurement(_new_pos)){
+				goToPosition(_new_pos.getMeasurementPosition());
+			}
 			motionScheduler.addMeasurementPositions(measurementStrategy.performMeasurement(_new_pos));
 		}
 		

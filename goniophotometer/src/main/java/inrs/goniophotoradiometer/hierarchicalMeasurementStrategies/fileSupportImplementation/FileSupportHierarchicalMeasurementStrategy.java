@@ -29,7 +29,6 @@ import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPo
 public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMeasurementStrategy {
 	
 	private static final String				SEPARATOR = "_"; 
-	private static final String				DIRECTORY_SEPARATOR = "\\";
 	private static final float 				MIN_CUTTABLE_RANGE_WIDTH = 8.0f;
 	private static final int				MIN_SEPARATE_RANGE_WIDTH = 1;
 	
@@ -49,6 +48,7 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 		}
 		// first scan whereas the data have already been saved
 		//
+		/*
 		boolean _all_parts_in_files = true;
 		String[] _parts_names = measurementDevice.getMeasurementPartsNames();
 		for (String _part_name : _parts_names){
@@ -62,8 +62,10 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 			catch (UncoherentStateFileException _e) {
 				throw new RadiometryException("error verifying " + _part_name + " measurement part existance.", _e);
 			}
-		}
-		if (_all_parts_in_files){
+		}*/
+		
+		String[] _parts_names = measurementDevice.getMeasurementPartsNames();
+		if (existsMeasurement(meas_point)){
 			measurementDevice.beginLoadingSession();
 			for (String _part_name : _parts_names){
 				try{
@@ -204,6 +206,25 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 
 	public MeasurementPatch createMeasurementPatch(int c_mid, int g_mid) {
 		return measurementDevice.createMeasurementPatch(c_mid, g_mid);
+	}
+
+	public boolean existsMeasurement(MeasurementPoint measurement_pos_c_g_deg) throws RadiometryException {
+		if (measurement_pos_c_g_deg.hasBeenYetMeasured()){
+			return true;
+		}
+		String[] _parts_names = measurementDevice.getMeasurementPartsNames();
+		for (String _part_name : _parts_names){
+			SecuredFile _secured = new SecuredFile(getPartFileName(_part_name, measurement_pos_c_g_deg));
+			try {
+				if (!_secured.existsInCoherentState()){
+					return false;
+				}
+			}
+			catch (UncoherentStateFileException _e) {
+				throw new RadiometryException("error verifying " + _part_name + " measurement part existance.", _e);
+			}
+		}
+		return true;
 	}
 
 }
