@@ -33,6 +33,7 @@ public class GoniophotoradiometerApplication {
 	public static final int			TURNTABLE_BIG_GEAR = 120;
 	public static final float		TURNTABLE_MAX_SPEED_DEG_SEC = 3.35f;
 	public static final float		TURNTABLE_ACC_DEG_SEC_2 = 1.0f;
+	public static final float		HOMING_SMALL_MOTION = 10f;
 	public static final String		BMP_IMAGE_FORMAT = "bmp";
 	
 	/**
@@ -86,11 +87,10 @@ public class GoniophotoradiometerApplication {
 			_arm.setHardLimitsNormalyOpen(true);
 			_arm.setInvertMotionSense(false);
 			if (need_for_homing){
-				_arm.processRelativeMove(-1f);
 				_arm.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 				_arm.performHoming();
 				_arm.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
-				_arm.processRelativeMove(15f);
+				_arm.processRelativeMove(HOMING_SMALL_MOTION);
 				_arm.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 				_arm.performHoming();
 				_arm.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
@@ -112,11 +112,10 @@ public class GoniophotoradiometerApplication {
 			_turntable.setHardLimitsNormalyOpen(true);
 			_turntable.setInvertMotionSense(false);
 			if (need_for_homing){
-				_turntable.processRelativeMove(1f);
 				_turntable.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 				_turntable.performHoming();
 				_turntable.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
-				_turntable.processRelativeMove(15f);
+				_turntable.processRelativeMove(HOMING_SMALL_MOTION);
 				_turntable.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
 				_turntable.performHoming();
 				_turntable.waitForEndOfMotionAndSetTheoricalAbsolutePosition();
