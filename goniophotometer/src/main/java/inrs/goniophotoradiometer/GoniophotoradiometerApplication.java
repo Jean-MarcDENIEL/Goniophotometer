@@ -64,29 +64,6 @@ public class GoniophotoradiometerApplication {
 				}
 			}
 			
-			String[] _image_formal_name_tab = uniqueNames(ImageIO.getWriterFormatNames());
-			System.out.println("Choose an image format among the followings [0 - " + (_image_formal_name_tab.length-1) + "] (default 0) :" );
-			for (int _i=0; _i<_image_formal_name_tab.length; _i++){
-				System.out.println("\t [" +_i + "] : " + _image_formal_name_tab[_i] + ": " +
-						(ImageIO.getImageWritersByFormatName(_image_formal_name_tab[_i]).hasNext()?"a writer available":"no writer"));
-			}
-			String _image_format_index_str = _buff.readLine();
-			int _format_index = 0;
-			if (_image_format_index_str.length()>0){
-				try{
-					_format_index = Integer.parseInt(_image_format_index_str);
-				}
-				catch(NumberFormatException _e){
-					errorExiting("entry is not an integer.");
-				}
-			}
-			else{
-				System.out.println("Choosing default image format.");
-			}
-			if (_format_index >= _image_formal_name_tab.length-1){
-				errorExiting("Out of format possible choices.");
-			}
-			
 			CameraHead 			_camera 	= new CameraHead(BMP_IMAGE_FORMAT, BMP_IMAGE_FORMAT);
 			MeasurementStrategy _strategy 	= new FileSupportHierarchicalMeasurementStrategy(MAX_C_DELTA, MAX_G_DELTA, _directory, _camera);
 			MotionScheduler		_scheduler = new 
