@@ -142,15 +142,6 @@ public class GoniophotoradiometerApplication {
 		}
 	}
 	
-    private static String[] uniqueNames(String[] strings_tab) {
-        Set<String> _set = new HashSet<String>();
-        for (int i=0; i<strings_tab.length; i++) {
-            String _name = strings_tab[i].toLowerCase();
-            _set.add(_name);
-        }
-        return (String[])_set.toArray(new String[0]);
-    }
-    
     private static void errorExiting(String error_msg){
     	System.out.println(error_msg);
     	System.out.println("Exiting with code 1");

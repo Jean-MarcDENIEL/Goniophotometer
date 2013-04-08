@@ -144,6 +144,7 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 	}
 	
 	private void getPrimaryMeasurementPositions(MeasurementPatch current_patch, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException{
+		
 		boolean _should_cut_on_c = patch_c_bounds.getWidth() > maxCDelta;
 		boolean _should_cut_on_g = patch_g_bounds.getWidth() > maxGDelta;
 		PatchSubdivision _how_to_cut;
@@ -197,7 +198,7 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 			IntegerBounds _c_mids_2 = computeSubpatchesCMiddleValues(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
 			_child_patches[MeasurementPatch.ChildPatchIndexes.C_LOWER_AND_G_LOWER_CHILD.getChildIndex()] = createMeasurementPatch(_c_mids_2.getLowerBound(), _g_mids_2.getLowerBound());
 			_child_patches[MeasurementPatch.ChildPatchIndexes.C_LOWER_AND_G_UPPER_CHILD.getChildIndex()] = createMeasurementPatch(_c_mids_2.getLowerBound(), _g_mids_2.getUpperBound());
-			_child_patches[MeasurementPatch.ChildPatchIndexes.C_UPPER_AND_G_LOWER_CHILD.getChildIndex()] = createMeasurementPatch(_c_mids_2.getUpperBound(), _c_mids_2.getLowerBound());
+			_child_patches[MeasurementPatch.ChildPatchIndexes.C_UPPER_AND_G_LOWER_CHILD.getChildIndex()] = createMeasurementPatch(_c_mids_2.getUpperBound(), _g_mids_2.getLowerBound());
 			_child_patches[MeasurementPatch.ChildPatchIndexes.C_UPPER_AND_G_UPPER_CHILD.getChildIndex()] = createMeasurementPatch(_c_mids_2.getUpperBound(), _g_mids_2.getUpperBound());
 			initializeMeasurementPatch(_child_patches[MeasurementPatch.ChildPatchIndexes.C_LOWER_AND_G_LOWER_CHILD.getChildIndex()], 
 					new IntegerBounds(patch_c_bounds.getLowerBound(), patch_to_subdivide.getcMid()), 

@@ -46,23 +46,6 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 		if (meas_point.hasBeenYetMeasured()){
 			throw new RadiometryException("should not measure the same measurement point twice.");
 		}
-		// first scan whereas the data have already been saved
-		//
-		/*
-		boolean _all_parts_in_files = true;
-		String[] _parts_names = measurementDevice.getMeasurementPartsNames();
-		for (String _part_name : _parts_names){
-			SecuredFile _secured = new SecuredFile(getPartFileName(_part_name, meas_point));
-			try {
-				if (!_secured.existsInCoherentState()){
-					_all_parts_in_files = false;
-					break;
-				}
-			}
-			catch (UncoherentStateFileException _e) {
-				throw new RadiometryException("error verifying " + _part_name + " measurement part existance.", _e);
-			}
-		}*/
 		
 		String[] _parts_names = measurementDevice.getMeasurementPartsNames();
 		if (existsMeasurement(meas_point)){
