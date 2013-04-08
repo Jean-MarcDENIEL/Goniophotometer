@@ -58,7 +58,7 @@ public class ShortestTravelTimeMotionScheduler implements MotionScheduler {
 			float _min_duration = Float.MAX_VALUE;
 			for (int _i=0; _i<_list_size; _i++){
 				PlaneVector _dist= getWaitingMeasurements().get(_i).getMeasurementPosition().opMinus(getLastPosition().getMeasurementPosition());
-				float _duration = Math.max(_dist.getX() / getTurntableMaxSpeedDegSec() , _dist.getY() / getArmAxeMaxSpeedDegSec());
+				float _duration = Math.max(Math.abs(_dist.getX()) / getTurntableMaxSpeedDegSec() , Math.abs(_dist.getY()) / getArmAxeMaxSpeedDegSec());
 
 				if (_duration < _min_duration){
 					_min_duration = _duration;

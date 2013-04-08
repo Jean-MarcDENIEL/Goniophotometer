@@ -11,16 +11,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
 
 
 public class GoniophotoradiometerApplication {
 	
-	public static final int 		MAX_C_DELTA = 15;
-	public static final int 		MAX_G_DELTA = 20;
+	public static final int 		MAX_C_DELTA = 30;
+	public static final int 		MAX_G_DELTA = 40;
 	public static final String 		ARM_PORT = "COM1";
 	public static final int			ARM_COUNT_PER_REV = 4000;
 	public static final int			ARM_REV_RATIO = 500 ;
