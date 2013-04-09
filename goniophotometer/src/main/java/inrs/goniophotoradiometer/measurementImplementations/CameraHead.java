@@ -233,23 +233,4 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 		return new MeasurementPatch(c_mid, g_mid);
 	}
 
-	public static void main(String[] args){
-		try {
-			//BufferedImage _img = ImageIO.read(new FileInputStream("c:\\test\\lecture.png"));
-			
-			BufferedImage _img = new BufferedImage(100, 200, BufferedImage.TYPE_INT_RGB);
-			
-			FileOutputStream _out = new FileOutputStream("c:\\test\\ecriture.jpg");
-			System.out.println("Ecriture : "  + ImageIO.write(_img, "jpg", _out));
-			_out.close();
-			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 }

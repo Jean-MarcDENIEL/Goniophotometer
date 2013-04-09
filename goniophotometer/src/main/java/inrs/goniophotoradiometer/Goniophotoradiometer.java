@@ -18,10 +18,7 @@ public class Goniophotoradiometer {
 	private MotionEngine		armEngine;
 	private MotionEngine		turntableEngine;
 	
-	private static final float	HALF_ROUND_DEGREE 	= 180f;
 	private static final float	QUATER_ROUND_DEGREE = 90f;
-	private static final float	ROUND_DEGREE		= 360f;
-	
 	public Goniophotoradiometer(MotionScheduler motion_scheduler, MeasurementStrategy meas_strat, MotionEngine arm_engine, MotionEngine turntable_engine){
 		shouldStopFlag 		= false;
 		motionScheduler		= motion_scheduler;
