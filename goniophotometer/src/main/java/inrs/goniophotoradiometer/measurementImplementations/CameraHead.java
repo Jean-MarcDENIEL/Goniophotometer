@@ -17,7 +17,7 @@ import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPa
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint;
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.FileSupportedMeasurementDevice;
 import inrs.goniophotoradiometer.imageCapture.GrayscaleImageCapture;
-import inrs.goniophotoradiometer.imageCapture.GrayscaleImageCapture.CaptureException;
+import inrs.goniophotoradiometer.imageCapture.GrayscaleImageCapture.ImageCaptureException;
 import inrs.goniophotoradiometer.imageCapture.xcd90Implementation.XCD90ImageCapture;
 
 /**
@@ -48,7 +48,7 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 		capturedImage			= null;
 		try {
 			captureDevice.initCapture();
-		} catch (CaptureException _e) {
+		} catch (ImageCaptureException _e) {
 			throw new RadiometryException("cannot initialize camera", _e);
 		}
 	}
@@ -57,7 +57,7 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 	protected void finalize() throws Throwable{
 		try {
 			captureDevice.endCapture();
-		} catch (CaptureException _e) {
+		} catch (ImageCaptureException _e) {
 			_e.printStackTrace();
 		}
 		finally{
@@ -155,7 +155,7 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 				throw new RadiometryException("Bad MeasurementPoint type : " + meas_point.getClass().getName());
 			}
 		}
-		catch (CaptureException _e) {
+		catch (ImageCaptureException _e) {
 			throw new RadiometryException("Camera error", _e);
 		}
 

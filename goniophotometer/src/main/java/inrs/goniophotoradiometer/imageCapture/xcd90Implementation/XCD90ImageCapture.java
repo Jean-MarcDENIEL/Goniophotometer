@@ -34,25 +34,25 @@ public class XCD90ImageCapture implements GrayscaleImageCapture {
 	public XCD90ImageCapture(){
 	}
 
-	public int getImageHeight() throws CaptureException {
+	public int getImageHeight() throws ImageCaptureException {
 		ZCL_GETIMAGEINFO _image_info = new ZCL_GETIMAGEINFO();
 		invokeZCL(ZCL_LIBRARY.INSTANCE.ZCLGetImageInfo(cameraHandle, _image_info));
 		return _image_info.Image.Height;
 	}
 
-	public int getImageWidth() throws CaptureException {
+	public int getImageWidth() throws ImageCaptureException {
 		ZCL_GETIMAGEINFO _image_info = new ZCL_GETIMAGEINFO();
 		invokeZCL(ZCL_LIBRARY.INSTANCE.ZCLGetImageInfo(cameraHandle, _image_info));
 		return _image_info.Image.Width;
 	}
 
-	public int getImageDepth() throws CaptureException {
+	public int getImageDepth() throws ImageCaptureException {
 		ShortByReference _data_depth = new ShortByReference();
 		invokeZCL(ZCL_LIBRARY.INSTANCE.ZCLGetDataDepth(cameraHandle, _data_depth));
 		return _data_depth.getValue();
 	}
 
-	public int[] captureImage(int[] image_buffer) throws CaptureException {
+	public int[] captureImage(int[] image_buffer) throws ImageCaptureException {
 		int _height = getImageHeight();
 		int _width = getImageWidth();
 		int[] _res;
@@ -96,7 +96,7 @@ public class XCD90ImageCapture implements GrayscaleImageCapture {
 	}
 
 
-	public void setExposureTime(float seconds_of_exposure) throws CaptureException {
+	public void setExposureTime(float seconds_of_exposure) throws ImageCaptureException {
 		ZCL_SETFEATUREVALUE _set_exposure_time = new ZCL_SETFEATUREVALUE();
 		_set_exposure_time.FeatureID = ZCL_FEATUREID.ZCL_SHUTTER.getFeatureID();
 		_set_exposure_time.ReqID = ZCL_SETREQID.ZCL_ABSVALUE.getRequestID();
@@ -105,15 +105,15 @@ public class XCD90ImageCapture implements GrayscaleImageCapture {
 		invokeZCL(ZCL_LIBRARY.INSTANCE.ZCLSetFeatureValue(cameraHandle, _set_exposure_time));
 	}
 
-	public float getMinExposureTime() throws CaptureException {
+	public float getMinExposureTime() throws ImageCaptureException {
 		return MIN_SHUTTER_TIME_SEC;
 	}
 
-	public float getMaxExposureTime() throws CaptureException {
+	public float getMaxExposureTime() throws ImageCaptureException {
 		return MAX_SHUTTER_TIME_SEC;
 	}
 
-	public void setGain(float gain_value) throws CaptureException {
+	public void setGain(float gain_value) throws ImageCaptureException {
 		ZCL_SETFEATUREVALUE _set_gain = new ZCL_SETFEATUREVALUE();
 		_set_gain.FeatureID = ZCL_SETFEATUREVALUE.ZCL_FEATUREID.ZCL_GAIN.getFeatureID();
 		_set_gain.ReqID = ZCL_SETFEATUREVALUE.ZCL_SETREQID.ZCL_VALUE.getRequestID();
@@ -122,15 +122,15 @@ public class XCD90ImageCapture implements GrayscaleImageCapture {
 		invokeZCL(ZCL_LIBRARY.INSTANCE.ZCLSetFeatureValue(cameraHandle, _set_gain));
 	}
 
-	public float getMinGain() throws CaptureException {
+	public float getMinGain() throws ImageCaptureException {
 		return 0f;
 	}
 
-	public float getMaxGain() throws CaptureException {
+	public float getMaxGain() throws ImageCaptureException {
 		return 512f;
 	}
 
-	public void initCapture() throws CaptureException {
+	public void initCapture() throws ImageCaptureException {
 		// retrieving camera list
 		ZCL_LIST	_camera_list 	= new ZCL_LIST();
 		NativeLongByReference _h_camera = new NativeLongByReference();
@@ -175,15 +175,15 @@ public class XCD90ImageCapture implements GrayscaleImageCapture {
 
 	}
 
-	public void endCapture() throws CaptureException {
+	public void endCapture() throws ImageCaptureException {
 		invokeZCL(ZCL_LIBRARY.INSTANCE.ZCLAbortImageReqAll(cameraHandle));
 		invokeZCL(ZCL_LIBRARY.INSTANCE.ZCLIsoRelease(cameraHandle));
 		invokeZCL(ZCL_LIBRARY.INSTANCE.ZCLClose(cameraHandle));
 	}
 
-	private boolean invokeZCL(boolean zcl_method_return) throws CaptureException{
+	private boolean invokeZCL(boolean zcl_method_return) throws ImageCaptureException{
 		if(!zcl_method_return){
-			CaptureException _e = new CaptureException(STATUS_RTNCODE.decodeStatus(ZCL_LIBRARY.INSTANCE.ZCLGetLastError()));
+			ImageCaptureException _e = new ImageCaptureException(STATUS_RTNCODE.decodeStatus(ZCL_LIBRARY.INSTANCE.ZCLGetLastError()));
 			throw (_e);
 		}
 		try {
@@ -257,7 +257,7 @@ public class XCD90ImageCapture implements GrayscaleImageCapture {
 			System.out.println("End");
 			System.exit(0);
 		}
-		catch(CaptureException _e){
+		catch(ImageCaptureException _e){
 			System.out.println("CaptureException : " + _e.getMessage());
 			_e.printStackTrace();
 			System.exit(1);
