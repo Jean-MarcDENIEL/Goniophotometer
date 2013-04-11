@@ -132,6 +132,8 @@ public class GoniophotoradiometerApplication {
 			Goniophotoradiometer	_gonio = new Goniophotoradiometer(_scheduler, _strategy, _arm, _turntable);
 			_gonio.performMeasurement();
 			
+			System.exit(0);
+			
 		}
 		catch(IOException _e){
 
