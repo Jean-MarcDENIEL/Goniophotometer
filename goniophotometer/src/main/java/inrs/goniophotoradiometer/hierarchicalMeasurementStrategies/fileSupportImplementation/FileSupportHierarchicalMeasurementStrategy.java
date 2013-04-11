@@ -2,7 +2,7 @@ package inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportI
 
 import java.io.File;
 import c4sci.io.SecuredFile;
-import c4sci.io.UncoherentStateFileException;
+import c4sci.io.UncoherentIOStateException;
 import c4sci.math.algebra.Floatings;
 import c4sci.math.geometry.plane.PlaneVector;
 
@@ -56,7 +56,7 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 					measurementDevice.loadMeasurementPart(meas_point, _part_name, _secured.readFile());
 					_secured.closeFile();
 				}
-				catch (UncoherentStateFileException _e){
+				catch (UncoherentIOStateException _e){
 					throw new RadiometryException("error loading " + _part_name + " measurement part.", _e);
 				}
 			}
@@ -71,7 +71,7 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 					measurementDevice.saveMeasurementPart(meas_point, _part_name, _secured.createNewFile());
 					_secured.closeFile();
 				}
-				catch(UncoherentStateFileException _e){
+				catch(UncoherentIOStateException _e){
 					throw new RadiometryException("error savign newly measured " + _part_name + " measurement part.", _e);
 				}
 			}
@@ -203,7 +203,7 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 					return false;
 				}
 			}
-			catch (UncoherentStateFileException _e) {
+			catch (UncoherentIOStateException _e) {
 				throw new RadiometryException("error verifying " + _part_name + " measurement part existance.", _e);
 			}
 		}
