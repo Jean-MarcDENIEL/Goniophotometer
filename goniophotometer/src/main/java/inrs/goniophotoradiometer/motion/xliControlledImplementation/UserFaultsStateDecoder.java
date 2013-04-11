@@ -1,9 +1,17 @@
 package inrs.goniophotoradiometer.motion.xliControlledImplementation;
 
+import c4sci.io.serial.SerialDevice;
+import c4sci.io.serial.SerialStateParsingException;
+
 class UserFaultsStateDecoder extends BitsPaquetsStateDecoder{
 	public void decodeState(String state_string,
-			XliControlledMotionEngine motion_engine)
-					throws StateParsingException {
-		decodeState(state_string, motion_engine.getUserFaultsTab());
+			SerialDevice motion_engine)
+					throws SerialStateParsingException {
+		try{
+			decodeState(state_string, ((XliControlledMotionEngine)motion_engine).getUserFaultsTab());
+		}
+		catch(ClassCastException _e){
+			throw new SerialStateParsingException("The serial device is not a Xli motion engine!", _e);
+		}
 	}
 }

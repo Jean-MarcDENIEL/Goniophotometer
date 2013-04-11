@@ -4,13 +4,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.TooManyListenersException;
 
-import gnu.io.CommPort;
+/*import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
+import gnu.io.SerialPortEventListener;*/
+
 import inrs.goniophotoradiometer.motion.MotionEngine;
+
+import c4sci.io.serial.SerialDevice;
+import c4sci.io.serial.SerialStateDecoder;
+import c4sci.io.serial.SerialStateParsingException;
 
 /**
  * This class implements a motion engine that is composed of a stepper motor driven through a Parker Xli controller.<br>
@@ -22,17 +27,16 @@ import inrs.goniophotoradiometer.motion.MotionEngine;
  * @author jeanmarc.deniel
  *
  */
-@SuppressWarnings("restriction")
-public final class XliControlledMotionEngine implements MotionEngine {
+public final class XliControlledMotionEngine extends SerialDevice implements MotionEngine {
 
-	private String			serialPortName;
+	//private String			serialPortName;
 	private int 			engineNumber;
 	private int				motorCurrent;
 	private int				motorStandbyCurrent;
 	private int 			motorResolution;
 	private int				reducerRatio;
-	private SerialPort		serialPort;
-	private int				delayBetweenSendsMilliSec;
+	//private SerialPort		serialPort;
+	//private int				delayBetweenSendsMilliSec;
 	private boolean			homingPositiveReferenceEdge;
 	private boolean			homeSwitchNormallyClosed;
 	private boolean			homePositiveSense;
@@ -78,8 +82,8 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	private boolean[]		statusBitsTab;
 	private boolean[]		userFaultsTab;
 
-	private StringBuffer	controllerReturnToDecode;
-	private StateDecoder	stateDecoderToUse;
+	//private StringBuffer		controllerReturnToDecode;
+	//private SerialStateDecoder	stateDecoderToUse;
 
 	/**
 	 * This class gets controller returns from the RS232 interface.
@@ -91,6 +95,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	 * @author jeanmarc.deniel
 	 *
 	 */
+	/*
 	private class EasiDecoder implements SerialPortEventListener {
 		private InputStream			decodedStream;
 
@@ -111,7 +116,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 				// if the message is a command result (i.e begins with '*') then it is decoded
 				//
 				if (getControllerReturnToDecode().charAt(0) == '*'){
-					StateDecoder _state_decoder = getStateDecoderToUse();
+					SerialStateDecoder _state_decoder = getStateDecoderToUse();
 					if (_state_decoder != null){
 						_state_decoder.decodeState(getControllerReturnToDecode().toString(), XliControlledMotionEngine.this);
 					}
@@ -119,12 +124,12 @@ public final class XliControlledMotionEngine implements MotionEngine {
 			}
 			catch(IOException _e){
 				_e.printStackTrace();
-			} catch (StateParsingException _e) {
+			} catch (SerialStateParsingException _e) {
 				_e.printStackTrace();
 			}
 
 		}
-	};
+	};*/
 
 	/**
 	 * 
@@ -134,15 +139,17 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	 */
 	public XliControlledMotionEngine(String serial_port_name, int count_per_rev, int rev_ratio){
 
+		super(serial_port_name, "\r\n", '\n', DEFAULT_DELAY_BETWEEN_SENDS_MILLISEC, DEFAULT_TIMEOUT_MILLISEC);
+		
 		driveFaultsTab	= new boolean[FLAG_COUNT];
 		statusBitsTab	= new boolean[FLAG_COUNT];
 		userFaultsTab	= new boolean[FLAG_COUNT];
-		serialPort		= null;
+		//serialPort		= null;
 
-		setControllerReturnToDecode(new StringBuffer());
+		//setControllerReturnToDecode(new StringBuffer());
 
 		setEngineNumber(1);
-		setSerialPortName(serial_port_name);
+		//setSerialPortName(serial_port_name);
 		setMotorResolution(count_per_rev);
 		setReducerRatio(rev_ratio);
 		setMotorCurrent(DEFAULT_MOTOR_CURRENT_PERCENT);
@@ -160,9 +167,9 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		setHomingAccelerationDecelerationRevPerSecond(convertFromDegreeToRev(DEFAULT_ACCELERATION_DEGREES_PER_SQUARE_SECOND));
 		
 
-		setDelayBetweenSendsMilliSec(DEFAULT_DELAY_BETWEEN_SENDS_MILLISEC);
+		//setDelayBetweenSendsMilliSec(DEFAULT_DELAY_BETWEEN_SENDS_MILLISEC);
 
-
+/*
 		try {
 			CommPortIdentifier _com_id = CommPortIdentifier.getPortIdentifier(getSerialPortName());
 			CommPort _com_port = _com_id.open("EngineMotion", DEFAULT_TIMEOUT_MILLISEC);
@@ -184,7 +191,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 			_e.printStackTrace();
 		} catch (IOException _e) {
 			_e.printStackTrace();
-		}
+		}*/
 
 		sendOrderAndSetDecoder(EasiVocabulary.TURN_ON);
 		sendOrderAndSetDecoder(EasiVocabulary.MODE_INCREMENTAL);
@@ -209,6 +216,12 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		setToZeroPosition();
 
 	}
+	
+	@Override
+	public boolean isACommandResult(String serial_return) {
+		return serial_return.charAt(0) == '*';
+	}
+	
 	private int getCountPerDegree() {
 		return (int)(((float)(getReducerRatio()*getMotorResolution()))/ONE_REV_DEGREES);
 	}
@@ -227,7 +240,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	 * 
 	 * @param order_to_send
 	 */
-	public void sendOrderAndSetDecoder(EasiVocabulary order_to_send){
+	/*public void sendOrderAndSetDecoder(EasiVocabulary order_to_send){
 		setStateDecoderToUse(order_to_send.getResultDecoder());
 
 		String _order_str = order_to_send.getCommandSequence(this);
@@ -245,13 +258,14 @@ public final class XliControlledMotionEngine implements MotionEngine {
 			_e.printStackTrace();
 		}
 
-	}
+	}*/
 
 	/**
 	 * Translates a {@link String} to an integer array. Appends "\r\n" in order to make the controller take into account this order.
 	 * @param order_str An order in READI language.
 	 * @return The corresponding integer array to send through the serial port.
 	 */
+	/*
 	int[] translateToPort(String order_str){
 		int[] _res = new int[order_str.length()+2];
 		int _i=0;
@@ -261,7 +275,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		_res[_i++] = '\r';
 		_res[_i++] = '\n';
 		return _res;
-	}
+	}*/
 
 	public float getVelocityThreshold() {
 		return velocityThreshold;
@@ -467,13 +481,13 @@ public final class XliControlledMotionEngine implements MotionEngine {
 		revPerSquareSecondDeceleration = rev_par_square_second_dec;
 	}
 
-	public String getSerialPortName() {
+	/*public String getSerialPortName() {
 		return serialPortName;
-	}
+	}*/
 
-	public void setSerialPortName(String serial_port_name) {
+	/*public void setSerialPortName(String serial_port_name) {
 		serialPortName = serial_port_name;
-	}
+	}*/
 
 	public int getActualTheoricalCountPosition() {
 		return actualTheoricalCountPosition;
@@ -574,39 +588,39 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	}
 
 
-	public StringBuffer getControllerReturnToDecode() {
+	/*public StringBuffer getControllerReturnToDecode() {
 		return controllerReturnToDecode;
-	}
+	}*/
 
 
-	public void setControllerReturnToDecode(StringBuffer controller_return_to_decode) {
+	/*public void setControllerReturnToDecode(StringBuffer controller_return_to_decode) {
 		this.controllerReturnToDecode = controller_return_to_decode;
-	}
+	}*/
 
 	/**
 	 * 
 	 * @return The {@link StateDecoder} to use to update the inner state, as soon as a return has been received from the controller.<br>
 	 * Returns null is there is no inner state to update.
 	 */
-	public synchronized StateDecoder getStateDecoderToUse() {
+	/*public synchronized SerialStateDecoder getStateDecoderToUse() {
 		return stateDecoderToUse;
-	}
+	}*/
 
 	/**
 	 * 
 	 * @param state_decoder_to_use null if there is no state to update.
 	 */
-	public synchronized void setStateDecoderToUse(StateDecoder state_decoder_to_use) {
+	/*public synchronized void setStateDecoderToUse(StateDecoder state_decoder_to_use) {
 		stateDecoderToUse = state_decoder_to_use;
-	}
+	}*/
 
-	public int getDelayBetweenSendsMilliSec() {
+	/*public int getDelayBetweenSendsMilliSec() {
 		return delayBetweenSendsMilliSec;
-	}
+	}*/
 
-	public void setDelayBetweenSendsMilliSec(int delay_between_sends_milli_sec) {
+	/*public void setDelayBetweenSendsMilliSec(int delay_between_sends_milli_sec) {
 		delayBetweenSendsMilliSec = delay_between_sends_milli_sec;
-	}
+	}*/
 
 	public void waitForEndOfMotionAndSetTheoricalAbsolutePosition() {
 		setInMovement(true);
@@ -672,6 +686,7 @@ public final class XliControlledMotionEngine implements MotionEngine {
 	public void setGoalTheoricalCountPosition(int goal_theorical_count_position) {
 		this.goalTheoricalCountPosition = goal_theorical_count_position;
 	}
+
 
 
 }
