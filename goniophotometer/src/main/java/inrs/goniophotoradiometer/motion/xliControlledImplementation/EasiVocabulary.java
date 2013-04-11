@@ -205,10 +205,6 @@ public enum EasiVocabulary implements SerialVocabulary {
 		public void decodeState(String state_string, SerialDevice motion_engine) throws SerialStateParsingException {
 			String _value_str = state_string.substring(1, state_string.length()-1);
 			try{
-				/*System.out.println("Read_Position_Absolute");
-				System.out.println("	Strings :" + state_string + ":" +_value_str);
-				System.out.println("	Passing from " + motion_engine.getActualTheoricalCountPosition() + " to " + Integer.parseInt(_value_str));*/
-				
 				((XliControlledMotionEngine)motion_engine).setActualTheoricalCountPosition(Integer.parseInt(_value_str));
 			}
 			catch(NumberFormatException _e){
@@ -223,7 +219,7 @@ public enum EasiVocabulary implements SerialVocabulary {
 	READ_POSITION_INCREMENTAL("R", new SerialStateDecoder(){
 
 		public void decodeState(String state_string, SerialDevice motion_engine) throws SerialStateParsingException {
-			String _value_str = state_string.substring(1, state_string.length()-2);
+			//String _value_str = state_string.substring(1, state_string.length()-2);
 			try{
 				//motion_engine.setActualCountIncremental(Integer.parseInt(_value_str));
 			}
@@ -306,9 +302,6 @@ public enum EasiVocabulary implements SerialVocabulary {
 	private String 				commandLabel;
 	private SerialStateDecoder	resultDecoder;
 
-	//private EasiVocabulary() {
-	//}
-	
 	EasiVocabulary(String cmd_label){
 		commandLabel 	= cmd_label;
 		resultDecoder	=	null;
@@ -346,14 +339,6 @@ public enum EasiVocabulary implements SerialVocabulary {
 	public String getCommandState(SerialDevice motion_engine){
 		return ""+((XliControlledMotionEngine)motion_engine).getEngineNumber()+getLabel();
 	}
-	/**
-	 * 
-	 * @param motion_engine the {@link MotionEngine} to take into account.
-	 * @return The complete "set" sequence.
-	 */
-	/*public String getCommandSequence(XliControlledMotionEngine motion_engine){
-		return getCommandState(motion_engine)+getCommandParameters(motion_engine);
-	}*/
 
 	private static final float DEC_TEN			= 10.0f; 
 
