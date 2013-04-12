@@ -5,20 +5,23 @@ import inrs.goniophotoradiometer.illuminanceCapture.LuxMeter;
 
 public class AhlbornLuxMeter extends SerialDevice implements LuxMeter {
 
-	
+	private String		measurementChannel;
+	private float		measurementValue;
 	
 	
 	public AhlbornLuxMeter(String serial_port_name, String command_string_end,
 			char command_result_end, int delay_between_sends_millisec,
-			int timeout_millisec) {
+			int timeout_millisec, String measurement_channel) {
 		super(serial_port_name, command_string_end, command_result_end,
 				delay_between_sends_millisec, timeout_millisec);
-		// TODO Auto-generated constructor stub
+		setMeasurementChannel(measurement_channel);
+		
+		sendOrderAndSetDecoder(AlmenoVocabulary.MEASUREMENT_CHANNEL_CHOICE);
 	}
 
 	public float captureIlluminance() throws IlluminanceException {
-		// TODO Auto-generated method stub
-		return 0;
+		sendOrderAndSetDecoder(AlmenoVocabulary.MEASUREMENT_VALUE);
+		return getMeasurementValue();
 	}
 
 	@Override
@@ -26,21 +29,57 @@ public class AhlbornLuxMeter extends SerialDevice implements LuxMeter {
 		return true;
 	}
 	
+	public String getMeasurementChannel() {
+		return measurementChannel;
+	}
+
+	private void setMeasurementChannel(String measurement_channel) {
+		this.measurementChannel = measurement_channel;
+	}
+
 	public static void main(String main_args[]){
+		
 		System.out.println("Ouverture du luxmetre");
-		AhlbornLuxMeter _luxmeter = new AhlbornLuxMeter("COM2", "\r\n", '\n', 350, 100);
+		AhlbornLuxMeter _luxmeter = new AhlbornLuxMeter("COM2", "\r\n", '\n', 350, 100,"00");
+		
 		System.out.println("System overview");
 		_luxmeter.sendOrderAndSetDecoder(AlmenoVocabulary.SYSTEM_OVERVIEW);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {}
+		
+		System.out.println("Measurement choice");
+		_luxmeter.sendOrderAndSetDecoder(AlmenoVocabulary.MEASUREMENT_CHANNEL_CHOICE);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {}
+
+		System.out.println("Measurement");
+		System.out.println("before : " + _luxmeter.getMeasurementValue());
+		try {
+			System.out.println("after : " + _luxmeter.captureIlluminance());
+		} catch (IlluminanceException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {}
 
 		
 		try {
 			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (InterruptedException e) {}
 		System.out.println("End");
 		System.exit(0);
+	}
+
+	public float getMeasurementValue() {
+		return measurementValue;
+	}
+
+	public void setMeasurementValue(float measurementValue) {
+		this.measurementValue = measurementValue;
 	}
 
 }
