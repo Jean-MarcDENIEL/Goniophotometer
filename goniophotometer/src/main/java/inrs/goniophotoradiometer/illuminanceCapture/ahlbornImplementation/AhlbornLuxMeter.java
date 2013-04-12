@@ -1,12 +1,15 @@
 package inrs.goniophotoradiometer.illuminanceCapture.ahlbornImplementation;
 
 import c4sci.io.serial.SerialDevice;
+import c4sci.math.algebra.Floatings;
 import inrs.goniophotoradiometer.illuminanceCapture.LuxMeter;
 
 public class AhlbornLuxMeter extends SerialDevice implements LuxMeter {
 
-	private String		measurementChannel;
-	private float		measurementValue;
+	private String				measurementChannel;
+	private float				measurementValue;
+	
+	private static final float	LUX_LIMIT = 25000f; 
 	
 	
 	public AhlbornLuxMeter(String serial_port_name, String command_string_end,
@@ -21,7 +24,11 @@ public class AhlbornLuxMeter extends SerialDevice implements LuxMeter {
 
 	public float captureIlluminance() throws IlluminanceException {
 		sendOrderAndSetDecoder(AlmenoVocabulary.MEASUREMENT_VALUE);
-		return getMeasurementValue();
+		float _res = getMeasurementValue();
+		if (Floatings.isGreaterEqual(_res, LUX_LIMIT)){
+			throw new IlluminanceException("Illuminance limit reached!");
+		}
+		return _res;
 	}
 
 	@Override
@@ -68,13 +75,13 @@ public class AhlbornLuxMeter extends SerialDevice implements LuxMeter {
 
 		
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(30);
 		} catch (InterruptedException e) {}
 		System.out.println("End");
 		System.exit(0);
 	}
 
-	public float getMeasurementValue() {
+	private float getMeasurementValue() {
 		return measurementValue;
 	}
 
