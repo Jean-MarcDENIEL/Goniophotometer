@@ -2,6 +2,10 @@ package inrs.goniophotoradiometer.spectralIrradianceCapture.avantesImplementatio
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.DoubleByReference;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.ShortByReference;
 
 public interface AvantesLibrary extends Library {
 	AvantesLibrary INSTANCE = (AvantesLibrary) Native.loadLibrary("as5216", AvantesLibrary.class);
@@ -20,5 +24,16 @@ public interface AvantesLibrary extends Library {
 	int AVS_Init(short a_port);
 	int AVS_Done();
 	int AVS_GetNrOfDevices();
+	int AVS_GetList(int	a_ListSize, IntByReference a_pRequiredSize, AvsIdentityType a_pList[]);
+	int AVS_Activate(AvsIdentityType a_pDeviceId);
+	int AVS_Deactivate(long a_hDeviceId);
+	byte AVS_Register(int a_hWnd);
+	int AVS_PrepareMeasure(long a_hDevice, MeasConfigType a_pMeasConfig);
+	int AVS_Measure(long a_hDevice, int a_hWnd, short a_Nmsr);
+	int AVS_GetLambda(long a_hDevice, double[] a_pWavelength);
+	int AVS_GetNumPixels(long a_hDevice, IntByReference a_pNumPixels);
+	int AVS_GetParameter(long a_hDevice, int a_Size, IntByReference a_pRequiredSize, DeviceConfigType a_pData);
+	
+	public static final int 	DEFAULT_HWINDOW	= 1;
 	
 }
