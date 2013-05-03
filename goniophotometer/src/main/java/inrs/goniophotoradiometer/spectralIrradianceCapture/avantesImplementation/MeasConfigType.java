@@ -7,8 +7,8 @@ import com.sun.jna.Structure;
 
 public class MeasConfigType extends Structure {
 
-	public short 				m_StartPixel;
-	public short 				m_StopPixel;
+	public char 				m_StartPixel;
+	public char 				m_StopPixel;
 	public float				m_IntegrationTime;
 	public int					m_IntegrationDelay;
 	

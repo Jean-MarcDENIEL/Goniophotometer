@@ -1,6 +1,8 @@
 package inrs.goniophotoradiometer.spectralIrradianceCapture.avantesImplementation;
 
+import com.sun.jna.NativeLong;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.ShortByReference;
 
 public class AvantesTesting {
 	
@@ -36,9 +38,10 @@ public class AvantesTesting {
 			System.out.println("");
 		}
 		
-		long _handle;
-		testAVSFunction("AVS_Activate", (int) (_handle = AvantesLibrary.INSTANCE.AVS_Activate(_p_list[0])));
-		if (_handle == 1000L){
+		NativeLong _handle = new NativeLong(0);
+		_handle.setValue(AvantesLibrary.INSTANCE.AVS_Activate(_p_list[0]));
+		testAVSFunction("AVS_Activate", (int) ( _handle.longValue()));
+		if (_handle.longValue() == 1000L){
 			System.out.println("INVALID_AVS_HANDLE_VALUE");
 			System.exit(1);
 		}
@@ -52,22 +55,23 @@ public class AvantesTesting {
 		//testAVSFunction("AVS_GetVersionInfo", AvantesLibrary.INSTANCE.AVS_GetVersionInfo(_handle, _FPGAVersion, _FirmwareVersion, _DLLVersion));
 		
 		//ShortByReference _pixel_count = new ShortByReference();
-		short _pixel_count;
-			
-		testAVSFunction("Use_AVS_GetNumPixels", _pixel_count = (short) UseAvantesLibrary.INSTANCE.Use_AVS_GetNumPixels(_handle));
-		System.out.println("   Pixel count = " + _pixel_count);
+		ShortByReference _pixel_count = new ShortByReference((short) 35);
+		
+		
+		testAVSFunction("AVS_GetNumPixels", AvantesLibrary.INSTANCE.AVS_GetNumPixels(_handle, _pixel_count));
+		System.out.println("   Pixel count = " + _pixel_count.getValue());
 			
 		MeasConfigType _meas_config = new MeasConfigType();
 		_meas_config.m_StartPixel 			= 100;
 		_meas_config.m_StopPixel 			= 400;
 		_meas_config.m_IntegrationTime		= 1000f;						// 1000 ms
-		_meas_config.m_IntegrationDelay		= 1;							// FPGA clock cycles
+		_meas_config.m_IntegrationDelay		= 0;							// FPGA clock cycles
 		_meas_config.m_NrAverages			= 1;
 		_meas_config.m_CorDynDark.m_Enable	= 0;
 		_meas_config.m_CorDynDark.m_ForgetPercentage = 0;
 		_meas_config.m_Smoothing.m_SmoothPix = 0;
 		_meas_config.m_Smoothing.m_SmoothModel	= 0;
-		_meas_config.m_SaturationDetection	= 1;
+		_meas_config.m_SaturationDetection	= 0;
 		_meas_config.m_Trigger.m_Mode		= 0;
 		_meas_config.m_Trigger.m_Source		= 0;
 		_meas_config.m_Trigger.m_SourceType	= 0;
@@ -76,7 +80,32 @@ public class AvantesTesting {
 		_meas_config.m_Control.m_LaserWidth		= 0;
 		_meas_config.m_Control.m_LaserWaveLength	= 0f;
 		_meas_config.m_Control.m_StoreToRam			= 0;
-		testAVSFunction("AVS_PrepareMeasure", AvantesLibrary.INSTANCE.AVS_PrepareMeasure(_handle, _meas_config));
+		testAVSFunction("AVs_PrepareMEasure", AvantesLibrary.INSTANCE.AVS_PrepareMeasure(_handle, _meas_config));
+		testAVSFunction("Use_AVS_PrepareMeasure", UseAvantesLibrary.INSTANCE.Use_AVS_PrepareMeasure(_handle, 
+				(short)100, 		// start pixel
+				(short)500,	// stop pixel	
+					
+				(float)200.0,	// integration time
+				0,				// integration delay
+				1,				// nr averages
+				
+				(byte)0,		// dark enable
+				(byte)0,		// dark percentage
+				
+				(short)0,		// smoothing width
+				(byte)0,		// smoothing model
+				
+				(byte)0,		// saturation detection
+				
+				(byte)0,		// trigger mode
+				(byte)0,		// trigger source
+				(byte)0,		// trigger source type
+				
+				(short)0,		// strobe control
+				0,				// laser delay
+				0,				// laser width
+				0f,				// laser wavelength
+				(short)0));		// store to ram
 		
 		//DeviceConfigType 	_parameter_data = new DeviceConfigType();
 		//IntByReference		_desired_size = new IntByReference();

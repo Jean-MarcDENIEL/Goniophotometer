@@ -4,8 +4,7 @@ import java.nio.ByteBuffer;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.DoubleByReference;
+import com.sun.jna.NativeLong;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.ShortByReference;
 
@@ -32,14 +31,14 @@ public interface AvantesLibrary extends Library {
 	int AVS_Activate(AvsIdentityType a_pDeviceId);
 	int AVS_Activate(byte[] a_pDeviceId);
 	int AVS_Activate(ByteBuffer a_pDeviceId);
-	int AVS_Deactivate(long a_hDeviceId);
+	int AVS_Deactivate(NativeLong a_hDeviceId);
 	byte AVS_Register(int a_hWnd);
-	int AVS_PrepareMeasure(long a_hDevice, MeasConfigType a_pMeasConfig);
-	int AVS_Measure(long a_hDevice, int a_hWnd, short a_Nmsr);
-	int AVS_GetLambda(long a_hDevice, double[] a_pWavelength);
-	int AVS_GetNumPixels(long a_hDevice, ShortByReference a_pNumPixels);
-	int AVS_GetParameter(long a_hDevice, int a_Size, IntByReference a_pRequiredSize, DeviceConfigType a_pData);
-	int AVS_GetVersionInfo(long a_hDevice, byte[] a_pFPGAVersion, byte[] a_pFirmwareVersion, byte[] a_pDLLVersion);
+	int AVS_PrepareMeasure(NativeLong a_hDevice, MeasConfigType a_pMeasConfig);
+	int AVS_Measure(NativeLong a_hDevice, int a_hWnd, short a_Nmsr);
+	int AVS_GetLambda(NativeLong a_hDevice, double[] a_pWavelength);
+	int AVS_GetNumPixels(NativeLong a_hDevice, ShortByReference a_pNumPixels);
+	int AVS_GetParameter(NativeLong a_hDevice, int a_Size, IntByReference a_pRequiredSize, DeviceConfigType a_pData);
+	int AVS_GetVersionInfo(NativeLong a_hDevice, byte[] a_pFPGAVersion, byte[] a_pFirmwareVersion, byte[] a_pDLLVersion);
 	
 	public static final int 	DEFAULT_HWINDOW	= 1;
 	
