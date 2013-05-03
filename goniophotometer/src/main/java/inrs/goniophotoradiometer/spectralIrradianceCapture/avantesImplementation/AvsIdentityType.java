@@ -22,4 +22,8 @@ public class AvsIdentityType extends Structure {
 	public static final int		STATUS_AVAILABLE				= 1;
 	public static final int		STATUS_IN_USE_BY_APPLICATION	= 2;
 	public static final int		STATUS_IN_USE_BY_OTHER			= 3;
+	
+	public AvsIdentityType(){
+		super(Structure.ALIGN_NONE);
+	}
 }

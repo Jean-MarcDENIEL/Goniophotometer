@@ -1,7 +1,6 @@
 package inrs.goniophotoradiometer.spectralIrradianceCapture.avantesImplementation;
 
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.ShortByReference;
 
 public class AvantesTesting {
 	
@@ -27,28 +26,61 @@ public class AvantesTesting {
 			System.out.println("   status : " + _id_type.m_Status);
 			System.out.print  ("   serial : ");
 			for (byte _serial_byte : _id_type.m_aSerial){
-				System.out.print(" " + (char)_serial_byte);
+				System.out.print("" + (char)_serial_byte);
 			}
 			System.out.println("");
 			System.out.print  ("   user friendly id : ");
 			for (byte _id_byte : _id_type.m_aUserFriendlyId){
-				System.out.print(" " + (char)_id_byte);
+				System.out.print("" + (char)_id_byte);
 			}
 			System.out.println("");
 		}
 		
 		long _handle;
 		testAVSFunction("AVS_Activate", (int) (_handle = AvantesLibrary.INSTANCE.AVS_Activate(_p_list[0])));
+		if (_handle == 1000L){
+			System.out.println("INVALID_AVS_HANDLE_VALUE");
+			System.exit(1);
+		}
 		
 		
-		testAVSFunction("AVS_Register", AvantesLibrary.INSTANCE.AVS_Register(AvantesLibrary.DEFAULT_HWINDOW));
+		//testAVSFunction("AVS_Register", AvantesLibrary.INSTANCE.AVS_Register(AvantesLibrary.DEFAULT_HWINDOW));
 		
-		//IntByReference _pixel_count = new IntByReference();
-		//testAVSFunction("AVS_GetNumPixels", AvantesLibrary.INSTANCE.AVS_GetNumPixels(_handle, _pixel_count));
+		byte[] _FPGAVersion 	= new byte[16];
+		byte[] _FirmwareVersion	= new byte[16];
+		byte[] _DLLVersion		= new byte[16];
+		//testAVSFunction("AVS_GetVersionInfo", AvantesLibrary.INSTANCE.AVS_GetVersionInfo(_handle, _FPGAVersion, _FirmwareVersion, _DLLVersion));
 		
-		DeviceConfigType 	_parameter_data = new DeviceConfigType();
-		IntByReference		_desired_size = new IntByReference();
-		testAVSFunction("AVS_GetParameter", AvantesLibrary.INSTANCE.AVS_GetParameter(_handle, 0, _desired_size, _parameter_data));
+		//ShortByReference _pixel_count = new ShortByReference();
+		short _pixel_count;
+			
+		testAVSFunction("Use_AVS_GetNumPixels", _pixel_count = (short) UseAvantesLibrary.INSTANCE.Use_AVS_GetNumPixels(_handle));
+		System.out.println("   Pixel count = " + _pixel_count);
+			
+		MeasConfigType _meas_config = new MeasConfigType();
+		_meas_config.m_StartPixel 			= 100;
+		_meas_config.m_StopPixel 			= 400;
+		_meas_config.m_IntegrationTime		= 1000f;						// 1000 ms
+		_meas_config.m_IntegrationDelay		= 1;							// FPGA clock cycles
+		_meas_config.m_NrAverages			= 1;
+		_meas_config.m_CorDynDark.m_Enable	= 0;
+		_meas_config.m_CorDynDark.m_ForgetPercentage = 0;
+		_meas_config.m_Smoothing.m_SmoothPix = 0;
+		_meas_config.m_Smoothing.m_SmoothModel	= 0;
+		_meas_config.m_SaturationDetection	= 1;
+		_meas_config.m_Trigger.m_Mode		= 0;
+		_meas_config.m_Trigger.m_Source		= 0;
+		_meas_config.m_Trigger.m_SourceType	= 0;
+		_meas_config.m_Control.m_StrobeControl	= 0;
+		_meas_config.m_Control.m_LaserDelay		= 0;
+		_meas_config.m_Control.m_LaserWidth		= 0;
+		_meas_config.m_Control.m_LaserWaveLength	= 0f;
+		_meas_config.m_Control.m_StoreToRam			= 0;
+		testAVSFunction("AVS_PrepareMeasure", AvantesLibrary.INSTANCE.AVS_PrepareMeasure(_handle, _meas_config));
+		
+		//DeviceConfigType 	_parameter_data = new DeviceConfigType();
+		//IntByReference		_desired_size = new IntByReference();
+		//testAVSFunction("AVS_GetParameter", AvantesLibrary.INSTANCE.AVS_GetParameter(_handle, 0, _desired_size, _parameter_data));
 		
 		testAVSFunction("AVS_Deactivate", AvantesLibrary.INSTANCE.AVS_Deactivate(_handle));
 		

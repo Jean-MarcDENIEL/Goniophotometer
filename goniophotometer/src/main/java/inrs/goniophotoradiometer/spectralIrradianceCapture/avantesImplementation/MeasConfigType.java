@@ -31,6 +31,7 @@ public class MeasConfigType extends Structure {
 	}
 
 	public MeasConfigType(){
+		super(Structure.ALIGN_NONE);
 		m_CorDynDark 	= new DarkCorrectionType();
 		m_Smoothing 	= new SmoothingType();
 		m_Trigger		= new TriggerType();
