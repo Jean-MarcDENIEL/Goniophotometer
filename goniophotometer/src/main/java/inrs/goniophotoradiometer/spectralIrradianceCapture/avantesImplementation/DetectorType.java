@@ -31,6 +31,7 @@ public class DetectorType extends Structure {
 	}
 	
 	public DetectorType(){
+		super(Structure.ALIGN_NONE);
 		m_aFit 				= new float[5];
 		m_aNLCorrect		= new double[8];
 		m_Gain				= new float[2];

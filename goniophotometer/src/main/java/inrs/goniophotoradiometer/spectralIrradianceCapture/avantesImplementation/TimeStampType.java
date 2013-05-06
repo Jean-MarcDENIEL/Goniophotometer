@@ -15,5 +15,9 @@ public class TimeStampType extends Structure {
 	protected List getFieldOrder() {
 		return Arrays.asList(new String[] {"m_Date", "m_Time"});
 	}
+	
+	public TimeStampType(){
+		super(Structure.ALIGN_NONE);
+	}
 
 }

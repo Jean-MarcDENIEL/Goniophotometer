@@ -29,8 +29,7 @@ public interface AvantesLibrary extends Library {
 	int AVS_GetList(int	a_ListSize, IntByReference a_pRequiredSize, byte[] a_pList);
 	int AVS_GetList(int	a_ListSize, IntByReference a_pRequiredSize, ByteBuffer a_pList);
 	int AVS_Activate(AvsIdentityType a_pDeviceId);
-	int AVS_Activate(byte[] a_pDeviceId);
-	int AVS_Activate(ByteBuffer a_pDeviceId);
+	int AVS_UseHighResAdc(NativeLong a_hDevice, int enable_16bits_Adc);
 	int AVS_Deactivate(NativeLong a_hDeviceId);
 	byte AVS_Register(int a_hWnd);
 	int AVS_PrepareMeasure(NativeLong a_hDevice, MeasConfigType a_pMeasConfig);
@@ -40,6 +39,7 @@ public interface AvantesLibrary extends Library {
 	int AVS_GetParameter(NativeLong a_hDevice, int a_Size, IntByReference a_pRequiredSize, DeviceConfigType a_pData);
 	int AVS_GetVersionInfo(NativeLong a_hDevice, byte[] a_pFPGAVersion, byte[] a_pFirmwareVersion, byte[] a_pDLLVersion);
 	int AVS_PollScan(NativeLong a_hDevice);
+	int AVS_GetScopeData(NativeLong a_hDevice, IntByReference a_pTimeLabel, double[] a_pSpectrum);
 	
 	public static final int 	DEFAULT_HWINDOW	= 1;
 	

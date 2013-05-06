@@ -17,6 +17,7 @@ public class SmoothingType extends Structure {
 	}
 
 	public SmoothingType(){
+		super(Structure.ALIGN_NONE);
 		m_SmoothPix		= 0;
 		m_SmoothModel	= 0;
 	}

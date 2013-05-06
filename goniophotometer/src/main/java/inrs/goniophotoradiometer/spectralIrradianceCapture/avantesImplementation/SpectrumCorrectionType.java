@@ -16,6 +16,7 @@ public class SpectrumCorrectionType extends Structure {
 	}
 	
 	public SpectrumCorrectionType(){
+		super(Structure.ALIGN_NONE);
 		m_aSpectrumCorrect = new float[4096];
 	}
 

@@ -19,6 +19,7 @@ public class StandaloneType extends Structure {
 	}
 	
 	public StandaloneType(){
+		super(Structure.ALIGN_NONE);
 		m_Meas		= new MeasConfigType();
 		m_SDCard	= new SDCardType();
 	}

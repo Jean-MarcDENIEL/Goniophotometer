@@ -31,6 +31,8 @@ public class DeviceConfigType extends Structure {
 	}
 	
 	public DeviceConfigType(){
+		super(Structure.ALIGN_NONE);
+		
 		m_aUserFriendlyId		= new byte[64];
 		m_Detector				= new DetectorType();
 		m_Irradiance			= new IrradianceType();

@@ -11,12 +11,14 @@ public class TriggerType extends Structure {
 	public byte	m_Source;
 	public byte	m_SourceType;
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected List getFieldOrder() {
 		return Arrays.asList(new String[] {"m_Mode", "m_Source", "m_SourceType"});
 	}
 
 	public TriggerType(){
+		super(Structure.ALIGN_NONE);
 		m_Mode			= 0;
 		m_Source		= 1;
 		m_SourceType	= 1;

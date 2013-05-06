@@ -20,6 +20,7 @@ public class ProcessControlType extends Structure {
 
 	
 	public ProcessControlType(){
+		super(Structure.ALIGN_NONE);
 		m_AnalogLow		= new float[2];
 		m_AnalogHigh	= new float[2];
 		m_DigitalLow	= new float[10];

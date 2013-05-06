@@ -46,6 +46,7 @@ public class AvantesTesting {
 			System.exit(1);
 		}
 		
+		testAVSFunction("AVS_UseHighResAdc", AvantesLibrary.INSTANCE.AVS_UseHighResAdc(_handle, 1));
 		
 		testAVSFunction("AVS_Register", AvantesLibrary.INSTANCE.AVS_Register(AvantesLibrary.DEFAULT_HWINDOW));
 		
@@ -62,8 +63,8 @@ public class AvantesTesting {
 		System.out.println("   Pixel count = " + _pixel_count.getValue());
 			
 		MeasConfigType _meas_config = new MeasConfigType();
-		_meas_config.m_StartPixel 			= 100;
-		_meas_config.m_StopPixel 			= 400;
+		_meas_config.m_StartPixel 			= 0;
+		_meas_config.m_StopPixel 			= (char) (_pixel_count.getValue() - 1);
 		_meas_config.m_IntegrationTime		= 1000f;						// 1000 ms
 		_meas_config.m_IntegrationDelay		= 0;							// FPGA clock cycles
 		_meas_config.m_NrAverages			= 1;
@@ -84,13 +85,36 @@ public class AvantesTesting {
 
 		testAVSFunction("AVS_Measure", AvantesLibrary.INSTANCE.AVS_Measure(_handle, AvantesLibrary.DEFAULT_HWINDOW, (short)1));
 		
-		//DeviceConfigType 	_parameter_data = new DeviceConfigType();
-		//IntByReference		_desired_size = new IntByReference();
-		//testAVSFunction("AVS_GetParameter", AvantesLibrary.INSTANCE.AVS_GetParameter(_handle, 0, _desired_size, _parameter_data));
+		DeviceConfigType 	_parameter_data = new DeviceConfigType();
+		IntByReference		_desired_size = new IntByReference();
+		AvantesLibrary.INSTANCE.AVS_GetParameter(_handle, 0, _desired_size, _parameter_data);
+		System.out.println("  desired size of parameter data : " + _desired_size.getValue());
+		testAVSFunction("AVS_GetParameter", AvantesLibrary.INSTANCE.AVS_GetParameter(_handle, _desired_size.getValue(), _desired_size, _parameter_data));
+		System.out.println("   -> m_Len : " + _parameter_data.m_Len);
+		System.out.print("   ->useFriendly : ");
+		for (byte _friendly : _parameter_data.m_aUserFriendlyId){
+			System.out.print((char)_friendly);
+		}
+		System.out.println("");
+
+		DetectorType _detector = _parameter_data.m_Detector;
+		System.out.println("    -> type : " + _detector.m_SensorType);
+		System.out.println("    -> nrPixel : " + _detector.m_NrPixels);
+		for (int _i=0; _i<5; _i++){
+			System.out.println("   -> wvl poly : " + _detector.m_aFit[_i]);
+		}
+		
 		
 		testAVSFunction("AVs_PollScan", AvantesLibrary.INSTANCE.AVS_PollScan(_handle));	
-		Thread.sleep(1500);
+		Thread.sleep(4500);
 		testAVSFunction("AVS_PollScan", AvantesLibrary.INSTANCE.AVS_PollScan(_handle));
+		
+		double _meas_result[] = new double[_pixel_count.getValue()];
+		IntByReference _time_stamp = new IntByReference();
+		testAVSFunction("AVS_GetScopeData", AvantesLibrary.INSTANCE.AVS_GetScopeData(_handle, _time_stamp, _meas_result));
+		for (double _val : _meas_result){
+			System.out.println("    "  + _val);
+		}
 		
 		testAVSFunction("AVS_Deactivate", AvantesLibrary.INSTANCE.AVS_Deactivate(_handle));
 		

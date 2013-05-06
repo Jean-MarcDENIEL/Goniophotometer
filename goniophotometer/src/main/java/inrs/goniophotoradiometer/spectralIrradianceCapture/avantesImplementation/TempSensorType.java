@@ -16,6 +16,7 @@ public class TempSensorType extends Structure {
 	}
 	
 	public TempSensorType(){
+		super(Structure.ALIGN_NONE);
 		m_aFit = new float[5];
 	}
 

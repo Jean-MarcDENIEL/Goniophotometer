@@ -19,6 +19,7 @@ public class SpectrumCalibrationType extends Structure {
 	}
 	
 	public SpectrumCalibrationType(){
+		super(Structure.ALIGN_NONE);
 		m_Smoothing 	= new SmoothingType();
 		m_aCalibConvers	= new float[4096];
 	}

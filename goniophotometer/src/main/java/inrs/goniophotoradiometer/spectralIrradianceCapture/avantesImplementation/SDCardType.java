@@ -19,6 +19,7 @@ public class SDCardType extends Structure {
 	}
 
 	public SDCardType(){
+		super(Structure.ALIGN_NONE);
 		m_aFileRootName = new byte[6];
 		m_TimeStamp		= new TimeStampType();
 	}

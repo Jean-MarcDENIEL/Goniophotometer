@@ -18,6 +18,7 @@ public class IrradianceType extends Structure {
 	}
 	
 	public IrradianceType(){
+		super(Structure.ALIGN_NONE);
 		m_IntensityCalib = new SpectrumCalibrationType();
 	}
 

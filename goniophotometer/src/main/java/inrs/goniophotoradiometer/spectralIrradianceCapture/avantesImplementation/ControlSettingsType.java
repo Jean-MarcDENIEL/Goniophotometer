@@ -13,12 +13,14 @@ public class ControlSettingsType extends Structure {
 	public float	m_LaserWaveLength;
 	public short	m_StoreToRam;
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected List getFieldOrder() {
 		return Arrays.asList(new String[] {"m_StrobeControl", "m_LaserDelay", "m_LaserWidth", "m_LaserWaveLength", "m_StoreToRam"});
 	}
 
 	public ControlSettingsType(){
+		super(Structure.ALIGN_NONE);
 		m_StrobeControl		= 0;
 		m_LaserDelay		= 0;
 		m_LaserWidth		= 0;

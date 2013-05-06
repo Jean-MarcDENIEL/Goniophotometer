@@ -18,6 +18,7 @@ public class TecControlType extends Structure {
 	}
 	
 	public TecControlType(){
+		super(Structure.ALIGN_NONE);
 		m_aFit = new float[2];
 	}
 
