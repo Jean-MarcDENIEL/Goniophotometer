@@ -39,6 +39,7 @@ public interface AvantesLibrary extends Library {
 	int AVS_GetNumPixels(NativeLong a_hDevice, ShortByReference a_pNumPixels);
 	int AVS_GetParameter(NativeLong a_hDevice, int a_Size, IntByReference a_pRequiredSize, DeviceConfigType a_pData);
 	int AVS_GetVersionInfo(NativeLong a_hDevice, byte[] a_pFPGAVersion, byte[] a_pFirmwareVersion, byte[] a_pDLLVersion);
+	int AVS_PollScan(NativeLong a_hDevice);
 	
 	public static final int 	DEFAULT_HWINDOW	= 1;
 	

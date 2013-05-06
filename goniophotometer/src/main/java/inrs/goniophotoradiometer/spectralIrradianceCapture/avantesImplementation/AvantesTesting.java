@@ -6,7 +6,7 @@ import com.sun.jna.ptr.ShortByReference;
 
 public class AvantesTesting {
 	
-	public static void main(String[] str_args){
+	public static void main(String[] str_args) throws InterruptedException{
 		
 		int _device_init;
 		short _init_param = (short)0;
@@ -47,7 +47,7 @@ public class AvantesTesting {
 		}
 		
 		
-		//testAVSFunction("AVS_Register", AvantesLibrary.INSTANCE.AVS_Register(AvantesLibrary.DEFAULT_HWINDOW));
+		testAVSFunction("AVS_Register", AvantesLibrary.INSTANCE.AVS_Register(AvantesLibrary.DEFAULT_HWINDOW));
 		
 		byte[] _FPGAVersion 	= new byte[16];
 		byte[] _FirmwareVersion	= new byte[16];
@@ -80,36 +80,17 @@ public class AvantesTesting {
 		_meas_config.m_Control.m_LaserWidth		= 0;
 		_meas_config.m_Control.m_LaserWaveLength	= 0f;
 		_meas_config.m_Control.m_StoreToRam			= 0;
-		testAVSFunction("AVs_PrepareMEasure", AvantesLibrary.INSTANCE.AVS_PrepareMeasure(_handle, _meas_config));
-		testAVSFunction("Use_AVS_PrepareMeasure", UseAvantesLibrary.INSTANCE.Use_AVS_PrepareMeasure(_handle, 
-				(short)100, 		// start pixel
-				(short)500,	// stop pixel	
-					
-				(float)200.0,	// integration time
-				0,				// integration delay
-				1,				// nr averages
-				
-				(byte)0,		// dark enable
-				(byte)0,		// dark percentage
-				
-				(short)0,		// smoothing width
-				(byte)0,		// smoothing model
-				
-				(byte)0,		// saturation detection
-				
-				(byte)0,		// trigger mode
-				(byte)0,		// trigger source
-				(byte)0,		// trigger source type
-				
-				(short)0,		// strobe control
-				0,				// laser delay
-				0,				// laser width
-				0f,				// laser wavelength
-				(short)0));		// store to ram
+		testAVSFunction("AVS_PrepareMEasure", AvantesLibrary.INSTANCE.AVS_PrepareMeasure(_handle, _meas_config));
+
+		testAVSFunction("AVS_Measure", AvantesLibrary.INSTANCE.AVS_Measure(_handle, AvantesLibrary.DEFAULT_HWINDOW, (short)1));
 		
 		//DeviceConfigType 	_parameter_data = new DeviceConfigType();
 		//IntByReference		_desired_size = new IntByReference();
 		//testAVSFunction("AVS_GetParameter", AvantesLibrary.INSTANCE.AVS_GetParameter(_handle, 0, _desired_size, _parameter_data));
+		
+		testAVSFunction("AVs_PollScan", AvantesLibrary.INSTANCE.AVS_PollScan(_handle));	
+		Thread.sleep(1500);
+		testAVSFunction("AVS_PollScan", AvantesLibrary.INSTANCE.AVS_PollScan(_handle));
 		
 		testAVSFunction("AVS_Deactivate", AvantesLibrary.INSTANCE.AVS_Deactivate(_handle));
 		
