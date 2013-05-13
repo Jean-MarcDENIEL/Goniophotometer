@@ -43,4 +43,5 @@ public interface AvantesLibrary extends Library {
 	
 	public static final int 	DEFAULT_HWINDOW	= 1;
 	
+	public static final short 	USB_PORT = 0;
 }
