@@ -21,6 +21,7 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 	private static final float				MAX_RELATIVE_LEVEL			= 0.90f;
 	private static final float				MIN_RELATIVE_LEVEL			= 0.75f;
 
+
 	
 	static{
 		try{
@@ -79,16 +80,19 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 	private float				integrationTimeMillisec;
 	private float				minIntegrationTimeMillisec;
 	private float				maxIntegrationTimeMillisec;
+	private float				measurementTimeMillisec;
 	
 	@SuppressWarnings("unused")
 	private AvantesSpectorRadiometer(){}
 	
 	public AvantesSpectorRadiometer(String device_name, 
 			float min_integration_time_millisec, 
-			float max_integration_time_millisec) 
+			float max_integration_time_millisec,
+			float meas_time_millisec) 
 					throws RadiometryException{
 		minIntegrationTimeMillisec	= min_integration_time_millisec;
 		maxIntegrationTimeMillisec	= max_integration_time_millisec;
+		measurementTimeMillisec		= meas_time_millisec;
 		
 		if ((deviceHandle = openAVSDevice(device_name)) == null){
 			throw new RadiometryException("Cannot open" + device_name + " : " + devicesState);
@@ -139,12 +143,13 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 	}
 	
 	private void performMeasurement(SpectralIrradiance irradiance_result) throws RadiometryException{
+		
 		MeasConfigType _meas_config = new MeasConfigType();
 		_meas_config.m_StartPixel 						= 0;
 		_meas_config.m_StopPixel 						= (char) (pixelCount.getValue() - 1);
 		_meas_config.m_IntegrationTime					= integrationTimeMillisec;
 		_meas_config.m_IntegrationDelay					= 0;
-		_meas_config.m_NrAverages						= 1;
+		_meas_config.m_NrAverages						= (int)(measurementTimeMillisec/integrationTimeMillisec);
 		_meas_config.m_CorDynDark.m_Enable				= 0;
 		_meas_config.m_CorDynDark.m_ForgetPercentage 	= 0;
 		_meas_config.m_Smoothing.m_SmoothPix 			= 0;

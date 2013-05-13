@@ -62,12 +62,15 @@ public class AvantesTesting {
 		testAVSFunction("AVS_GetNumPixels", AvantesLibrary.INSTANCE.AVS_GetNumPixels(_handle, _pixel_count));
 		System.out.println("   Pixel count = " + _pixel_count.getValue());
 			
+		int _nr_averages = 5;
+		int _int_time = 1000;
+		
 		MeasConfigType _meas_config = new MeasConfigType();
 		_meas_config.m_StartPixel 			= 0;
 		_meas_config.m_StopPixel 			= (char) (_pixel_count.getValue() - 1);
-		_meas_config.m_IntegrationTime		= 1000f;						// 1000 ms
+		_meas_config.m_IntegrationTime		= _int_time;					// 1000 ms
 		_meas_config.m_IntegrationDelay		= 0;							// FPGA clock cycles
-		_meas_config.m_NrAverages			= 1;
+		_meas_config.m_NrAverages			= _nr_averages;
 		_meas_config.m_CorDynDark.m_Enable	= 0;
 		_meas_config.m_CorDynDark.m_ForgetPercentage = 0;
 		_meas_config.m_Smoothing.m_SmoothPix = 0;
@@ -106,7 +109,7 @@ public class AvantesTesting {
 		
 		
 		testAVSFunction("AVs_PollScan", AvantesLibrary.INSTANCE.AVS_PollScan(_handle));	
-		Thread.sleep(4500);
+		Thread.sleep(_nr_averages*_int_time + 500);
 		testAVSFunction("AVS_PollScan", AvantesLibrary.INSTANCE.AVS_PollScan(_handle));
 		
 		double _meas_result[] = new double[_pixel_count.getValue()];
