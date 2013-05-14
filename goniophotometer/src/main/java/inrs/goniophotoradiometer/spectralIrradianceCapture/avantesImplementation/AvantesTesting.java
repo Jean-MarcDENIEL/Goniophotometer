@@ -8,6 +8,8 @@ public class AvantesTesting {
 	
 	public static void main(String[] str_args) throws InterruptedException{
 		
+		System.out.println("0^0 = " + Math.pow(0.0, 0.0));
+		
 		int _device_init;
 		short _init_param = (short)0;
 		testAVSFunction("AVS_Init("+_init_param+")", _device_init = AvantesLibrary.INSTANCE.AVS_Init(_init_param));

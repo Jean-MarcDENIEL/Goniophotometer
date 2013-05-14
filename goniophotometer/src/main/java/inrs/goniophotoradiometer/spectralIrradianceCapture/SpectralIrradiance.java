@@ -1,7 +1,6 @@
 package inrs.goniophotoradiometer.spectralIrradianceCapture;
 
 import c4sci.data.HierarchicalData;
-import c4sci.math.algebra.Floatings;
 
 /**
  * This class represents spectral irradiance measurements. This data is composed of index corresponding :
@@ -28,21 +27,21 @@ public class SpectralIrradiance extends HierarchicalData {
 	 * Grants read/write access to wavelength data.
 	 * @return wavelength data. Units depending on the user of this class. The wavelength values are sorted from lowest to highest values.
 	 */
-	public float[] getWavelengthData(){
+	public float[] accessWavelengthData(){
 		return wavelengthTab;
 	}
 	/**
 	 * Grants read/write access to irradiance data.
 	 * @return irradiance data. Index values correspond to those of wavelength data.
 	 */
-	public double[] getIrradianceData(){
+	public double[] accessIrradianceData(){
 		return irradianceTab;
 	}
 	/**
 	 * 
 	 * @return the number of wavelength data
 	 */
-	public int getDataSize(){
+	public int getWavelengthNumber(){
 		return wavelengthTab.length;
 	}
 	public final float getIntegrationTimeMs() {

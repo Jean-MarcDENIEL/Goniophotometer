@@ -133,6 +133,7 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 			throws RadiometryException {
 		
 		SpectralIrradiance _res = new SpectralIrradiance((int)pixelCount.getValue());
+		computeWavelength(_res);
 		while (true){
 			performMeasurement(_res);
 			if (!isIntegrationTimeInAcceptableRange(_res)){
@@ -141,6 +142,19 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 			else{
 				return _res;
 			}
+		}
+	}
+	
+	private void computeWavelength(SpectralIrradiance spectral_irradiance){
+		int 	_wavelength_count 	= spectral_irradiance.getWavelengthNumber();
+		float[] _wavelength_tab 	= spectral_irradiance.accessWavelengthData();
+		for (int _i=0; _i<_wavelength_count; _i++){
+			float _val = 0.0f;
+			float _f_i = (float)_i;
+			for (int _pow = 0; _pow<WAVELENGTH_POLYNOM_LENGTH; _pow++){
+				_val += wavelengthPolynom[_pow] * Math.pow(_f_i, (double)_pow);
+			}
+			_wavelength_tab[_i] = _val;
 		}
 	}
 	
@@ -166,6 +180,8 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 	}
 	
 	private void performMeasurement(SpectralIrradiance irradiance_result) throws RadiometryException{
+		
+		irradiance_result.setIntegrationTimeMs(currentIntegrationTimeMillisec);
 		
 		MeasConfigType _meas_config = new MeasConfigType();
 		_meas_config.m_StartPixel 						= 0;
@@ -195,7 +211,7 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 				int _data_available;
 				useAVSFunction("AVS_PollScan", _data_available = AvantesLibrary.INSTANCE.AVS_PollScan(deviceHandle));
 				if (_data_available != 0){
-					useAVSFunction("AVS_GetScopeData", AvantesLibrary.INSTANCE.AVS_GetScopeData(deviceHandle, new IntByReference(), irradiance_result.getIrradianceData()));
+					useAVSFunction("AVS_GetScopeData", AvantesLibrary.INSTANCE.AVS_GetScopeData(deviceHandle, new IntByReference(), irradiance_result.accessIrradianceData()));
 					return;
 				}
 				else{
