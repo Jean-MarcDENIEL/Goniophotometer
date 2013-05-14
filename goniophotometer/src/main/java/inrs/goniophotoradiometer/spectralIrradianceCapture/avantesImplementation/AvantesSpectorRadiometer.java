@@ -1,5 +1,7 @@
 package inrs.goniophotoradiometer.spectralIrradianceCapture.avantesImplementation;
 
+import java.awt.Polygon;
+
 import c4sci.math.algebra.Floatings;
 
 import com.sun.jna.NativeLong;
@@ -20,6 +22,9 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 	private static final float				MAX_16BITS_IRRADIANCE_VALUE	= 65535f;
 	private static final float				MAX_RELATIVE_LEVEL			= 0.90f;
 	private static final float				MIN_RELATIVE_LEVEL			= 0.75f;
+	private static final int				WAVELENGTH_POLYNOM_LENGTH	= 5;
+	
+	
 
 
 	
@@ -77,14 +82,22 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 	
 	private NativeLong			deviceHandle;
 	private ShortByReference	pixelCount;
-	private float				integrationTimeMillisec;
+	private float				currentIntegrationTimeMillisec;
 	private float				minIntegrationTimeMillisec;
 	private float				maxIntegrationTimeMillisec;
 	private float				measurementTimeMillisec;
+	private float				wavelengthPolynom[];
 	
 	@SuppressWarnings("unused")
 	private AvantesSpectorRadiometer(){}
-	
+	/**
+	 * 
+	 * @param device_name Device handle.
+	 * @param min_integration_time_millisec Minimum acceptable integration time (in milliseconds)
+	 * @param max_integration_time_millisec Maximum acceptable integration time (in milliseconds)
+	 * @param meas_time_millisec Measurement time (in milliseconds) used to define the number of measurements to be averaged.
+	 * @throws RadiometryException
+	 */
 	public AvantesSpectorRadiometer(String device_name, 
 			float min_integration_time_millisec, 
 			float max_integration_time_millisec,
@@ -103,7 +116,17 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 		pixelCount	= new ShortByReference();
 		useAVSFunction("AVS_GetNumPixels", AvantesLibrary.INSTANCE.AVS_GetNumPixels(deviceHandle, pixelCount));
 		
-		integrationTimeMillisec	 = DEFAULT_INTEGRATION_TIME;
+		currentIntegrationTimeMillisec	 = DEFAULT_INTEGRATION_TIME;
+		
+		wavelengthPolynom = new float[5];
+		DeviceConfigType 	_parameter_data = new DeviceConfigType();
+		IntByReference		_desired_size = new IntByReference();
+		AvantesLibrary.INSTANCE.AVS_GetParameter(deviceHandle, 0, _desired_size, _parameter_data);
+		useAVSFunction("AVS_GetParameter", AvantesLibrary.INSTANCE.AVS_GetParameter(deviceHandle, _desired_size.getValue(), _desired_size, _parameter_data));
+		DetectorType _detector = _parameter_data.m_Detector;
+		for (int _i=0; _i<WAVELENGTH_POLYNOM_LENGTH; _i++){
+			wavelengthPolynom[_i] = _detector.m_aFit[_i];
+		}
 	}
 	
 	public SpectralIrradiance captureIrradiance()
@@ -113,7 +136,7 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 		while (true){
 			performMeasurement(_res);
 			if (!isIntegrationTimeInAcceptableRange(_res)){
-				integrationTimeMillisec = computeIntegrationTime(_res);
+				currentIntegrationTimeMillisec = computeIntegrationTime(_res);
 			}
 			else{
 				return _res;
@@ -127,9 +150,9 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 		double max_irradiance_value = irradiance_values.getMaxIrradianceValue();
 		return 
 				((max_irradiance_value > max_acceptable_irradiance_value)&&
-						(Floatings.isGreater(integrationTimeMillisec, minIntegrationTimeMillisec))) ||
+						(Floatings.isGreater(currentIntegrationTimeMillisec, minIntegrationTimeMillisec))) ||
 				(( max_irradiance_value > min_acceptable_irradiance_value) &&
-						(Floatings.isLess(integrationTimeMillisec, maxIntegrationTimeMillisec)));
+						(Floatings.isLess(currentIntegrationTimeMillisec, maxIntegrationTimeMillisec)));
 	}
 	
 	private float computeIntegrationTime(SpectralIrradiance irradiance_values) throws RadiometryException{
@@ -147,9 +170,9 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 		MeasConfigType _meas_config = new MeasConfigType();
 		_meas_config.m_StartPixel 						= 0;
 		_meas_config.m_StopPixel 						= (char) (pixelCount.getValue() - 1);
-		_meas_config.m_IntegrationTime					= integrationTimeMillisec;
+		_meas_config.m_IntegrationTime					= currentIntegrationTimeMillisec;
 		_meas_config.m_IntegrationDelay					= 0;
-		_meas_config.m_NrAverages						= (int)(measurementTimeMillisec/integrationTimeMillisec);
+		_meas_config.m_NrAverages						= (int)(measurementTimeMillisec/currentIntegrationTimeMillisec);
 		_meas_config.m_CorDynDark.m_Enable				= 0;
 		_meas_config.m_CorDynDark.m_ForgetPercentage 	= 0;
 		_meas_config.m_Smoothing.m_SmoothPix 			= 0;
@@ -167,22 +190,22 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 
 		useAVSFunction("AVS_Measure", AvantesLibrary.INSTANCE.AVS_Measure(deviceHandle, AvantesLibrary.DEFAULT_HWINDOW, (short)1));
 		try {
-				Thread.sleep((long) (WAIT_FOR_DATA + integrationTimeMillisec));
-				while (true){
-					int _data_available;
-					useAVSFunction("AVS_PollScan", _data_available = AvantesLibrary.INSTANCE.AVS_PollScan(deviceHandle));
-					if (_data_available != 0){
-						useAVSFunction("AVS_GetScopeData", AvantesLibrary.INSTANCE.AVS_GetScopeData(deviceHandle, new IntByReference(), irradiance_result.getIrradianceData()));
-						return;
-					}
-					else{
-						Thread.sleep(WAIT_FOR_DATA);
-					}
+			Thread.sleep((long) (WAIT_FOR_DATA + currentIntegrationTimeMillisec));
+			while (true){
+				int _data_available;
+				useAVSFunction("AVS_PollScan", _data_available = AvantesLibrary.INSTANCE.AVS_PollScan(deviceHandle));
+				if (_data_available != 0){
+					useAVSFunction("AVS_GetScopeData", AvantesLibrary.INSTANCE.AVS_GetScopeData(deviceHandle, new IntByReference(), irradiance_result.getIrradianceData()));
+					return;
 				}
-			} catch (InterruptedException _e) {
-				throw new RadiometryException("Measurement interrupted", _e);
+				else{
+					Thread.sleep(WAIT_FOR_DATA);
+				}
 			}
-
+		} 
+		catch (InterruptedException _e) {
+			throw new RadiometryException("Measurement interrupted", _e);
+		}
 	}
 
 }
