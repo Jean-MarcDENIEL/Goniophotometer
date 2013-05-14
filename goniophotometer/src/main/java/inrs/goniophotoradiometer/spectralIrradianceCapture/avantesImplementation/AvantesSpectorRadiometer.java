@@ -1,7 +1,5 @@
 package inrs.goniophotoradiometer.spectralIrradianceCapture.avantesImplementation;
 
-import java.awt.Polygon;
-
 import c4sci.math.algebra.Floatings;
 
 import com.sun.jna.NativeLong;
