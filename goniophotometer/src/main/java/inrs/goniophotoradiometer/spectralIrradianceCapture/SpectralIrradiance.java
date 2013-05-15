@@ -12,16 +12,22 @@ import c4sci.data.HierarchicalData;
  *
  */
 public class SpectralIrradiance extends HierarchicalData {
-	private float[] wavelengthTab;
-	private double[] irradianceTab;
+	
+	private static final float	DEFAULT_INTEGRATION_TIME_MILLISEC = 1000f;
+	
+	private float[] 	wavelengthTab;
+	private double[] 	irradianceTab;
+	private boolean[]	saturationTab;
 	private float 	integrationTimeMs;
+	private int		averagesCount;
 	
 	@SuppressWarnings("unused")
 	private SpectralIrradiance(){}
 	public SpectralIrradiance(int wavelength_count){
 		wavelengthTab 		= new float[wavelength_count];
 		irradianceTab 		= new double[wavelength_count];
-		setIntegrationTimeMs(1f);
+		saturationTab		= new boolean[wavelength_count];
+		setIntegrationTimeMs(DEFAULT_INTEGRATION_TIME_MILLISEC);
 	}
 	/**
 	 * Grants read/write access to wavelength data.
@@ -36,6 +42,14 @@ public class SpectralIrradiance extends HierarchicalData {
 	 */
 	public double[] accessIrradianceData(){
 		return irradianceTab;
+	}
+	/**
+	 * Grants read/write access to saturation data. For each pixel, indicates whether or not saturation occurred during measurement.
+	 * @return saturation data. Index values correspond to wavelength data. 
+	 * 
+	 */
+	public boolean[] accessSaturationData(){
+		return saturationTab;
 	}
 	/**
 	 * 
@@ -61,5 +75,11 @@ public class SpectralIrradiance extends HierarchicalData {
 			_res = Math.max(_res, _irr);
 		}
 		return _res;
+	}
+	public int getAveragesCount() {
+		return averagesCount;
+	}
+	public void setAveragesCount(int averages_count) {
+		this.averagesCount = averages_count;
 	}
 }
