@@ -22,10 +22,6 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 	private static final float				MIN_RELATIVE_LEVEL			= 0.75f;
 	private static final int				WAVELENGTH_POLYNOM_LENGTH	= 5;
 	
-	
-
-
-	
 	static{
 		try{
 			short _device_count = (short) AvantesLibrary.INSTANCE.AVS_Init(AvantesLibrary.USB_PORT);
@@ -180,13 +176,15 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 	private void performMeasurement(SpectralIrradiance irradiance_result) throws RadiometryException{
 		
 		irradiance_result.setIntegrationTimeMs(currentIntegrationTimeMillisec);
+		int _averages_count = (int)(measurementTimeMillisec/currentIntegrationTimeMillisec);
+		irradiance_result.setAveragesCount(_averages_count);
 		
 		MeasConfigType _meas_config = new MeasConfigType();
 		_meas_config.m_StartPixel 						= 0;
 		_meas_config.m_StopPixel 						= (char) (pixelCount.getValue() - 1);
 		_meas_config.m_IntegrationTime					= currentIntegrationTimeMillisec;
 		_meas_config.m_IntegrationDelay					= 0;
-		_meas_config.m_NrAverages						= (int)(measurementTimeMillisec/currentIntegrationTimeMillisec);
+		_meas_config.m_NrAverages						= _averages_count;
 		_meas_config.m_CorDynDark.m_Enable				= 0;
 		_meas_config.m_CorDynDark.m_ForgetPercentage 	= 0;
 		_meas_config.m_Smoothing.m_SmoothPix 			= 0;
