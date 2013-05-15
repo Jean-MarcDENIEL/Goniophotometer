@@ -77,7 +77,7 @@ public class AvantesTesting {
 		_meas_config.m_CorDynDark.m_ForgetPercentage = 0;
 		_meas_config.m_Smoothing.m_SmoothPix = 0;
 		_meas_config.m_Smoothing.m_SmoothModel	= 0;
-		_meas_config.m_SaturationDetection	= 0;
+		_meas_config.m_SaturationDetection	= 1;
 		_meas_config.m_Trigger.m_Mode		= 0;
 		_meas_config.m_Trigger.m_Source		= 0;
 		_meas_config.m_Trigger.m_SourceType	= 0;
@@ -88,6 +88,7 @@ public class AvantesTesting {
 		_meas_config.m_Control.m_StoreToRam			= 0;
 		testAVSFunction("AVS_PrepareMEasure", AvantesLibrary.INSTANCE.AVS_PrepareMeasure(_handle, _meas_config));
 
+		System.out.println("Measuring ...");
 		testAVSFunction("AVS_Measure", AvantesLibrary.INSTANCE.AVS_Measure(_handle, AvantesLibrary.DEFAULT_HWINDOW, (short)1));
 		
 		DeviceConfigType 	_parameter_data = new DeviceConfigType();
@@ -117,8 +118,27 @@ public class AvantesTesting {
 		double _meas_result[] = new double[_pixel_count.getValue()];
 		IntByReference _time_stamp = new IntByReference();
 		testAVSFunction("AVS_GetScopeData", AvantesLibrary.INSTANCE.AVS_GetScopeData(_handle, _time_stamp, _meas_result));
+		double _pix = 0.0;
 		for (double _val : _meas_result){
-			System.out.println("    "  + _val);
+			double _wave = 0.0;
+			for (int _i=0; _i<5; _i++){
+				_wave += Math.pow(_pix, (double)_i) * (double)_detector.m_aFit[_i];
+			}
+			System.out.println(((int)_wave) + " :    "  + (_val == 65535.0? "65535.0 --- SATURATED" : _val));
+			
+			_pix += 1.0;
+		}
+		
+		byte[] _saturation_tab = new byte[_pixel_count.getValue()];
+		testAVSFunction("AVS_GetSaturatedPixels", AvantesLibrary.INSTANCE.AVS_GetSaturatedPixels(_handle, _saturation_tab));
+		_pix = 0.0;
+		for (byte _sat_val : _saturation_tab){
+			double _wave = 0.0;
+			for (int _i=0; _i<5; _i++){
+				_wave += Math.pow(_pix, (double)_i) * (double)_detector.m_aFit[_i];
+			}
+			System.out.println(((int)_wave) + " :   "  + (_sat_val == 1 ? "  SATURATED" : " - "));
+			_pix += 1.0;
 		}
 		
 		testAVSFunction("AVS_Deactivate", AvantesLibrary.INSTANCE.AVS_Deactivate(_handle));

@@ -40,6 +40,7 @@ public interface AvantesLibrary extends Library {
 	int AVS_GetVersionInfo(NativeLong a_hDevice, byte[] a_pFPGAVersion, byte[] a_pFirmwareVersion, byte[] a_pDLLVersion);
 	int AVS_PollScan(NativeLong a_hDevice);
 	int AVS_GetScopeData(NativeLong a_hDevice, IntByReference a_pTimeLabel, double[] a_pSpectrum);
+	int AVS_GetSaturatedPixels(NativeLong a_hDevice, byte[] a_pSaturation);
 	
 	public static final int 	DEFAULT_HWINDOW	= 1;
 	
