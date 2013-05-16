@@ -15,7 +15,7 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 	
 	private static AvsIdentityType[]		KNOWN_DEVICES				= null;
 	private static String					devicesState				= new String("No error");
-	private static final long				WAIT_FOR_DATA				= 500L;
+	private static final long				WAIT_FOR_DATA				= 1L;
 	private static final float				DEFAULT_INTEGRATION_TIME	= 1000f;
 	private static final float				MAX_16BITS_IRRADIANCE_VALUE	= 65535f;
 	private static final float				MAX_RELATIVE_LEVEL			= 0.90f;
