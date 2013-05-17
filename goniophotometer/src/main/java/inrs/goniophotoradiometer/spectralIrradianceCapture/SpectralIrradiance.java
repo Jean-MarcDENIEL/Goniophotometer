@@ -82,4 +82,12 @@ public class SpectralIrradiance extends HierarchicalData {
 	public void setAveragesCount(int averages_count) {
 		this.averagesCount = averages_count;
 	}
+	public boolean isSaturated(){
+		for (boolean _pixel_sat : accessSaturationData()){
+			if (_pixel_sat){
+				return true;
+			}
+		}
+		return false;
+	}
 }

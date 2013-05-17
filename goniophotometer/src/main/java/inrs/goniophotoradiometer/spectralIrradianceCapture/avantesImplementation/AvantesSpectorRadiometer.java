@@ -123,13 +123,13 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 		}
 	}
 	
+	/**
+	 * Captures irradiance ion auto mode so to get a high signal level.
+	 */
 	public SpectralIrradiance captureIrradiance()
 			throws RadiometryException {
-		
-		SpectralIrradiance _res = new SpectralIrradiance((int)pixelCount.getValue());
-		computeWavelength(_res);
 		while (true){
-			performMeasurement(_res);
+			SpectralIrradiance _res = captureIrradiance(currentIntegrationTimeMillisec);
 			if (!isIntegrationTimeInAcceptableRange(_res)){
 				currentIntegrationTimeMillisec = computeIntegrationTime(_res);
 			}
@@ -137,6 +137,14 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 				return _res;
 			}
 		}
+	}
+	
+	public SpectralIrradiance captureIrradiance(float integration_time) throws RadiometryException{
+		currentIntegrationTimeMillisec = integration_time;
+		SpectralIrradiance _res = new SpectralIrradiance((int)pixelCount.getValue());
+		computeWavelength(_res);
+		performMeasurement(_res);
+		return _res;
 	}
 	
 	private void computeWavelength(SpectralIrradiance spectral_irradiance){
@@ -153,6 +161,11 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 	}
 	
 	private boolean isIntegrationTimeInAcceptableRange(SpectralIrradiance irradiance_values){
+		
+		if (irradiance_values.isSaturated()){
+			return Floatings.isEqual(irradiance_values.getIntegrationTimeMs(), minIntegrationTimeMillisec);
+		}
+		
 		double min_acceptable_irradiance_value = MIN_RELATIVE_LEVEL * MAX_16BITS_IRRADIANCE_VALUE;
 		double max_acceptable_irradiance_value = MAX_RELATIVE_LEVEL * MAX_16BITS_IRRADIANCE_VALUE;
 		double max_irradiance_value = irradiance_values.getMaxIrradianceValue();
@@ -171,7 +184,8 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 		if (Floatings.isEqual((float)max_irradiance_value ,  0.0f)){
 			throw new RadiometryException("Abnormal low irradiance levels");
 		}
-		float _res = (float)(irradiance_values.getIntegrationTimeMs() * max_achievable_irradiance_value / max_irradiance_value);
+		float _res = (float) (irradiance_values.isSaturated() ? irradiance_values.getIntegrationTimeMs()/2.0 : irradiance_values.getIntegrationTimeMs() * max_achievable_irradiance_value / max_irradiance_value);
+		
 		return Math.min(maxIntegrationTimeMillisec, Math.max(minIntegrationTimeMillisec, _res));
 	}
 	
