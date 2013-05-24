@@ -1,8 +1,6 @@
 package inrs.goniophotoradiometer.filterWheel.thorlabsImplementation;
 
-import java.awt.HeadlessException;
 import java.io.IOException;
-import java.io.InputStream;
 import c4sci.io.serial.SerialDevice;
 import inrs.goniophotoradiometer.exceptions.RadiometryException;
 import inrs.goniophotoradiometer.filterWheel.FilterWheel;
