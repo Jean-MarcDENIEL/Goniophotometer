@@ -13,7 +13,7 @@ public enum AlmenoVocabulary implements SerialVocabulary {
 	},
 	MEASUREMENT_CHANNEL_CHOICE("M"){
 		public String getCommandParameters(SerialDevice serial_device) {
-			return ((AhlbornLuxMeter)serial_device).getMeasurementChannel();
+			return ((AhlbornLuxMeter)serial_device).getUsedMeasurementChannel();
 		}
 	},
 	MEASUREMENT_VALUE("P01", new SerialStateDecoder(){
@@ -23,7 +23,7 @@ public enum AlmenoVocabulary implements SerialVocabulary {
 				throws SerialStateParsingException {
 			try{
 				System.out.println(": " + state_string);
-				int _value_index = this.DATE_LENGTH + ((AhlbornLuxMeter)serial_device).getMeasurementChannel().length() + this.BETWEEN_CHANNEL_AND_VALUE;
+				int _value_index = this.DATE_LENGTH + ((AhlbornLuxMeter)serial_device).getUsedMeasurementChannel().length() + this.BETWEEN_CHANNEL_AND_VALUE;
 				String _to_parse = state_string.substring(_value_index);
 				int _point_index = _to_parse.indexOf(" ");
 				if (_point_index != -1){
@@ -32,6 +32,7 @@ public enum AlmenoVocabulary implements SerialVocabulary {
 						((AhlbornLuxMeter)serial_device).setMeasurementValue(Float.parseFloat(_to_parse));
 					}
 					catch(NumberFormatException _e){
+						((AhlbornLuxMeter)serial_device).setMeasurementValue(AhlbornLuxMeter.INSENSITIVE_LUX_LIMIT);
 						throw new SerialStateParsingException("Cannot read illuminance value " + _e.getMessage(), _e);
 					}
 				}
