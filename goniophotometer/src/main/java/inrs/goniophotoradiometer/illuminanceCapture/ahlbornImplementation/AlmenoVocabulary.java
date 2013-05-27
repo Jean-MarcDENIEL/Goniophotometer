@@ -22,7 +22,6 @@ public enum AlmenoVocabulary implements SerialVocabulary {
 		public void decodeState(String state_string, SerialDevice serial_device)
 				throws SerialStateParsingException {
 			try{
-				System.out.println(": " + state_string);
 				int _value_index = this.DATE_LENGTH + ((AhlbornLuxMeter)serial_device).getUsedMeasurementChannel().length() + this.BETWEEN_CHANNEL_AND_VALUE;
 				String _to_parse = state_string.substring(_value_index);
 				int _point_index = _to_parse.indexOf(" ");
