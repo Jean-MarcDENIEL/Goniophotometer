@@ -2,7 +2,7 @@ package inrs.goniophotoradiometer.hierarchicalMeasurementStrategies;
 
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalMeasurementStrategy.PatchSubdivision;
 
-public class DefaultHierarchialStrategyBehavior {
+public class DefaultHierarchicalStrategyBehavior {
 	/**
 	 * By default cuts along the widest parameter range
 	 * @param patch_to_subdivide
