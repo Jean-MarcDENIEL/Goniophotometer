@@ -114,6 +114,16 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 		boolean _cutable_on_g = Floatings.isGreaterEqual(patch_g_bounds.getWidth(), MIN_CUTTABLE_RANGE_WIDTH);
 		
 		PatchSubdivision _res = measurementDevice.computeSubdivisionWay(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
+		if (_res == null){
+			// in this case we must ensure that the patch won't be cut if there no way to have 
+			// proper file names for each measurement point of subpatches.
+			if (_cutable_on_c && _cutable_on_g){
+				return null;
+			}
+			else{
+				return PatchSubdivision.NO_SUBDIVISION;
+			}
+		}
 		switch(_res){
 		case NO_SUBDIVISION :
 			return _res;

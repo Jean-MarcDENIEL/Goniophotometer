@@ -177,6 +177,9 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 
 	private void subdividePatch(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException{
 		PatchSubdivision _subdivision_way = computeSubdivisionWay(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
+		if (_subdivision_way == null){
+			_subdivision_way = DefaultHierarchicalStrategyBehavior.computeSubdivisionWay(patch_to_subdivide, patch_c_bounds, patch_g_bounds);
+		}
 		MeasurementPatch[] _child_patches = new MeasurementPatch[_subdivision_way.getChildCount()];
 		switch (_subdivision_way){
 		case ON_C_ONLY:

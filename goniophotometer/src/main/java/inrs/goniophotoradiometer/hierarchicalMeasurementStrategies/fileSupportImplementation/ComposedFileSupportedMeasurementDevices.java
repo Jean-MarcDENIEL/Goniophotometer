@@ -1,6 +1,7 @@
 package inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation;
 
 import inrs.goniophotoradiometer.exceptions.RadiometryException;
+import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.DefaultHierarchicalStrategyBehavior;
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalMeasurementStrategy.PatchSubdivision;
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.IntegerBounds;
 import inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPatch;
@@ -81,7 +82,7 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 	/**
 	 * In a {@link ComposedFileSupportedMeasurementDevices}, all {@link FileSupportedMeasurementDevice}s are tested through their own<br>
 	 *  {@link FileSupportedMeasurementDevice#computeSubdivisionWay(MeasurementPatch, IntegerBounds, IntegerBounds)} method.
-	 *  @return The maximum possible subdivision combination between all sub {@link FileSupportedMeasurementDevice}s results. 
+	 *  @return The maximum possible subdivision combination between all sub {@link FileSupportedMeasurementDevice}s results or null if there's no.
 	 */
 	public PatchSubdivision computeSubdivisionWay(
 			MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds,
@@ -91,27 +92,34 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 			ComposedMeasurementPatch _comp_patch = (ComposedMeasurementPatch) patch_to_subdivide;
 			boolean _c_subdivide = false;
 			boolean _g_subdivide = false;
+			boolean _subdivision_suggested = false;
 			for (	Iterator<FileSupportedMeasurementDevice> _it = measurementDevices.iterator(); (
 					_it.hasNext())&&((!_c_subdivide)||(!_g_subdivide));){
 				FileSupportedMeasurementDevice _sub_device = _it.next();
 				MeasurementPatch _sub_patch 	= _comp_patch.getSubDeviceMeasurementPatch(_sub_device);
 				PatchSubdivision _subdivision 	= _sub_device.computeSubdivisionWay(_sub_patch, patch_c_bounds, patch_g_bounds);
-				switch(_subdivision){
-				case NO_SUBDIVISION:
-					break;
-				case ON_C_ONLY:
-					_c_subdivide = true;
-					break;
-				case ON_GAMMA_ONLY:
-					_g_subdivide = true;
-					break;
-				case ON_C_AND_GAMMA:
-					_c_subdivide = true;
-					_g_subdivide = true;
-					break;
-				default:
-					throw new RadiometryException("Unexpected subdivision");	
+				if (_subdivision != null){
+					_subdivision_suggested = true;
+					switch(_subdivision){
+					case NO_SUBDIVISION:
+						break;
+					case ON_C_ONLY:
+						_c_subdivide = true;
+						break;
+					case ON_GAMMA_ONLY:
+						_g_subdivide = true;
+						break;
+					case ON_C_AND_GAMMA:
+						_c_subdivide = true;
+						_g_subdivide = true;
+						break;
+					default:
+						throw new RadiometryException("Unexpected subdivision");	
+					}
 				}
+			}
+			if (!_subdivision_suggested){
+				return null;
 			}
 			if (_c_subdivide){
 				if (_g_subdivide){
