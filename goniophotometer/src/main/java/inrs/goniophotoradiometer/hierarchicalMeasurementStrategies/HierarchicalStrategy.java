@@ -42,7 +42,7 @@ public interface HierarchicalStrategy {
 	 * @param patch_to_subdivide
 	 * @param patch_c_bounds
 	 * @param patch_g_bounds
-	 * @return
+	 * @return null if no preferred way to cut the patch.
 	 * @throws RadiometryException
 	 */
 	PatchSubdivision computeSubdivisionWay(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
@@ -52,7 +52,7 @@ public interface HierarchicalStrategy {
 	 * @param patch_to_subdivide
 	 * @param patch_c_bounds
 	 * @param patch_g_bounds
-	 * @return Lower = lower child C middle value, Upper = upper child C middle value
+	 * @return Lower = lower child C middle value, Upper = upper child C middle value, null if no preferred way to subdivide
 	 * @throws RadiometryException
 	 */
 	IntegerBounds computeSubpatchesCMiddleValues(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
@@ -62,7 +62,7 @@ public interface HierarchicalStrategy {
 	 * @param patch_to_subdivide
 	 * @param patch_c_bounds
 	 * @param patch_g_bounds
-	 * @return
+	 * @return Lower = lower child G middle value, Upper = upper child G middle value, null if no preferred way to subdivide
 	 * @throws RadiometryException
 	 */
 	IntegerBounds computeSubpatchesGammaMiddleValues(MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException;
