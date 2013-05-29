@@ -76,33 +76,22 @@ public class LuxMeterHead implements FileSupportedMeasurementDevice {
 	public PatchSubdivision computeSubdivisionWay(
 			MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds,
 			IntegerBounds patch_g_bounds) throws RadiometryException {
-		// cut along the widest parameter range
-		//
-		if (patch_c_bounds.getWidth() > patch_g_bounds.getWidth()){
-			return PatchSubdivision.ON_C_ONLY;
-		}
-		else{
-			if (patch_c_bounds.getWidth() < patch_g_bounds.getWidth()){
-				return PatchSubdivision.ON_GAMMA_ONLY;
-			}
-			else{
-				return PatchSubdivision.ON_C_AND_GAMMA;
-			}
-		}
+		// for the moment no heuristic
+		return null;
 	}
 
 	public IntegerBounds computeSubpatchesCMiddleValues(
 			MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds,
 			IntegerBounds patch_g_bounds) throws RadiometryException {
-		int _c_mid = patch_to_subdivide.getcMid();
-		return new IntegerBounds((_c_mid + patch_c_bounds.getLowerBound())/2, (_c_mid + patch_c_bounds.getUpperBound())/2);
+		// for the moment no heuristic
+		return null;
 	}
 
 	public IntegerBounds computeSubpatchesGammaMiddleValues(
 			MeasurementPatch patch_to_subdivide, IntegerBounds patch_c_bounds,
 			IntegerBounds patch_g_bounds) throws RadiometryException {
-		int _g_mid = patch_to_subdivide.getgMid();
-		return new IntegerBounds((_g_mid+patch_g_bounds.getLowerBound())/2, (_g_mid+patch_g_bounds.getUpperBound())/2);
+		// for the moment no heuristic
+		return null;
 	}
 
 	public String[] getMeasurementPartsNames() throws RadiometryException {
