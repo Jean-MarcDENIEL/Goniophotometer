@@ -159,7 +159,7 @@ public class CameraHead implements FileSupportedMeasurementDevice {
 
 	}
 
-	public MeasurementPoint createMeasurementPoint(PlaneVector meas_point) {
+	public MeasurementPoint createMeasurementPoint(PlaneVector meas_point) throws RadiometryException {
 		return new CameraHeadMeasurementPoint(meas_point);
 	}
 	/**

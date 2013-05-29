@@ -219,7 +219,7 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 		patch_to_subdivide.subDivide(_child_patches);
 	}
 
-	private void initializeMeasurementPatch(MeasurementPatch patch_to_initialize, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds){
+	private void initializeMeasurementPatch(MeasurementPatch patch_to_initialize, IntegerBounds patch_c_bounds, IntegerBounds patch_g_bounds) throws RadiometryException{
 		patch_to_initialize.setcMingMid(getMeasurementPoint(patch_c_bounds.getLowerBound(), patch_to_initialize.getgMid()));
 		patch_to_initialize.setcMidgMin(getMeasurementPoint(patch_to_initialize.getcMid(), patch_g_bounds.getLowerBound()));
 		patch_to_initialize.setcMidgMid(getMeasurementPoint(patch_to_initialize.getcMid(), patch_to_initialize.getgMid()));
@@ -231,8 +231,9 @@ public abstract class HierarchicalMeasurementStrategy implements MeasurementStra
 	 * Search for an existing {@link MeasurementPoint} or creates and stores it has to be a point waiting for measurement,
 	 * or retrieves an existing one.
 	 * @return
+	 * @throws RadiometryException 
 	 */
-	private MeasurementPoint getMeasurementPoint(int c_value, int g_value){
+	private MeasurementPoint getMeasurementPoint(int c_value, int g_value) throws RadiometryException{
 		MeasurementPoint _res = null;
 		if (getRootPatch() != null){
 			_res = MeasurementPatch.getExistingMeasurementPoint(getRootPatch(), C_BOUNDS, G_BOUNDS, c_value, g_value);

@@ -13,7 +13,12 @@ public class AhlbornLuxMeter extends SerialDevice implements LuxMeter {
 	
 	public static final float	SENSITIVE_LUX_LIMIT 	= 25000f; 
 	public static final float	INSENSITIVE_LUX_LIMIT 	= 250000f;
+	public static final String 	COMMAND_STRING_END		= "\r\n";
+	public static final char	COMMAND_RESULT_END		= '\n';
+	public static final int		DEFAULT_DELAY_MILLISEC	= 350;
+	public static final int		DEFAULT_TIMEOUT_MILLISEC = 200;
 	private static final float	KLUX_TO_LUX_CONVERT		= 1000f;
+	
 	
 	
 	public AhlbornLuxMeter(String serial_port_name, String command_string_end,

@@ -269,4 +269,8 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 			System.out.println("" + ((int)_irradiance.accessWavelengthData()[_i]) + " : " + _irradiance.accessIrradianceData()[_i] + " / " + _irradiance.accessSaturationData()[_i]);
 		}
 	}
+
+	public int getWavelengthCount() throws RadiometryException {
+		return pixelCount.getValue();
+	}
 }

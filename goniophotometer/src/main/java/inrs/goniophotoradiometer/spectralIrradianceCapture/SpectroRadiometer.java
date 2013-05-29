@@ -14,4 +14,10 @@ public interface SpectroRadiometer {
 	 * @throws RadiometryException in the case the measurement is not possible.
 	 */
 	SpectralIrradiance captureIrradiance() throws RadiometryException;
+	/**
+	 * 
+	 * @return The number of wavelength-dependant irradiance values (W/nm/m²) to represent irradiance
+	 * @throws RadiometryException
+	 */
+	int getWavelengthCount() throws RadiometryException;
 }

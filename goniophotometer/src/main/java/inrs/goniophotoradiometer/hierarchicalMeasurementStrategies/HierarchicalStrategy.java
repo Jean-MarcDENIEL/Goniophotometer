@@ -31,8 +31,9 @@ public interface HierarchicalStrategy {
 	 * <b>Pattern</b> This method implements the <b>factory method</b> pattern.
 	 * @param meas_point
 	 * @return
+	 * @throws RadiometryException TODO
 	 */
-	MeasurementPoint createMeasurementPoint(PlaneVector meas_point);
+	MeasurementPoint createMeasurementPoint(PlaneVector meas_point) throws RadiometryException;
 	
 	MeasurementPatch createMeasurementPatch(int c_mid, int g_mid);
 

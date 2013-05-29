@@ -87,7 +87,7 @@ public  class FileSupportHierarchicalMeasurementStrategy extends HierarchicalMea
 	}
 
 
-	public MeasurementPoint createMeasurementPoint(PlaneVector meas_point) {
+	public MeasurementPoint createMeasurementPoint(PlaneVector meas_point) throws RadiometryException {
 		return measurementDevice.createMeasurementPoint(meas_point);
 	}
 

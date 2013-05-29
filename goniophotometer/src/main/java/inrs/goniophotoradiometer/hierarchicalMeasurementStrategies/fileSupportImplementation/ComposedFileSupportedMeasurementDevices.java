@@ -71,7 +71,7 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 		}
 	}
 
-	public MeasurementPoint createMeasurementPoint(PlaneVector meas_point) {
+	public MeasurementPoint createMeasurementPoint(PlaneVector meas_point) throws RadiometryException {
 		return new ComposedMeasurementPoint(meas_point, measurementDevices);
 	}
 	public MeasurementPatch createMeasurementPatch(int c_mid, int g_mid) {
@@ -304,7 +304,7 @@ public class ComposedFileSupportedMeasurementDevices implements FileSupportedMea
 
 		private Map<FileSupportedMeasurementDevice, MeasurementPoint> measurementPoints;
 
-		public ComposedMeasurementPoint(PlaneVector meas_point, List<FileSupportedMeasurementDevice> sub_device_list) {
+		public ComposedMeasurementPoint(PlaneVector meas_point, List<FileSupportedMeasurementDevice> sub_device_list) throws RadiometryException {
 			super(meas_point);
 			measurementPoints = new ConcurrentHashMap<FileSupportedMeasurementDevice, MeasurementPoint>();
 			for (Iterator<FileSupportedMeasurementDevice> _it = sub_device_list.iterator(); _it.hasNext();){
