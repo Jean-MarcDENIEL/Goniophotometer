@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClassDiagram>
+    <Class name="inrs.goniophotoradiometer.MotionScheduler" x="4" y="70">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="true"
+            accessors-accepted="true" constructors-accepted="true"/>
+    </Class>
+    <Class
+        name="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+        x="400" y="631">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="true" static-accepted="false"
+            accessors-accepted="true" constructors-accepted="false"/>
+    </Class>
+    <Class
+        name="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.ComposedFileSupportedMeasurementDevices"
+        x="1195" y="677">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="true" constructors-accepted="false"/>
+        <Extension destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.FileSupportedMeasurementDevice">
+            <Point x="1207" y="558"/>
+        </Extension>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.FileSupportedMeasurementDevice"
+            endpointName="measurementDevices" kind="Simple">
+            <Point x="1424" y="542"/>
+        </Association>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.ComposedFileSupportedMeasurementDevices.ComposedMeasurementPoint"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.ComposedFileSupportedMeasurementDevices.ComposedMeasurementPatch"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalStrategy"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.FileSupportedMeasurementDevice"/>
+    </Class>
+    <Class
+        name="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalStrategy"
+        x="889" y="85">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="true"
+            default-accepted="true" static-accepted="true"
+            accessors-accepted="false" constructors-accepted="false"/>
+    </Class>
+    <Class
+        name="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.ComposedFileSupportedMeasurementDevices.ComposedMeasurementPatch"
+        x="119" y="674">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Extension destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPatch">
+            <Point x="236" y="636"/>
+        </Extension>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPatch"
+            endpointName="measurementPatches" kind="Simple">
+            <Point x="58" y="612"/>
+        </Association>
+    </Class>
+    <Class
+        name="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.FileSupportedMeasurementDevice"
+        x="1010" y="340">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="true" static-accepted="false"
+            accessors-accepted="true" constructors-accepted="false"/>
+        <Extension destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalStrategy"/>
+    </Class>
+    <Class name="inrs.goniophotoradiometer.MeasurementStrategy" x="319" y="69">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="true"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="true"
+            accessors-accepted="true" constructors-accepted="true"/>
+    </Class>
+    <Class
+        name="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.FileSupportHierarchicalMeasurementStrategy"
+        x="138" y="867">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="true" static-accepted="false"
+            accessors-accepted="true" constructors-accepted="false"/>
+        <Extension destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalMeasurementStrategy">
+            <Point x="759" y="713"/>
+        </Extension>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.FileSupportedMeasurementDevice"
+            endpointName="measurementDevice" kind="Simple">
+            <Point x="942" y="708"/>
+        </Association>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPatch"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalStrategy"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.FileSupportedMeasurementDevice"/>
+    </Class>
+    <Class
+        name="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPatch"
+        x="20" y="252">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="true"
+            default-accepted="false" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="true" static-accepted="false"
+            accessors-accepted="true" constructors-accepted="false"/>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+            endpointName="cMidgMid" kind="Simple"/>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPatch"
+            endpointName="subPatches" kind="Simple">
+            <Point x="89" y="568"/>
+            <Point x="136" y="586"/>
+            <Point x="191" y="585"/>
+        </Association>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+            endpointName="cMaxgMid" kind="Simple">
+            <Point x="311" y="676"/>
+        </Association>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+            endpointName="cMidgMin" kind="Simple">
+            <Point x="363" y="599"/>
+        </Association>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+            endpointName="cMingMid" kind="Simple"/>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+            endpointName="cMidgMax" kind="Simple">
+            <Point x="349" y="651"/>
+        </Association>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"/>
+    </Class>
+    <Class
+        name="inrs.goniophotoradiometer.measurementImplementations.CameraHead.CameraHeadMeasurementPoint"
+        x="147" y="750">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Extension destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"/>
+    </Class>
+    <Class
+        name="inrs.goniophotoradiometer.measurementImplementations.CameraHead"
+        x="872" y="970">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="true" static-accepted="false"
+            accessors-accepted="true" constructors-accepted="false"/>
+        <Extension destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.FileSupportedMeasurementDevice"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPatch"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.measurementImplementations.CameraHead.CameraHeadMeasurementPoint"/>
+    </Class>
+    <Class
+        name="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.fileSupportImplementation.ComposedFileSupportedMeasurementDevices.ComposedMeasurementPoint"
+        x="469" y="761">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Extension destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint">
+            <Point x="564" y="744"/>
+        </Extension>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+            endpointName="measurementPoints" kind="Simple">
+            <Point x="509" y="744"/>
+        </Association>
+    </Class>
+    <Class
+        name="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalMeasurementStrategy"
+        x="475" y="292">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="true" static-accepted="true"
+            accessors-accepted="true" constructors-accepted="true"/>
+        <Extension destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalStrategy"/>
+        <Extension destinationClassName="inrs.goniophotoradiometer.MeasurementStrategy"/>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+            endpointName="cMaxgMinMeasurement" kind="Simple">
+            <Point x="702" y="717"/>
+        </Association>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPatch"
+            endpointName="rootPatch" kind="Simple"/>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+            endpointName="cMaxgMaxMeasurement" kind="Simple">
+            <Point x="656" y="675"/>
+        </Association>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+            endpointName="cMingMaxMeasurement" kind="Simple">
+            <Point x="686" y="699"/>
+        </Association>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+            endpointName="cMingMinMeasurement" kind="Simple">
+            <Point x="630" y="619"/>
+        </Association>
+        <Association
+            destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"
+            endpointName="waitingPoints" kind="Simple">
+            <Point x="650" y="650"/>
+        </Association>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPoint"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.MeasurementPatch"/>
+        <Communication destinationClassName="inrs.goniophotoradiometer.hierarchicalMeasurementStrategies.HierarchicalStrategy"/>
+    </Class>
+</ClassDiagram>
