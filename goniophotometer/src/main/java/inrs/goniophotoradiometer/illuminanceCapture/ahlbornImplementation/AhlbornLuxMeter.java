@@ -14,7 +14,7 @@ public class AhlbornLuxMeter extends SerialDevice implements LuxMeter {
 	public static final float	SENSITIVE_LUX_LIMIT 	= 25000f; 
 	public static final float	INSENSITIVE_LUX_LIMIT 	= 250000f;
 	public static final String 	COMMAND_STRING_END		= "\r\n";
-	public static final char	COMMAND_RESULT_END		= '\n';
+	public static final char	COMMAND_RESULT_END		= '\n';		// should be ETX = 3
 	public static final int		DEFAULT_DELAY_MILLISEC	= 350;
 	public static final int		DEFAULT_TIMEOUT_MILLISEC = 200;
 	private static final float	KLUX_TO_LUX_CONVERT		= 1000f;
@@ -69,7 +69,9 @@ public class AhlbornLuxMeter extends SerialDevice implements LuxMeter {
 	public static void main(String main_args[]){
 		
 		System.out.println("Ouverture du luxmetre");
-		AhlbornLuxMeter _luxmeter = new AhlbornLuxMeter("COM2", "\r\n", '\n', 350, 100,"00", "10");
+		AhlbornLuxMeter _luxmeter = new AhlbornLuxMeter("COM3", 
+				AhlbornLuxMeter.COMMAND_STRING_END, 
+				AhlbornLuxMeter.COMMAND_RESULT_END, 350, 100,"00", "10");
 		
 		System.out.println("System overview");
 		_luxmeter.sendOrderAndSetDecoder(AlmenoVocabulary.SYSTEM_OVERVIEW);

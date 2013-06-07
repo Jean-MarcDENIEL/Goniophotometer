@@ -259,7 +259,8 @@ public class AvantesSpectorRadiometer implements SpectroRadiometer {
 
 	
 	public static void main(String[] args_tab) throws RadiometryException, InterruptedException{
-		AvantesSpectorRadiometer _spectro = new AvantesSpectorRadiometer("1002004U1", 1000f, 2000f, 8000f);
+		//AvantesSpectorRadiometer _spectro = new AvantesSpectorRadiometer("1002004U1", 1000f, 2000f, 8000f);
+		AvantesSpectorRadiometer _spectro = new AvantesSpectorRadiometer("1003082U1", 1000f, 2000f, 8000f);
 		System.out.println("Capturing irradiance...");
 		Thread.sleep(500);
 		SpectralIrradiance _irradiance = _spectro.captureIrradiance();

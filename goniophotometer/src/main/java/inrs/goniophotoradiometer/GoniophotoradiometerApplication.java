@@ -17,12 +17,12 @@ public class GoniophotoradiometerApplication {
 	
 	public static final int 		MAX_C_DELTA 			= 30;
 	public static final int 		MAX_G_DELTA 			= 40;
-	public static final String 		ARM_PORT 				= "COM1";
+	public static final String 		ARM_PORT 				= "COM1";	// COM1 = right plug
 	public static final int			ARM_COUNT_PER_REV 		= 4000;
 	public static final int			ARM_REV_RATIO 			= 500 ;
 	public static final float		ARM_MAX_SPEED_DEG_SEC 	= 1.163f;
 	public static final float		ARM_ACC_DEG_SEC_2 		= 1.0f;	
-	public static final String 		TURNTABLE_PORT 			= "COM2";
+	public static final String 		TURNTABLE_PORT 			= "COM2";	// COM2 = left plug
 	public static final int			TURNTABLE_COUNT_PER_REV = 4000;
 	public static final int			TURNTABLE_REV_RATIO 	= 64;
 	public static final int			TURNTABLE_SMALL_GEAR 	= 15;
